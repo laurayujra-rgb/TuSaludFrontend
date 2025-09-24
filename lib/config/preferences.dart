@@ -10,4 +10,15 @@ class Preferences {
   final keyRefreshToken = 'refreshToken';
   final keyRole = 'role';
   final keyPersonId = 'personId';
+  
+
+  Future<String> accessToken() async{
+    String value = await _storage.read(key: keyAccessToken) ?? '';
+    return value;
+  }
+  Future<String> refreshToken() async{
+    String value = await _storage.read(key: keyRefreshToken) ?? '';
+    return value;
+  }
+  
 }
