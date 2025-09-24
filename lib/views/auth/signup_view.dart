@@ -105,11 +105,8 @@ bool _obscureConfirmPassword = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final genderProvider = Provider.of<GenderProvider>(context, listen: false);
       final personTypeProvider = Provider.of<PersonTypeProvider>(context, listen: false);
-      final countryProvider = Provider.of<CountryProvider>(context, listen: false);
-      
       genderProvider.loadGenders();
       personTypeProvider.loadPersonTypes();
-      countryProvider.loadCountries();
     });
   }
 

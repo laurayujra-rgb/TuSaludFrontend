@@ -1,5 +1,5 @@
-import 'package:smarttolls/models/models.dart';
-import 'package:smarttolls/api/api.dart';
+import 'package:tusalud/api/response/app/ts_gender_response.dart';
+import 'package:tusalud/api/response/app/ts_role_response.dart';
 import 'dart:convert';
 
 import 'package:tusalud/api/response/ts_response.dart';
@@ -16,8 +16,8 @@ class TsPersonResponse implements TsResponseService {
   String? personAddress;
   String? personAge;
   int personStatus;
-  StGenderResponse gender;
-  StPersonTypeResponse personType;
+  TsGenderResponse gender;
+  TsRoleResponse role;
 
 
   TsPersonResponse({
@@ -33,7 +33,7 @@ class TsPersonResponse implements TsResponseService {
     this.personAge,
     required this.personStatus,
     required this.gender,
-    required this.personType,
+    required this.role,
 
   });
 
@@ -49,8 +49,8 @@ class TsPersonResponse implements TsResponseService {
         personAddress: '',
         personAge: '',
         personStatus: 0,
-        gender: StGenderResponse.createEmpty(),
-        personType: StPersonTypeResponse.createEmpty(),
+        gender: TsGenderResponse.createEmpty(),
+        role: TsRoleResponse.createEmpty(),
 
       );
 
@@ -70,11 +70,11 @@ factory TsPersonResponse.fromJson(Map<String, dynamic> json) => TsPersonResponse
       personAge: json["personAge"] as String?,
       personStatus: json["personStatus"] as int? ?? 0,
       gender: json["gender"] != null 
-          ? StGenderResponse.fromJson(json["gender"] as Map<String, dynamic>) 
-          : StGenderResponse.createEmpty(),
-      personType: json["personType"] != null
-          ? StPersonTypeResponse.fromJson(json["personType"] as Map<String, dynamic>)
-          : StPersonTypeResponse.createEmpty(),
+          ? TsGenderResponse.fromJson(json["gender"] as Map<String, dynamic>) 
+          : TsGenderResponse.createEmpty(),
+      role: json["role"] != null
+          ? TsRoleResponse.fromJson(json["role"] as Map<String, dynamic>)
+          : TsRoleResponse.createEmpty(),
     );
 
   @override
@@ -91,14 +91,9 @@ factory TsPersonResponse.fromJson(Map<String, dynamic> json) => TsPersonResponse
         "personAge": personAge,
         "personStatus": personStatus,
         "gender": gender.toJson(),
-        "personType": personType.toJson(),
+        "role": role.toJson(),
 
       };
-
-  @override
-  TsPersonResponse fromJson(String json) {
-    return fromMap(jsonDecode(json));
-  }
 
   @override
   TsPersonResponse fromJson(String json) {
@@ -119,11 +114,11 @@ factory TsPersonResponse.fromJson(Map<String, dynamic> json) => TsPersonResponse
       personAge: json["personAge"] as String?,
       personStatus: json["personStatus"] as int? ?? 0,
       gender: json["gender"] != null 
-          ? StGenderResponse.fromJson(json["gender"] as Map<String, dynamic>) 
-          : StGenderResponse.createEmpty(),
-      personType: json["personType"] != null
-          ? StPersonTypeResponse.fromJson(json["personType"] as Map<String, dynamic>)
-          : StPersonTypeResponse.createEmpty(),
+          ? TsGenderResponse.fromJson(json["gender"] as Map<String, dynamic>) 
+          : TsGenderResponse.createEmpty(),
+      role: json["role"] != null
+          ? TsRoleResponse.fromJson(json["role"] as Map<String, dynamic>)
+          : TsRoleResponse.createEmpty(),
 
     );
 }

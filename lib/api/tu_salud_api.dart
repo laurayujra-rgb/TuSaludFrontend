@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:tusalud/api/request/app/ts_gender_request.dart';
 import 'package:tusalud/api/request/auth/sign_up_request.dart';
 
 import 'package:tusalud/api/request/auth/ts_auth_request.dart';
+import 'package:tusalud/api/response/app/ts_gender_response.dart';
+import 'package:tusalud/api/response/auth/ts_person_response.dart';
 import 'package:tusalud/api/response/ts_response.dart';
 import 'package:tusalud/config/enviroment.dart';
 
@@ -66,7 +69,12 @@ class TuSaludApi {
     }
     
   }
-// DEFAULT METHODS
+/// ------------------------------------------------------------------------------------
+/// DEFAULT METHODS
+
+/// ------------------------------------------------------------------------------------
+/// GET
+/// ------------------------------------------------------------------------------------
   Future<http.Response> httpGet(String baseUrl, dynamic header) async {
     try {
       var httpResponse = await http.get(Uri.parse(baseUrl), headers: header);
@@ -84,7 +92,9 @@ class TuSaludApi {
     }
     return http.Response("{}", HttpStatus.conflict);
   }
-  // put
+///-------------------------------------------------------------------------------------
+/// PUT
+/// ------------------------------------------------------------------------------------
   Future<http.Response> httpPut(String baseUrl, dynamic header, String jsonRequest) async {
     try {
       var httpResponse = await http.put(
@@ -107,7 +117,9 @@ class TuSaludApi {
     }
     return http.Response("{}", HttpStatus.conflict);
   }
-
+/// ------------------------------------------------------------------------------------
+/// POST
+/// ------------------------------------------------------------------------------------
   Future<http.Response> httpPost(String baseUrl, dynamic header, String jsonRequest) async {
     try {
       var httpResponse = await http.post(
@@ -130,6 +142,30 @@ class TuSaludApi {
     }
     return http.Response("{}", HttpStatus.conflict);
   }
+/// ------------------------------------------------------------------------------------
+/// DELETE
+/// ------------------------------------------------------------------------------------
+Future<http.Response> httpDelete(String baseUrl, dynamic header) async {
+  try {
+    var httpResponse = await http.delete(
+      Uri.parse(baseUrl),
+      headers: header,
+    ).timeout(const Duration(seconds: 120));
+    
+    if (httpResponse.statusCode != HttpStatus.ok) {
+      final error = TsResponse.fromJson(httpResponse.body);
+      if (error.status == authorizationForbidden || error.status == authorizationUnauthorized) {
+        // httpResponse = await reloginMethodDelete(baseUrl, header, httpResponse);
+      }
+    }
+    return httpResponse;
+  } catch (e) {
+    if (e.toString().contains('errno = 7') || e.toString().contains('Software caused connection abort')) {
+      return http.Response("{}", HttpStatus.networkConnectTimeoutError);
+    }
+  }
+  return http.Response("{}", HttpStatus.conflict);
+}
 
 
   getHeaders() {
@@ -213,5 +249,155 @@ Future<TsResponse<TsPersonResponse>> signup(TsSignUpRequest personRequest) async
     );
   }
 }
+
+/// GENDER SECTION
+/// ----------------------------------------------------------------------------
+/// CREATE GENDER
+/// ----------------------------------------------------------------------------------------------------
+  Future<TsResponse<TsGenderResponse>> createGender(TsGenderRequest genderRequest) async {
+    try{
+      final response = await httpPost('$_baseUrl/gender/create', getHeaders(), jsonEncode(genderRequest.toJson()));
+      if(response.statusCode >= HttpStatus.badRequest){
+        if(response.statusCode == HttpStatus.networkConnectTimeoutError){
+          return TsResponse<TsGenderResponse>(status: HttpStatus.networkConnectTimeoutError);
+        }
+        try{
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsGenderResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al crear el género',
+            error: errorJson['error'] ?? '',
+          );
+        }catch(e){
+          return TsResponse<TsGenderResponse>.createEmpty();
+        }
+      }
+      final responseJson = json.decode(response.body);
+      final genderData = TsGenderResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsGenderResponse>(
+        data: genderData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    }catch(e){
+      return TsResponse<TsGenderResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la creación del género',
+        error: e.toString(),
+      );
+    }
+  }
+///  ----------------------------------------------------------------------------------------------------
+/// GET ALL GENDERS
+/// ----------------------------------------------------------------------------------------------------
+  Future<TsResponse<TsGenderResponse>> getAllGenders() async{
+    try{
+      final response = await httpGet('$_baseUrl/gender', getHeaders());
+      if(response.statusCode >= HttpStatus.badRequest){
+        if(response.statusCode == HttpStatus.networkConnectTimeoutError){
+          TsResponse<TsGenderResponse> responseData = TsResponse(status: HttpStatus.networkConnectTimeoutError);
+          return responseData;
+        }
+        return TsResponse.createEmpty();
+      }
+      TsResponse<TsGenderResponse> responseData = TsResponse.fromJsonList(utf8.decode(response.bodyBytes), TsGenderResponse.createEmpty());
+      return responseData;
+    }catch(e){
+      return TsResponse.createEmpty();
+    }
+  }
+///  ------------------------------------------------------------------------------------------------
+/// GET A GENDER
+/// ----------------------------------------------------------------------------------------------------
+  Future<TsResponse<TsGenderResponse>> getGender(int genderId) async{
+    try{
+      final response = await httpGet('$_baseUrl/gender/$genderId', getHeaders());
+      if(response.statusCode >= HttpStatus.badRequest){
+        if(response.statusCode == HttpStatus.networkConnectTimeoutError){
+          TsResponse<TsGenderResponse> responseData = TsResponse(status: HttpStatus.networkConnectTimeoutError);
+          return responseData;
+        }
+        return TsResponse.createEmpty();
+      }
+      TsResponse<TsGenderResponse> responseData = TsResponse.fromJson(utf8.decode(response.bodyBytes));
+      return responseData;
+    }catch(e){
+      return TsResponse.createEmpty();
+    }
+  }
+///  ------------------------------------------------------------------------------------------------
+/// UPDATE A GENDER
+/// ----------------------------------------------------------------------------------------------------
+  Future<TsResponse<TsGenderResponse>> updateGender(int genderId, TsGenderRequest genderRequest) async {
+    try {
+      final response = await httpPut('$_baseUrl/gender/$genderId', getHeaders(), jsonEncode(genderRequest.toJson()));
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsGenderResponse>(status: HttpStatus.networkConnectTimeoutError);
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsGenderResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al actualizar el género',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (e) {
+          return TsResponse<TsGenderResponse>.createEmpty();
+        }
+      }
+      final responseJson = json.decode(response.body);
+      final genderData = TsGenderResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsGenderResponse>(
+        data: genderData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsGenderResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la actualización del género',
+        error: e.toString(),
+      );
+    }
+  }
+///  ------------------------------------------------------------------------------------------------
+/// DELETE A GENDER
+/// ----------------------------------------------------------------------------------------------------
+  Future<TsResponse<TsGenderResponse>> deleteGender(int genderId) async {
+    try {
+      final response = await httpDelete('$_baseUrl/gender/$genderId', getHeaders());
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsGenderResponse>(status: HttpStatus.networkConnectTimeoutError);
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsGenderResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al eliminar el género',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (e) {
+          return TsResponse<TsGenderResponse>.createEmpty();
+        }
+      }
+      final responseJson = json.decode(response.body);
+      final genderData = TsGenderResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsGenderResponse>(
+        data: genderData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsGenderResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la eliminación del género',
+        error: e.toString(),
+      );
+    }
+  }
+
+
 
 }
