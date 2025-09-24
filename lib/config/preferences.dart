@@ -20,5 +20,37 @@ class Preferences {
     String value = await _storage.read(key: keyRefreshToken) ?? '';
     return value;
   }
+    Future<void> setAccessToken(String value) async{
+    await _storage.write(key: keyAccessToken, value: value);
+  }
+
   
+
+  Future<void> setEmail(String value) async{
+    await _storage.write(key: keyEmail, value: value);
+  }
+
+  Future<void> setLastName(String value) async{
+    await _storage.write(key: keyLastName, value: value);
+  }
+
+  Future<void> setName(String value) async{
+    await _storage.write(key: keyName, value: value);
+  }
+
+  Future<void> setRefreshToken(String value) async{
+    await _storage.write(key: keyRefreshToken, value: value);
+  }
+
+  Future<void> setRole(String value) async{
+    await _storage.write(key: keyRole, value: value);
+  }
+  
+
+  Future<void> setPersonId(int value) async {
+    await _storage.write(key: keyPersonId, value: value.toString()); // Guarda como String
+  }
+    Future<void> clearSession() async {
+  await _storage.deleteAll(); // Borra todo lo guardado
+}
 }

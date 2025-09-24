@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:tusalud/api/request/auth/sign_up_request.dart';
 
 import 'package:tusalud/api/request/auth/ts_auth_request.dart';
 import 'package:tusalud/api/response/ts_response.dart';
@@ -178,4 +179,39 @@ class TuSaludApi {
     return utf8.decode(base64Url.decode(output));
   }
   
+// signup
+Future<TsResponse<TsPersonResponse>> signup(TsSignUpRequest personRequest) async {
+  try {
+    final response = await httpPost('$_baseUrl/persons/create', getHeaders(), jsonEncode(personRequest.toJson()));
+    if (response.statusCode >= HttpStatus.badRequest) {
+      if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+        return TsResponse<TsPersonResponse>(status: HttpStatus.networkConnectTimeoutError);
+      }
+      try {
+        final errorJson = json.decode(response.body);
+        return TsResponse<TsPersonResponse>(
+          status: response.statusCode,
+          message: errorJson['message'] ?? 'Error al crear la persona',
+          error: errorJson['error'] ?? '',
+        );
+      } catch (e) {
+        return TsResponse<TsPersonResponse>.createEmpty();
+      }
+    }
+    final responseJson = json.decode(response.body);
+    final personData = TsPersonResponse.createEmpty().fromMap(responseJson['data']);
+    return TsResponse<TsPersonResponse>(
+      data: personData,
+      status: response.statusCode,
+      message: responseJson['message'],
+    );
+  } catch (e) {
+    return TsResponse<TsPersonResponse>(
+      status: HttpStatus.internalServerError,
+      message: 'Error durante la creación de la persona',
+      error: e.toString(),
+    );
+  }
+}
+
 }
