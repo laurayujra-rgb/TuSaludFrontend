@@ -27,7 +27,7 @@ class SignUpView extends StatelessWidget {
           text: S.of(context).signUp,
         ),
         backgroundColor: AppStyle.white,
-        // drawer: isMobile ? const SmartTollsMobileDrawer() : null,
+       
         body: isMobile
             ? const SingleChildScrollView(
                 child: Padding(
@@ -51,7 +51,7 @@ class SignUpTabletView extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Row(
       children: [
-        // SmartTollsDrawer(),
+      
         Expanded(
           flex: 2,
           child: SingleChildScrollView(

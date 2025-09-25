@@ -1,6 +1,6 @@
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' show dotenv;
 
 class Enviroment {
   static String get file{
@@ -14,10 +14,10 @@ class Enviroment {
   }
 
   static String get apiTuSaludAuthURL{
-    return dotenv.env['API_SMART_TOLLS_AUTH_URL'] ?? '';
+    return dotenv.env['API_TU_SALUD_AUTH_URL'] ?? '';
   }
 
   static String get apiTuSaludURL{
-    return dotenv.env['API_SMART_TOLLS_URL'] ?? '';
+    return dotenv.env['API_TU_SALUD_URL'] ?? '';
   }
 }
