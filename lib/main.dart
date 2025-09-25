@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:tusalud/config/api_router.dart';
 import 'package:tusalud/config/enviroment.dart';
+import 'package:tusalud/generated/l10.dart';
 
 void main() async{
   await dotenv.load(fileName: Enviroment.file);
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    MultiProvider(
-      providers:AppRouter.providers,
-      child: const MyApp(),
-    ),
-  );
+  // runApp(
+  //   MultiProvider(
+  //     providers:AppRouter.providers,
+  //     child: const MyApp(),
+  //   ),
+  // );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget{

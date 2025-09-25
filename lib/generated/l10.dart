@@ -372,6 +372,51 @@ class S {
       args: [],
     );
   }
+  /// `Select Role`
+  String get selectRole {
+    return Intl.message(
+      'Select Role',
+      name: 'selectRole',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Select your role`
+  String get selectYourRole {
+    return Intl.message(
+      'Select your role',
+      name: 'selectYourRole',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Administration`
+  String get administration {
+    return Intl.message(
+      'Administration',
+      name: 'administration',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Nurse`
+  String get nurse {
+    return Intl.message(
+      'Nurse',
+      name: 'nurse',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Supervisor`
+  String get supervisor {
+    return Intl.message(
+      'Supervisor',
+      name: 'supervisor',
+      desc: '',
+      args: [],
+    );
+  }
 }
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   const AppLocalizationDelegate();

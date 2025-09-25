@@ -9,6 +9,7 @@ import 'package:tusalud/config/preferences.dart';
 import 'package:tusalud/providers/auth/user_provider.dart';
 import 'package:tusalud/utils/orientation_util.dart';
 import 'package:tusalud/utils/utils.dart';
+import 'package:tusalud/views/app/select_mode_view.dart';
 import 'package:tusalud/views/auth/login_view.dart';
 import 'package:tusalud/widgets/app/loading.dart';
 

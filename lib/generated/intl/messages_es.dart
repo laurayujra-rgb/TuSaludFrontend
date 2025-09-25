@@ -45,7 +45,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "register": MessageLookupByLibrary.simpleMessage("Registrar"),
     "welcomeMessage": MessageLookupByLibrary.simpleMessage("¡Bienvenido a TuSalud!"),
     "logout": MessageLookupByLibrary.simpleMessage("Cerrar sesión"),
-    
+    "selectRole": MessageLookupByLibrary.simpleMessage("Seleccionar rol"),
+    "selectYourRole": MessageLookupByLibrary.simpleMessage("Seleccione su rol"),
+    "administration": MessageLookupByLibrary.simpleMessage("Administración"),
+    "nurse": MessageLookupByLibrary.simpleMessage("Enfermera"),
+    "supervisor": MessageLookupByLibrary.simpleMessage("Supervisor"),
   };
   
   

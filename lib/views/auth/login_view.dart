@@ -11,8 +11,8 @@ import 'package:tusalud/widgets/app/custom_field.dart';
 import '../../generated/l10.dart';
 import '../../widgets/app/custom_button.dart';
 class LoginView extends StatelessWidget{
-  static const String routeName = 'login';
-  static const String routePath = '/login';
+  static const String routerName = 'login';
+  static const String routerPath = '/login';
   const LoginView({super.key});
   @override
   Widget build(BuildContext context){
