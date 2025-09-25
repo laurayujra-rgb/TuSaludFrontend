@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:tusalud/generated/l10.dart';
+import 'package:tusalud/providers/admin/gender_provider.dart';
+import 'package:tusalud/providers/admin/role_provider.dart';
+import 'package:tusalud/providers/auth/sign_up_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/widgets/app/custom_app_bar.dart';
+import 'package:tusalud/widgets/app/custom_field.dart';
+
+import '../../widgets/app/custom_button.dart';
 
 class SignUpView extends StatelessWidget {
   static const String routerName = 'signUp';
@@ -88,7 +94,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   // Dropdown values
   String? _selectedGenderId;
-  String? _selectedPersonTypeId;
+  String? _selectedRoleId;
   String? _selectedCountryId;
   String? _selectedCityId;
 
@@ -104,9 +110,9 @@ bool _obscureConfirmPassword = true;
   void _loadInitialData() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final genderProvider = Provider.of<GenderProvider>(context, listen: false);
-      final personTypeProvider = Provider.of<PersonTypeProvider>(context, listen: false);
+      final roleProvider = Provider.of<RoleProvider>(context, listen: false);
       genderProvider.loadGenders();
-      personTypeProvider.loadPersonTypes();
+      roleProvider.loadRoles();
     });
   }
 
@@ -146,7 +152,7 @@ bool _obscureConfirmPassword = true;
       _addressController.text,
       _ageController.text,
       int.parse(_selectedGenderId!),
-      int.parse(_selectedPersonTypeId!),
+      int.parse(_selectedRoleId!),
       int.parse(_selectedCountryId!),
       int.parse(_selectedCityId!),
     );
@@ -398,7 +404,7 @@ bool _obscureConfirmPassword = true;
                 hint: Text(S.of(context).gender),
                 items: genderProvider.genders.map((gender) {
                   return DropdownMenuItem<String>(
-                    value: gender.idGender.toString(),
+                    value: gender.genderId.toString(),
                     child: Text(gender.genderName ?? 'N/A'),
                   );
                 }).toList(),
@@ -428,22 +434,22 @@ bool _obscureConfirmPassword = true;
             },
           ),
           const SizedBox(height: 16),
-          
-          // Person Type Dropdown
-          Consumer<PersonTypeProvider>(
-            builder: (context, personTypeProvider, _) {
+
+          // Role Dropdown
+          Consumer<RoleProvider>(
+            builder: (context, roleProvider, _) {
               return DropdownButtonFormField<String>(
-                value: _selectedPersonTypeId,
-                hint: Text(S.of(context).personType),
-                items: personTypeProvider.personTypes.map((type) {
+                value: _selectedRoleId,
+                hint: Text(S.of(context).role),
+                items: roleProvider.roles.map((role) {
                   return DropdownMenuItem<String>(
-                    value: type.idPersonType.toString(),
-                    child: Text(type.personType ?? 'N/A'),
+                    value: role.roleId.toString(),
+                    child: Text(role.roleName ?? 'N/A'),
                   );
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
-                    _selectedPersonTypeId = value;
+                    _selectedRoleId = value;
                   });
                 },
                 decoration: InputDecoration(
@@ -459,102 +465,15 @@ bool _obscureConfirmPassword = true;
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return S.of(context).pleaseSelectPersonType;
+                    return S.of(context).pleaseSelectRole;
                   }
                   return null;
                 },
               );
             },
           ),
-          const SizedBox(height: 16),
           
-          // Country Dropdown
-          Consumer<CountryProvider>(
-            builder: (context, countryProvider, _) {
-              return DropdownButtonFormField<String>(
-                value: _selectedCountryId,
-                hint: Text(S.of(context).country),
-                items: countryProvider.countries.map((country) {
-                  return DropdownMenuItem<String>(
-                    value: country.idCountry.toString(),
-                    child: Text(country.countryName ?? 'N/A'),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedCountryId = value;
-                    _selectedCityId = null; // Reset city when country changes
-                    
-                    if (value != null) {
-                      final cityProvider = Provider.of<CityProvider>(context, listen: false);
-                      cityProvider.loadCitiesByCountry(int.parse(value));
-                    }
-                  });
-                },
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.public, color: AppStyle.primary),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(color: AppStyle.primary, width: 1.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(color: AppStyle.primary, width: 1.0),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return S.of(context).pleaseSelectCountry;
-                  }
-                  return null;
-                },
-              );
-            },
-          ),
-          const SizedBox(height: 16),
-          
-          // City Dropdown (depends on country)
-          Consumer<CityProvider>(
-            builder: (context, cityProvider, _) {
-              return DropdownButtonFormField<String>(
-                value: _selectedCityId,
-                hint: Text(S.of(context).city),
-                items: cityProvider.cities.map((city) {
-                  return DropdownMenuItem<String>(
-                    value: city.idCity.toString(),
-                    child: Text(city.cityName ?? 'N/A'),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedCityId = value;
-                  });
-                },
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.location_city, color: AppStyle.primary),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(color: AppStyle.primary, width: 1.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(color: AppStyle.primary, width: 1.0),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return S.of(context).pleaseSelectCity;
-                  }
-                  if (_selectedCountryId == null) {
-                    return S.of(context).pleaseSelectCountryFirst;
-                  }
-                  return null;
-                },
-              );
-            },
-          ),
           const SizedBox(height: 24),
-          
           // Submit Button
           if (signUpProvider.isLoading)
             const CircularProgressIndicator(color: AppStyle.primary)

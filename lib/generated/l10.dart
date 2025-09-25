@@ -110,9 +110,269 @@ class S {
       args: [],
     );
   }
+  /// `Registration successful`
+  String get registrationSuccessful {
+    return Intl.message(
+      'Registration successful',
+      name: 'registrationSuccessful',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Name`
+  String get name {
+    return Intl.message(
+      'Name',
+      name: 'name',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Please enter name`
+  String get pleaseEnterName {
+    return Intl.message(
+      'Please enter name',
+      name: 'pleaseEnterName',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Surname`
+  String get surname {
+    return Intl.message(
+      'Surname',
+      name: 'surname',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Please enter surname`
+  String get pleaseEnterSurname {
+    return Intl.message(
+      'Please enter surname',
+      name: 'pleaseEnterSurname',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Birthdate`
+  String get birthdate {
+    return Intl.message(
+      'Birthdate',
+      name: 'birthdate',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Please enter birthdate`
+  String get pleaseSelectBirthdate {
+    return Intl.message(
+      'Please enter birthdate',
+      name: 'pleaseSelectBirthdate',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `WhatsApp Number`
+  String get whatsappNumber {
+    return Intl.message(
+      'WhatsApp Number',
+      name: 'whatsappNumber',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Please enter WhatsApp number`
+  String get pleaseEnterWhatsappNumber {
+    return Intl.message(
+      'Please enter WhatsApp number',
+      name: 'pleaseEnterWhatsappNumber',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Please enter email`
+  String get pleaseEnterEmail {
+    return Intl.message(
+      'Please enter email',
+      name: 'pleaseEnterEmail',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Please enter valid email`
+  String get pleaseEnterValidEmail {
+    return Intl.message(
+      'Please enter valid email',
+      name: 'pleaseEnterValidEmail',
+      desc: '',
+      args: [],
+    );
 }
+/// 'pleaseEnterPassword'
+  String get pleaseEnterPassword {
+    return Intl.message(
+      'Please enter password',
+      name: 'pleaseEnterPassword',
+      desc: '',
+      args: [],
+    );
+  }
+/// 'passwordTooShort'
+  String get passwordTooShort {
+    return Intl.message(
+      'Password too short',
+      name: 'passwordTooShort',
+      desc: '',
+      args: [],
+    );
+  }
+/// 'confirmPassword'
+  String get confirmPassword {
+    return Intl.message(
+      'Confirm Password',
+      name: 'confirmPassword',
+      desc: '',
+      args: [],
+    ); 
+  }
+/// 'pleaseConfirmPassword'
+  String get pleaseConfirmPassword {
+    return Intl.message(
+      'Please confirm password',
+      name: 'pleaseConfirmPassword',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `DNI`
+  String get dni {
+    return Intl.message(
+      'DNI',
+      name: 'dni',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Please enter DNI`
+  String get pleaseEnterDni {
+    return Intl.message(
+      'Please enter DNI',
+      name: 'pleaseEnterDni',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Address`
+  String get address {
+    return Intl.message(
+      'Address',
+      name: 'address',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Please enter address`
+  String get pleaseEnterAddress {
+    return Intl.message(
+      'Please enter address',
+      name: 'pleaseEnterAddress',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Age`
+  String get age {
+    return Intl.message(
+      'Age',
+      name: 'age',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Please enter age`
+  String get pleaseEnterAge {
+    return Intl.message(
+      'Please enter age',
+      name: 'pleaseEnterAge',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Please enter valid age`
+  String get pleaseEnterValidAge {
+    return Intl.message(
+      'Please enter valid age',
+      name: 'pleaseEnterValidAge',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Gender`
+  String get gender {
+    return Intl.message(
+      'Gender',
+      name: 'gender',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Please select gender`
+  String get pleaseSelectGender {
+    return Intl.message(
+      'Please select gender',
+      name: 'pleaseSelectGender',
+      desc: '',
+      args: [],
+    );
+  }
 
-
+  /// `Role`
+  String get role {
+    return Intl.message(
+      'Role',
+      name: 'role',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Please select role`
+  String get pleaseSelectRole {
+    return Intl.message(
+      'Please select role',
+      name: 'pleaseSelectRole',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Register`
+  String get register {
+    return Intl.message(
+      'Register',
+      name: 'register',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Welcome to TuSalud!`
+  String get welcomeMessage {
+    return Intl.message(
+      'Welcome to TuSalud!',
+      name: 'welcomeMessage',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Logout`
+  String get logout {
+    return Intl.message(
+      'Logout',
+      name: 'logout',
+      desc: '',
+      args: [],
+    );
+  }
+}
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   const AppLocalizationDelegate();
 

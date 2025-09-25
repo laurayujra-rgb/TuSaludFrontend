@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:tusalud/api/request/app/ts_gender_request.dart';
+import 'package:tusalud/api/request/app/ts_role_request.dart';
 import 'package:tusalud/api/request/auth/sign_up_request.dart';
 
 import 'package:tusalud/api/request/auth/ts_auth_request.dart';
 import 'package:tusalud/api/response/app/ts_gender_response.dart';
+import 'package:tusalud/api/response/app/ts_role_response.dart';
 import 'package:tusalud/api/response/auth/ts_person_response.dart';
 import 'package:tusalud/api/response/ts_response.dart';
 import 'package:tusalud/config/enviroment.dart';
@@ -214,8 +216,13 @@ Future<http.Response> httpDelete(String baseUrl, dynamic header) async {
 
     return utf8.decode(base64Url.decode(output));
   }
-  
-// signup
+///----------------------------------------------------------------------------
+/// AUTH SECTION
+/// ----------------------------------------------------------------------------
+/// 
+///-----------------------------------------------------------------------------
+// SIGNUP
+/// ----------------------------------------------------------------------------------------------------
 Future<TsResponse<TsPersonResponse>> signup(TsSignUpRequest personRequest) async {
   try {
     final response = await httpPost('$_baseUrl/persons/create', getHeaders(), jsonEncode(personRequest.toJson()));
@@ -249,7 +256,7 @@ Future<TsResponse<TsPersonResponse>> signup(TsSignUpRequest personRequest) async
     );
   }
 }
-
+///----------------------------------------------------------------------------------------------------
 /// GENDER SECTION
 /// ----------------------------------------------------------------------------
 /// CREATE GENDER
@@ -398,6 +405,135 @@ Future<TsResponse<TsPersonResponse>> signup(TsSignUpRequest personRequest) async
     }
   }
 
+///----------------------------------------------------------------------------------------------------
+/// ROLE SECTION
+/// ---------------------------------------------------------------------------------------------------
 
-
+///----------------------------------------------------------------------------------------------------
+/// CREATE ROLE
+/// ----------------------------------------------------------------------------------------------------
+  Future<TsResponse<TsRoleResponse>> createRole(TsRoleRequest roleRequest) async{
+    try{
+      final response = await httpPost('$_baseUrl/personsType/create', getHeaders(), jsonEncode(roleRequest.toJson()));
+      if(response.statusCode >= HttpStatus.badRequest){
+        if(response.statusCode == HttpStatus.networkConnectTimeoutError){
+          return TsResponse<TsRoleResponse>(status: HttpStatus.networkConnectTimeoutError);
+        }
+        try{
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsRoleResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al crear el tipo de persona',
+            error: errorJson['error'] ?? '',
+          );
+        }catch(e){
+          return TsResponse<TsRoleResponse>.createEmpty();
+        }
+      }
+      final responseJson = json.decode(response.body);
+      final personTypeData = TsRoleResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsRoleResponse>(
+        data: personTypeData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    }catch(e){
+      return TsResponse<TsRoleResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la creación del tipo de persona',
+        error: e.toString(),
+      );
+    }
+  }
+///  ----------------------------------------------------------------------------------------------------
+/// GET ALL ROLES
+/// ----------------------------------------------------------------------------------------------------
+  Future<TsResponse<TsRoleResponse>> getAllRoles() async{
+    try{
+      final response = await httpGet('$_baseUrl/roles', getHeaders());
+      if(response.statusCode >= HttpStatus.badRequest){
+        if(response.statusCode == HttpStatus.networkConnectTimeoutError){
+          TsResponse<TsRoleResponse> responseData = TsResponse(status: HttpStatus.networkConnectTimeoutError);
+          return responseData;
+        }
+        return TsResponse.createEmpty();
+      }
+      TsResponse<TsRoleResponse> responseData = TsResponse.fromJsonList(utf8.decode(response.bodyBytes), TsRoleResponse.createEmpty());
+      return responseData;
+    }catch(e){
+      return TsResponse.createEmpty();
+    }
+  }
+///  ------------------------------------------------------------------------------------------------
+/// UpDATE A ROLE
+/// ----------------------------------------------------------------------------------------------------
+  Future<TsResponse<TsRoleResponse>> updateRole(int roleId, TsRoleRequest roleRequest) async {
+    try {
+      final response = await httpPut('$_baseUrl/roles/$roleId', getHeaders(), jsonEncode(roleRequest.toJson()));
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsRoleResponse>(status: HttpStatus.networkConnectTimeoutError);
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsRoleResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al actualizar el rol',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (e) {
+          return TsResponse<TsRoleResponse>.createEmpty();
+        }
+      }
+      final responseJson = json.decode(response.body);
+      final roleData = TsRoleResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsRoleResponse>(
+        data: roleData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsRoleResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la actualización del rol',
+        error: e.toString(),
+      );
+    }
+  }
+///  ------------------------------------------------------------------------------------------------
+/// DELETE A ROLE
+/// ----------------------------------------------------------------------------------------------------
+  Future<TsResponse<TsRoleResponse>> deleteRole(int roleId) async {
+    try {
+      final response = await httpDelete('$_baseUrl/roles/$roleId', getHeaders());
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsRoleResponse>(status: HttpStatus.networkConnectTimeoutError);
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsRoleResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al eliminar el rol',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (e) {
+          return TsResponse<TsRoleResponse>.createEmpty();
+        }
+      }
+      final responseJson = json.decode(response.body);
+      final roleData = TsRoleResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsRoleResponse>(
+        data: roleData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsRoleResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la eliminación del rol',
+        error: e.toString(),
+      );
+    }
+  }
 }

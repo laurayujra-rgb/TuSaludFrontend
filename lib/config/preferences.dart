@@ -24,7 +24,32 @@ class Preferences {
     await _storage.write(key: keyAccessToken, value: value);
   }
 
-  
+   Future<String> email() async{
+    String value = await _storage.read(key: keyEmail) ?? '';
+    return value;
+  }
+
+  Future<String> lastName() async{
+    String value = await _storage.read(key: keyLastName) ?? '';
+    return value;
+  }
+
+  Future<String> name() async{
+    String value = await _storage.read(key: keyName) ?? '';
+    return value;
+  }
+
+  Future<int> personId() async {
+    String value = await _storage.read(key: keyPersonId) ?? '0'; // '0' por defecto si es null
+    return int.tryParse(value) ?? 0; // Convierte a int, si falla retorna 0
+  }
+
+
+
+  Future<String> role() async{
+    String value = await _storage.read(key: keyRole) ?? '';
+    return value;
+  }
 
   Future<void> setEmail(String value) async{
     await _storage.write(key: keyEmail, value: value);

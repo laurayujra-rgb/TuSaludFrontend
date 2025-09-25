@@ -6,6 +6,7 @@ import 'package:tusalud/providers/auth/login_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/utils/assets_image.dart';
 import 'package:tusalud/utils/validators.dart';
+import 'package:tusalud/views/auth/signup_view.dart';
 import 'package:tusalud/widgets/app/custom_field.dart';
 import '../../generated/l10.dart';
 import '../../widgets/app/custom_button.dart';

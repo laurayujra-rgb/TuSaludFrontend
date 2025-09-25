@@ -12,6 +12,8 @@ import 'package:tusalud/utils/utils.dart';
 import 'package:tusalud/views/auth/login_view.dart';
 import 'package:tusalud/widgets/app/loading.dart';
 
+import '../../views/views.dart';
+
 class LoginProvider extends ChangeNotifier{
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TsAuthRequest request = TsAuthRequest.createEmpty();
@@ -91,7 +93,7 @@ void goHome(BuildContext context) async{
                 return;
               }
               await OrientationUtil.setPortraitOnly();
-              context.goNamed(HomeView.routerName);
+              context.goNamed(HomeNurseView.routerName);
 
             } else if (role == 'ROLE_OPERADOR') {
               if (isMobile) {
@@ -103,7 +105,7 @@ void goHome(BuildContext context) async{
                 return;
               }
               await OrientationUtil.setAllowAll();
-              context.goNamed(HomeOperadorView.routerName);
+              context.goNamed(HomeSupervisorView.routerName);
             }
           }
 

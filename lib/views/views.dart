@@ -1,0 +1,9 @@
+// General
+export 'package:tusalud/views/auth/login_view.dart';
+export 'package:tusalud/views/auth/signup_view.dart';
+// Adminsitration
+export 'package:tusalud/views/admin/home_admin_view.dart';
+// Nurse
+export 'package:tusalud/views/nurse/home_nurse_view.dart';
+// Supervisor
+export 'package:tusalud/views/supervisor/home_supervisor_view.dart';
