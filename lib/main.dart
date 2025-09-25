@@ -11,13 +11,13 @@ import 'package:tusalud/generated/l10.dart';
 void main() async{
   await dotenv.load(fileName: Enviroment.file);
   WidgetsFlutterBinding.ensureInitialized();
-  // runApp(
-  //   MultiProvider(
-  //     providers:AppRouter.providers,
-  //     child: const MyApp(),
-  //   ),
-  // );
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers:AppRouter.providers,
+      child: const MyApp(),
+    ),
+  );
+  // runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget{
