@@ -1,13 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:tusalud/api/request/app/ts_bed_request.dart';
 import 'package:tusalud/api/request/app/ts_gender_request.dart';
 import 'package:tusalud/api/request/app/ts_role_request.dart';
+import 'package:tusalud/api/request/app/ts_room_request.dart';
 import 'package:tusalud/api/request/auth/sign_up_request.dart';
 
 import 'package:tusalud/api/request/auth/ts_auth_request.dart';
+import 'package:tusalud/api/response/app/ts_bed_response.dart';
 import 'package:tusalud/api/response/app/ts_gender_response.dart';
 import 'package:tusalud/api/response/app/ts_role_response.dart';
+import 'package:tusalud/api/response/app/ts_room_response.dart';
 import 'package:tusalud/api/response/auth/ts_person_response.dart';
 import 'package:tusalud/api/response/ts_response.dart';
 import 'package:tusalud/config/enviroment.dart';
@@ -532,6 +536,298 @@ Future<TsResponse<TsPersonResponse>> signup(TsSignUpRequest personRequest) async
       return TsResponse<TsRoleResponse>(
         status: HttpStatus.internalServerError,
         message: 'Error durante la eliminación del rol',
+        error: e.toString(),
+      );
+    }
+  }
+///  ------------------------------------------------------------------------------------------------
+/// ROOM SECTION
+/// ---------------------------------------------------------------------------------------------------
+
+///------------------------------------------------------------------------------------
+/// CREATE ROOM
+///----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsRoomResponse>>createRoom(TsRoomRequest roomRequest) async{
+    try{
+      final response = await httpPost('$_baseUrl/rooms/create', getHeaders(), jsonEncode(roomRequest.toJson()));
+      if(response.statusCode >= HttpStatus.badRequest){
+        if(response.statusCode == HttpStatus.networkConnectTimeoutError){
+          return TsResponse<TsRoomResponse>(status: HttpStatus.networkConnectTimeoutError);
+        }
+        try{
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsRoomResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al crear la sala',
+            error: errorJson['error'] ?? '',
+          );
+        }catch(e){
+          return TsResponse<TsRoomResponse>.createEmpty();
+        }
+    }
+    final responseJson = json.decode(response.body);
+    final roomData = TsRoomResponse.createEmpty().fromMap(responseJson['data']);
+    return TsResponse<TsRoomResponse>(
+      data: roomData,
+      status: response.statusCode,
+      message: responseJson['message'],
+    );
+}catch(e){
+      return TsResponse<TsRoomResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la creación de la sala',
+        error: e.toString(),
+      );
+    }
+  }
+///  ----------------------------------------------------------------------------------------------------
+
+/// ------------------------------------------------------------------------------------ --------------- 
+/// GET ALL ROOMS
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsRoomResponse>> getAllRooms() async{
+    try{
+      final response = await httpGet('$_baseUrl/rooms', getHeaders());
+      if(response.statusCode >= HttpStatus.badRequest){
+        if(response.statusCode == HttpStatus.networkConnectTimeoutError){
+          TsResponse<TsRoomResponse> responseData = TsResponse(status: HttpStatus.networkConnectTimeoutError);
+          return responseData;
+        }
+        return TsResponse.createEmpty();
+      }
+      TsResponse<TsRoomResponse> responseData = TsResponse.fromJsonList(utf8.decode(response.bodyBytes), TsRoomResponse.createEmpty());
+      return responseData;
+    }catch(e){
+      return TsResponse.createEmpty();
+    }
+  }
+///  ------------------------------------------------------------------------------------------------
+
+/// ------------------------------------------------------------------------------------
+/// UPDATE A ROOM
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsRoomResponse>> updateRoom(int roomId, TsRoomRequest roomRequest) async {
+    try {
+      final response = await httpPut('$_baseUrl/rooms/$roomId', getHeaders(), jsonEncode(roomRequest.toJson()));
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsRoomResponse>(status: HttpStatus.networkConnectTimeoutError);
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsRoomResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al actualizar la sala',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (e) {
+          return TsResponse<TsRoomResponse>.createEmpty();
+        }
+      }
+      final responseJson = json.decode(response.body);
+      final roomData = TsRoomResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsRoomResponse>(
+        data: roomData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsRoomResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la actualización de la sala',
+        error: e.toString(),
+      );
+    }
+  }
+///  ------------------------------------------------------------------------------------------------
+
+/// -------------------------------------------------------------------------------------------------
+/// DELETE A ROOM
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsRoomResponse>> deleteRoom(int roomId) async {
+    try {
+      final response = await httpDelete('$_baseUrl/rooms/$roomId', getHeaders());
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsRoomResponse>(status: HttpStatus.networkConnectTimeoutError);
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsRoomResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al eliminar la sala',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (e) {
+          return TsResponse<TsRoomResponse>.createEmpty();
+        }
+      }
+      final responseJson = json.decode(response.body);
+      final roomData = TsRoomResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsRoomResponse>(
+        data: roomData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsRoomResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la eliminación de la sala',
+        error: e.toString(),
+      );
+    }
+  }
+///  ------------------------------------------------------------------------------------------------
+
+
+///----------------------------------------------------------------------------------------------------
+///BEDS SECTION
+/// ---------------------------------------------------------------------------------------------------
+
+
+///----------------------------------------------------------------------------------------------------
+///CREATE BED BY ROOMID
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsBedsResponse>> createBed(TsBedsRequest bedRequest) async {
+    try {
+      final response = await httpPost('$_baseUrl/beds/create', getHeaders(), jsonEncode(bedRequest.toJson()));
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsBedsResponse>(status: HttpStatus.networkConnectTimeoutError);
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsBedsResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al crear la cama',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (e) {
+          return TsResponse<TsBedsResponse>.createEmpty();
+        }
+      }
+      final responseJson = json.decode(response.body);
+      final modelData = TsBedsResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsBedsResponse>(
+        data: modelData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsBedsResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la creación de la cama',
+        error: e.toString(),
+      );
+    }
+  }
+/// ---------------------------------------------------------------------------
+/// GET ALL BEDS
+/// ----------------------------------------------------------------------------------------------------
+  Future<TsResponse<TsBedsResponse>> getAllBeds() async{
+    try {
+      final response = await httpGet('$_baseUrl/beds', getHeaders());
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          TsResponse<TsBedsResponse> responseData = TsResponse(status: HttpStatus.networkConnectTimeoutError);
+          return responseData;
+        }
+        return TsResponse.createEmpty();
+      }
+      TsResponse<TsBedsResponse> responseData = TsResponse.fromJsonList(utf8.decode(response.bodyBytes), TsBedsResponse.createEmpty());
+      return responseData;
+    } catch (e) {
+      return TsResponse.createEmpty();
+    }
+  }
+///  ------------------------------------------------------------------------------------------------
+/// GET BEDS By ROOM ID
+/// ----------------------------------------------------------------------------------------------------
+  Future<TsResponse<TsBedsResponse>> getBedssByRoom(int roomId) async{
+    try{
+      final response = await httpGet('$_baseUrl/beds/byRoom/$roomId', getHeaders());
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          TsResponse<TsBedsResponse> responseData = TsResponse(status: HttpStatus.networkConnectTimeoutError);
+          return responseData;
+        }
+        return TsResponse.createEmpty();
+      }
+      TsResponse<TsBedsResponse> responseData = TsResponse.fromJsonList(utf8.decode(response.bodyBytes), TsBedsResponse.createEmpty());
+      return responseData;
+    }catch(e){
+      return TsResponse.createEmpty();
+    }
+  } 
+///  ------------------------------------------------------------------------------------------------
+/// UPDATE A BED
+/// ----------------------------------------------------------------------------------------------------
+
+  Future<TsResponse<TsBedsResponse>> updateBed(int bedId, TsBedsRequest bedRequest) async {
+    try {
+      final response = await httpPut('$_baseUrl/beds/$bedId', getHeaders(), jsonEncode(bedRequest.toJson()));
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsBedsResponse>(status: HttpStatus.networkConnectTimeoutError);
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsBedsResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al actualizar la cama',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (e) {
+          return TsResponse<TsBedsResponse>.createEmpty();
+        }
+      }
+      final responseJson = json.decode(response.body);
+      final bedData = TsBedsResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsBedsResponse>(
+        data: bedData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsBedsResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la actualización de la cama',
+        error: e.toString(),
+      );
+    }
+  }
+///  ------------------------------------------------------------------------------------------------
+/// DELETE A BED
+/// ----------------------------------------------------------------------------------------------------
+  Future<TsResponse<TsBedsResponse>> deleteBed(int bedId) async {
+    try {
+      final response = await httpDelete('$_baseUrl/beds/$bedId', getHeaders());
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsBedsResponse>(status: HttpStatus.networkConnectTimeoutError);
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsBedsResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al eliminar la cama',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (e) {
+          return TsResponse<TsBedsResponse>.createEmpty();
+        }
+      }
+      final responseJson = json.decode(response.body);
+      final bedData = TsBedsResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsBedsResponse>(
+        data: bedData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsBedsResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la eliminación de la cama',
         error: e.toString(),
       );
     }

@@ -4,7 +4,7 @@ class TsRoomRequest {
   TsRoomRequest({
     required this.roomName,
   });
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'roomName': roomName,
     };
