@@ -27,7 +27,13 @@ class NavBarView extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            const CustomIcon(icon: Icon(Icons.home, color: AppStyle.primary), index: 0, label: 'Inicio', route: HomeAdminView.routerName),
+            CustomIcon(icon:Icon(Icons.home, color: AppStyle.primary), index: 0, label: 'Inicio', route: HomeAdminView.routerName),
+            CustomIcon(icon:Icon(Icons.person_3_rounded, color: AppStyle.primary), index: 1, label: 'Perfil'),
+            CustomIcon(icon:Icon(Icons.local_hospital_rounded, color: AppStyle.primary), index: 2, label: 'Hospital'),
+            CustomIcon(icon:Icon(Icons.person_add_alt_1_rounded, color: AppStyle.primary),index:3,label: 'Personal'),
+            CustomIcon(icon:Icon(Icons.assignment_add, color: AppStyle.primary),index:4,label: 'Asignar'),
+            CustomIcon(icon:Icon(Icons.logout, color: AppStyle.primary),index:5,label: 'Salir')
+
 //             CustomIcon(icon: Icon(Icons.account_circle_rounded, color: AppStyle.primary), index: 1, label: S.of(context).profile, route: ProfileCustomerView.routerName),
 //             CustomIcon(icon: Icon(Icons.car_crash_outlined, color: AppStyle.primary), index: 3, label: S.of(context).vehicle, route: VehiclesCustomerView.routerName),
 //             CustomIcon(icon: Icon(Icons.wallet_outlined, color: AppStyle.primary), index: 4, label: S.of(context).wallet, route: WalletView.routerName),

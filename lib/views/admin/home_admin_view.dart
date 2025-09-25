@@ -5,14 +5,11 @@ import 'package:tusalud/providers/auth/user_provider.dart';
 import 'package:tusalud/widgets/admin/home_dashboard.dart';
 import 'package:tusalud/widgets/app/drawer.dart';
 import '../../style/app_style.dart';
-
-
 class HomeAdminView extends StatelessWidget{
   static const String routerName = 'homeAdmin';
   static const String routerPath = '/homeAdmin';
   const HomeAdminView({Key? key}) : super (key: key);
-  
-    @override
+  @override
   Widget build(BuildContext context) {
     bool isMobile = ResponsiveBreakpoints.of(context).smallerThan(TABLET);
     return SafeArea(

@@ -6,9 +6,6 @@ class UserProvider extends ChangeNotifier {
   String? _role;
   String? _email;
   int? _personId;  // Cambiado a int?
-
-
-
   String? get name => _name;
   String? get lastName => _lastName;
   String? get role => _role;

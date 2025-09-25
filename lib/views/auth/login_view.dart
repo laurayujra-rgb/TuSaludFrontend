@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:tusalud/providers/auth/login_provider.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/utils/assets_image.dart';
-import 'package:tusalud/utils/validators.dart';
 import 'package:tusalud/views/auth/signup_view.dart';
-import 'package:tusalud/widgets/app/custom_field.dart';
+import 'package:tusalud/widgets/app/custom_button.dart';
 import '../../generated/l10.dart';
-import '../../widgets/app/custom_button.dart';
-class LoginView extends StatelessWidget{
+import '../../providers/auth/login_provider.dart';
+import '../../utils/assets_image.dart';
+import '../../utils/validators.dart';
+import '../../widgets/app/custom_field.dart';
+class LoginView extends StatelessWidget {
   static const String routerName = 'login';
   static const String routerPath = '/login';
   const LoginView({super.key});
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     bool isMobile = ResponsiveBreakpoints.of(context).smallerThan(TABLET);
     return SafeArea(
       child: Scaffold(
@@ -27,7 +27,7 @@ class LoginView extends StatelessWidget{
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if(isMobile) const LoginMobileView(),
-                // if(!isMobile) const LoginTabletView()
+                if(!isMobile) const LoginTabletView()
               ],
             ),
           ),
@@ -36,9 +36,8 @@ class LoginView extends StatelessWidget{
     );
   }
 }
-class LoginMobileView extends StatelessWidget{
+class LoginMobileView extends StatelessWidget {
   const LoginMobileView({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -54,7 +53,32 @@ class LoginMobileView extends StatelessWidget{
     );    
   }
 }
-class LoginForm extends StatefulWidget{
+class LoginTabletView extends StatelessWidget {
+  const LoginTabletView({super.key});
+  @override
+  Widget build(BuildContext context) {
+    bool isDesktop = ResponsiveBreakpoints.of(context).smallerThan(DESKTOP);
+    return GridView.count(
+      shrinkWrap: true,
+      primary: true,childAspectRatio: (0.8),
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 80),
+            AssetsImages.map(height: isDesktop? MediaQuery.of(context).size.width * .2: MediaQuery.of(context).size.width * .3),
+            AssetsImages.logo(height: isDesktop? MediaQuery.of(context).size.width * .1: MediaQuery.of(context).size.width * .15),
+          ],
+        ),
+        const LoginForm()
+      ],
+    );
+  }
+}
+class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -99,7 +123,6 @@ class _LoginFormState extends State<LoginForm> {
             decoration: InputDecoration(
               hintText: S.of(context).password,
               prefixIcon: const Icon(Icons.lock),
-              
               suffixIcon: IconButton(
                 icon: Icon(
                   _obscureLoginPassword ? Icons.visibility_off : Icons.visibility,
@@ -129,7 +152,6 @@ class _LoginFormState extends State<LoginForm> {
               return null;
             },
           ),
-
           const SizedBox(height: 16),
           CustomButton(
             onPressed: () => loginProvider.goHome(context), 

@@ -14,9 +14,7 @@ import '../../widgets/app/custom_button.dart';
 class SignUpView extends StatelessWidget {
   static const String routerName = 'signUp';
   static const String routerPath = '/signUp';
-  
   const SignUpView({super.key});
-
   @override
   Widget build(BuildContext context) {
     bool isMobile = ResponsiveBreakpoints.of(context).smallerThan(TABLET);
@@ -44,6 +42,7 @@ class SignUpView extends StatelessWidget {
     );
   }
 }
+
 class SignUpTabletView extends StatelessWidget {
   const SignUpTabletView({super.key});
 

@@ -13,6 +13,7 @@ import 'package:tusalud/views/app/nav_bar_view.dart';
 import 'package:tusalud/views/auth/login_view.dart';
 
 import '../providers/auth/user_provider.dart';
+import '../views/views.dart';
 
 final GlobalKey<NavigatorState>rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final GlobalKey<NavigatorState>shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
@@ -35,15 +36,25 @@ class AppRouter{
         navigatorKey: shellNavigatorKey,
         routes: <RouteBase>[
           GoRoute(
-            name: HomeAdminView.routerName,
-            path: HomeAdminView.routerPath,
-            builder: (context, state) => const HomeAdminView(),
-          ),
-                    GoRoute(
             name: SplashView.routerName,
             path: SplashView.routerPath,
             builder: (context, state) => const SplashView(),
           ),
+          GoRoute(
+            name: HomeAdminView.routerName,
+            path: HomeAdminView.routerPath,
+            builder: (context, state) => const HomeAdminView(),
+          ),
+          GoRoute(
+            name: HomeNurseView.routerName,
+            path: HomeNurseView.routerPath,
+            builder: (context, state) => const HomeNurseView(),
+          ),
+          GoRoute(
+            name: HomeSupervisorView.routerName,
+            path: HomeSupervisorView.routerPath,
+            builder: (context, state) => const HomeSupervisorView(),
+          )
         ]
       )
     ]
@@ -55,6 +66,8 @@ class AppRouter{
           ChangeNotifierProvider(create: (_) => SignUpProvider()),
           ChangeNotifierProvider(create: (_) => UserProvider()),
           ChangeNotifierProvider(create: (_) => HomeProvider()),
+          // ----------------------------------------------------------
+        
           
           
         ];
