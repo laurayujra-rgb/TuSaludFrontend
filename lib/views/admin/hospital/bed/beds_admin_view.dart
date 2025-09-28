@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tusalud/providers/admin/rooms_admin_provider.dart';
 import 'package:tusalud/providers/admin/beds_admin_provider.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/views/admin/bed/bed_by_room_view.dart';
+import 'package:tusalud/views/admin/hospital/bed/bed_by_room_view.dart';
 import 'package:tusalud/widgets/admin/beds/bed_admin_card.dart';
 import 'package:tusalud/widgets/admin/beds/bed_room_card.dart';
 

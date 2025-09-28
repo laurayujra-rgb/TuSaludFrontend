@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/views/admin/rooms/room_admin_view.dart';
+import 'package:tusalud/views/admin/hospital/rooms/room_admin_view.dart';
 import 'package:tusalud/widgets/admin/hospital_option_card.dart';
-import 'package:tusalud/views/admin/bed/beds_admin_view.dart';
+import 'package:tusalud/views/admin/hospital/bed/beds_admin_view.dart';
 
 class HospitalAdminView extends StatelessWidget {
   static const String routerName = 'hospital';

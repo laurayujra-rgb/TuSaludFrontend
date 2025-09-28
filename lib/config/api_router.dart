@@ -10,7 +10,10 @@ import 'package:tusalud/providers/app/select_mdoe_provider.dart';
 import 'package:tusalud/providers/auth/login_provider.dart';
 import 'package:tusalud/providers/auth/sign_up_provider.dart';
 import 'package:tusalud/providers/auth/splashView.dart';
-import 'package:tusalud/views/admin/hospital_admin_view.dart';
+import 'package:tusalud/views/admin/hospital/bed/beds_admin_view.dart';
+import 'package:tusalud/views/admin/hospital/hospital_admin_view.dart';
+import 'package:tusalud/views/admin/hospital/rooms/room_admin_view.dart';
+import 'package:tusalud/views/admin/peoples/people_admin.view.dart';
 import 'package:tusalud/views/app/nav_bar_view.dart';
 
 
@@ -58,6 +61,24 @@ class AppRouter{
             path: HospitalAdminView.routerPath,
             builder: (context, state) => const HospitalAdminView(),
           ),
+          // ROOMS ADMIN
+          GoRoute(
+            name: RoomsAdminView.routerName,
+            path: RoomsAdminView.routerPath,
+            builder: (context, state) => const RoomsAdminView(),
+          ),
+          // BEDS ADMIN
+          GoRoute(
+            name: BedsAdminView.routerName,
+            path: BedsAdminView.routerPath,
+            builder: (context, state) => const BedsAdminView(),
+          ),
+          // PEOPLE ADMIN
+          GoRoute(
+            name: PeopleAdminView.routerName,
+            path: PeopleAdminView.routerPath,
+            builder: (context, state) => const PeopleAdminView(),
+          ),
 //-------------------------------------------------------------------------------------------------------------------------
 // NURSE SECTION
 // ------------------------------------------------------------------------------------------------------------------------
@@ -86,7 +107,7 @@ class AppRouter{
           ChangeNotifierProvider(create: (_) => UserProvider()),
           ChangeNotifierProvider(create: (_) => HomeProvider()),
           ChangeNotifierProvider(create: (_) => BedsAdminProvider()),
-           ChangeNotifierProvider(create: (_) => RoomsAdminProvider()),
+          ChangeNotifierProvider(create: (_) => RoomsAdminProvider()),
           // ----------------------------------------------------------
         
           

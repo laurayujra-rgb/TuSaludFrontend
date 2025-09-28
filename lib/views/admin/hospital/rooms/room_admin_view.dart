@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/providers/admin/rooms_admin_provider.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/views/admin/rooms/add_room_admin_vew.dart';
-import 'package:tusalud/views/admin/rooms/edit_room_admin_card.dart';
+import 'package:tusalud/views/admin/hospital/rooms/add_room_admin_vew.dart';
+import 'package:tusalud/views/admin/hospital/rooms/edit_room_admin_card.dart';
 import 'package:tusalud/widgets/admin/rooms/room_admin_card.dart';
 
 class RoomsAdminView extends StatefulWidget {

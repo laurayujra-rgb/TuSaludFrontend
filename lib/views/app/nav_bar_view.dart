@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tusalud/views/admin/hospital_admin_view.dart';
+import 'package:tusalud/views/admin/hospital/hospital_admin_view.dart';
+import 'package:tusalud/views/admin/peoples/people_admin.view.dart';
 import 'package:tusalud/views/views.dart';
 import 'package:tusalud/widgets/app/custom_icon.dart';
 
@@ -31,7 +32,7 @@ class NavBarView extends StatelessWidget {
             CustomIcon(icon:Icon(Icons.home, color: AppStyle.primary), index: 0, label: 'Inicio', route: HomeAdminView.routerName),
             CustomIcon(icon:Icon(Icons.person_3_rounded, color: AppStyle.primary), index: 1, label: 'Perfil'),
             CustomIcon(icon:Icon(Icons.local_hospital_rounded, color: AppStyle.primary), index: 2, label: 'Hospital', route: HospitalAdminView.routerName),
-            CustomIcon(icon:Icon(Icons.person_add_alt_1_rounded, color: AppStyle.primary),index:3,label: 'Personal'),
+            CustomIcon(icon:Icon(Icons.person_add_alt_1_rounded, color: AppStyle.primary),index:3,label: 'Personal', route: PeopleAdminView.routerName),
             CustomIcon(icon:Icon(Icons.assignment_add, color: AppStyle.primary),index:4,label: 'Asignar'),
             CustomIcon(icon:Icon(Icons.logout, color: AppStyle.primary),index:5,label: 'Salir')
 
