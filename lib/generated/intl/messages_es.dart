@@ -50,6 +50,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "administration": MessageLookupByLibrary.simpleMessage("Administración"),
     "nurse": MessageLookupByLibrary.simpleMessage("Enfermera"),
     "supervisor": MessageLookupByLibrary.simpleMessage("Supervisor"),
+    "registredRooms": MessageLookupByLibrary.simpleMessage("Habitaciones registradas"),
+    "totalRoomsInHospital": MessageLookupByLibrary.simpleMessage("Total de habitaciones en el hospital"),
+    "registeredBeds": MessageLookupByLibrary.simpleMessage("Camas registradas"),
+    "totalBedsInHospital": MessageLookupByLibrary.simpleMessage("Total de camas en el hospital"),
+    "registeredBachelorNursing": MessageLookupByLibrary.simpleMessage("Licenciadas en enfermería registradas"),
+    "totalBachelorNursing": MessageLookupByLibrary.simpleMessage("Total de licenciadas en enfermería en el hospital"),
+    "registeredNursing": MessageLookupByLibrary.simpleMessage("Auxiliares de enfermería registrados"),
+    "totalNursing": MessageLookupByLibrary.simpleMessage("Total de auxiliares de enfermería en el hospital"),
+    "bedsCounts": MessageLookupByLibrary.simpleMessage("Cantidad de camas"),
+    "HospitalManagment": MessageLookupByLibrary.simpleMessage("Gestión del Hospital"),
+    "roomsCounts": MessageLookupByLibrary.simpleMessage("Cantidad de habitaciones"),
   };
   
   

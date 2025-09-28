@@ -4,8 +4,9 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:tusalud/providers/auth/user_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/widgets/app/drawer.dart';
+import 'package:tusalud/widgets/supervisor/home_supervisor_dasboard.dart';
 
-import '../../widgets/admin/home_dashboard.dart';
+import '../../widgets/admin/home_admin_dashboard.dart';
 
 class HomeSupervisorView extends StatelessWidget{
   static const String routerName = 'supervisorHome';
@@ -62,7 +63,7 @@ class HomeSupervisorView extends StatelessWidget{
             ? const SingleChildScrollView(
                 child: Padding(
                   padding: EdgeInsets.all(16),
-                  child: HomeDashboard(),
+                  child: HomeSupervisorDashBoard(),
                 ),
               )
             : const Row(
@@ -73,7 +74,7 @@ class HomeSupervisorView extends StatelessWidget{
                     child: SingleChildScrollView(
                       child: Padding(
                         padding: EdgeInsets.all(16),
-                        child: HomeDashboard(),
+                        child: HomeSupervisorDashBoard(),
                       ),
                     ),
                   )

@@ -8,8 +8,8 @@ class TsBedsResponse implements TsResponseService{
   int bedId;
   String? bedName;
   TsRoomResponse room;
-  int bedStatus;
-  TsAuditResponse audit;
+  int? bedStatus;
+  TsAuditResponse? audit;
 
   TsBedsResponse({
     required this.bedId,
@@ -31,11 +31,13 @@ class TsBedsResponse implements TsResponseService{
   String toJson() => json.encode(toMap());
 
   factory TsBedsResponse.fromJson(Map<String, dynamic> json) => TsBedsResponse(
-    bedId: json["bedId"],
-    bedName: json["bedName"],
+    bedId: json["bedId"] as int? ??0,
+    bedName: json["bedName"] as String?,
     room: TsRoomResponse.fromJson(json["room"]),
-    bedStatus: json["bedStatus"],
-    audit: TsAuditResponse.fromJson(json["audit"]),
+    bedStatus: json["bedStatus"] as int? ??0,
+    audit: json["audit"] != null 
+        ? TsAuditResponse.fromJson(json["audit"]) 
+        : TsAuditResponse.createEmpty(),
   );
 
   @override
@@ -44,7 +46,7 @@ class TsBedsResponse implements TsResponseService{
     "bedName": bedName,
     "room": room.toMap(),
     "bedStatus": bedStatus,
-    "audit": audit.toJson(),
+        "audit": audit?.toJson(),
   };
 
   @override
@@ -54,11 +56,13 @@ class TsBedsResponse implements TsResponseService{
 
   @override
   TsBedsResponse fromMap(Map<String, dynamic> json) => TsBedsResponse(
-    bedId: json["bedId"],
-    bedName: json["bedName"],
+    bedId: json["bedId"] as int? ?? 0,
+    bedName: json["bedName"] as String?,
     room: TsRoomResponse.fromJson(json["room"]),
-    bedStatus: json["bedStatus"],
-    audit: TsAuditResponse.fromJson(json["audit"]),
+    bedStatus: json["bedStatus"] as int? ?? 0,
+    audit: json["audit"] != null 
+        ? TsAuditResponse.fromJson(json["audit"]) 
+        : TsAuditResponse.createEmpty(),
   );
 
 

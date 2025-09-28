@@ -1,1 +1,1 @@
-export 'package:tusalud/widgets/admin/home_dashboard.dart';
+export 'package:tusalud/widgets/admin/home_admin_dashboard.dart';

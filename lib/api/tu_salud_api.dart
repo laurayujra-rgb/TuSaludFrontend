@@ -608,7 +608,7 @@ Future<TsResponse<TsRoomResponse>> getAllRooms() async{
 /// ----------------------------------------------------------------------------------------------------
 Future<TsResponse<TsRoomResponse>> updateRoom(int roomId, TsRoomRequest roomRequest) async {
     try {
-      final response = await httpPut('$_baseUrl/rooms/$roomId', getHeaders(), jsonEncode(roomRequest.toJson()));
+      final response = await httpPut('$_baseUrl/rooms/update/$roomId', getHeaders(), jsonEncode(roomRequest.toJson()));
       if (response.statusCode >= HttpStatus.badRequest) {
         if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
           return TsResponse<TsRoomResponse>(status: HttpStatus.networkConnectTimeoutError);
@@ -646,7 +646,7 @@ Future<TsResponse<TsRoomResponse>> updateRoom(int roomId, TsRoomRequest roomRequ
 /// ----------------------------------------------------------------------------------------------------
 Future<TsResponse<TsRoomResponse>> deleteRoom(int roomId) async {
     try {
-      final response = await httpDelete('$_baseUrl/rooms/$roomId', getHeaders());
+      final response = await httpDelete('$_baseUrl/rooms/delete/$roomId', getHeaders());
       if (response.statusCode >= HttpStatus.badRequest) {
         if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
           return TsResponse<TsRoomResponse>(status: HttpStatus.networkConnectTimeoutError);
@@ -690,7 +690,7 @@ Future<TsResponse<TsRoomResponse>> deleteRoom(int roomId) async {
 /// ----------------------------------------------------------------------------------------------------
 Future<TsResponse<TsBedsResponse>> createBed(TsBedsRequest bedRequest) async {
     try {
-      final response = await httpPost('$_baseUrl/beds/create', getHeaders(), jsonEncode(bedRequest.toJson()));
+      final response = await httpPost('$_baseUrl/bed/create', getHeaders(), jsonEncode(bedRequest.toJson()));
       if (response.statusCode >= HttpStatus.badRequest) {
         if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
           return TsResponse<TsBedsResponse>(status: HttpStatus.networkConnectTimeoutError);
@@ -726,7 +726,7 @@ Future<TsResponse<TsBedsResponse>> createBed(TsBedsRequest bedRequest) async {
 /// ----------------------------------------------------------------------------------------------------
   Future<TsResponse<TsBedsResponse>> getAllBeds() async{
     try {
-      final response = await httpGet('$_baseUrl/beds', getHeaders());
+      final response = await httpGet('$_baseUrl/bed/all', getHeaders());
       if (response.statusCode >= HttpStatus.badRequest) {
         if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
           TsResponse<TsBedsResponse> responseData = TsResponse(status: HttpStatus.networkConnectTimeoutError);
@@ -743,9 +743,9 @@ Future<TsResponse<TsBedsResponse>> createBed(TsBedsRequest bedRequest) async {
 ///  ------------------------------------------------------------------------------------------------
 /// GET BEDS By ROOM ID
 /// ----------------------------------------------------------------------------------------------------
-  Future<TsResponse<TsBedsResponse>> getBedssByRoom(int roomId) async{
+  Future<TsResponse<TsBedsResponse>> getBedsByRoom(int roomId) async{
     try{
-      final response = await httpGet('$_baseUrl/beds/byRoom/$roomId', getHeaders());
+      final response = await httpGet('$_baseUrl/bed/room/$roomId', getHeaders());
       if (response.statusCode >= HttpStatus.badRequest) {
         if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
           TsResponse<TsBedsResponse> responseData = TsResponse(status: HttpStatus.networkConnectTimeoutError);
@@ -765,7 +765,7 @@ Future<TsResponse<TsBedsResponse>> createBed(TsBedsRequest bedRequest) async {
 
   Future<TsResponse<TsBedsResponse>> updateBed(int bedId, TsBedsRequest bedRequest) async {
     try {
-      final response = await httpPut('$_baseUrl/beds/$bedId', getHeaders(), jsonEncode(bedRequest.toJson()));
+      final response = await httpPut('$_baseUrl/bed/$bedId', getHeaders(), jsonEncode(bedRequest.toJson()));
       if (response.statusCode >= HttpStatus.badRequest) {
         if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
           return TsResponse<TsBedsResponse>(status: HttpStatus.networkConnectTimeoutError);
@@ -801,7 +801,7 @@ Future<TsResponse<TsBedsResponse>> createBed(TsBedsRequest bedRequest) async {
 /// ----------------------------------------------------------------------------------------------------
   Future<TsResponse<TsBedsResponse>> deleteBed(int bedId) async {
     try {
-      final response = await httpDelete('$_baseUrl/beds/$bedId', getHeaders());
+      final response = await httpDelete('$_baseUrl/bed/$bedId', getHeaders());
       if (response.statusCode >= HttpStatus.badRequest) {
         if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
           return TsResponse<TsBedsResponse>(status: HttpStatus.networkConnectTimeoutError);

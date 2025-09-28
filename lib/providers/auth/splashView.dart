@@ -35,11 +35,11 @@ class _SplashViewState extends State<SplashView> {
       } else if (role == 'ROLE_SUPERVISOR') {
         context.goNamed(HomeSupervisorView.routerName);
       } else {
-        context.goNamed(LoginView.routerName);
+        context.goNamed(HomeAdminView.routerName);
       }
     } else {
       if (mounted) {
-        // context.goNamed(LoginView.routerName);
+        context.goNamed(HomeAdminView.routerName);
       }
     }
   }

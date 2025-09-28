@@ -417,6 +417,105 @@ class S {
       args: [],
     );
   }
+/// `Registred Rooms`
+  String get registredRooms {
+    return Intl.message(
+      'Registred Rooms',
+      name: 'registredRooms',
+      desc: '',
+      args: [],
+    );
+  }
+/// `Total Rooms in Hospital`
+  String get totalRoomsInHospital {
+    return Intl.message(
+      'Total Rooms in Hospital',
+      name: 'totalRoomsInHospital',
+      desc: '',
+      args: [],
+    );
+  }
+/// `Registered Beds`
+  String get registeredBeds {
+    return Intl.message(
+      'Registered Beds',
+      name: 'registeredBeds',
+      desc: '',
+      args: [],
+    );
+  }
+/// `Total Beds in Hospital`
+  String get totalBedsInHospital {
+    return Intl.message(
+      'Total Beds in Hospital',
+      name: 'totalBedsInHospital',
+      desc: '',
+      args: [],
+    );
+  }
+/// `Registered Bachelor Nursing`
+  String get registeredBachelorNursing {
+    return Intl.message(
+      'Licenciadas en enfermería registradas',
+      name: 'registeredBachelorNursing',
+      desc: '',
+      args: [],
+    );
+  }
+/// `Total Bachelor Nursing`
+  String get totalBachelorNursing {
+    return Intl.message(
+      'Total de licenciadas en enfermería en el hospital',
+      name: 'totalBachelorNursing',
+      desc: '',
+      args: [],
+    );
+  }
+/// `Registered Nursing`
+  String get registeredNursing {
+    return Intl.message(
+      'Auxiliares de enfermería registrados',
+      name: 'registeredNursing',
+      desc: '',
+      args: [],
+    );
+  }
+/// `Total Nursing`
+  String get totalNursing {
+    return Intl.message(
+      'Total de auxiliares de enfermería',
+      name: 'totalNursing',
+      desc: '',
+      args: [],
+    );
+  }
+/// `Beds Count`
+  String get bedsCounts {
+    return Intl.message(
+      'Contidad de camas',
+      name: 'bedsCount',
+      desc: '',
+      args: [],
+    );
+  }
+/// `Hospital Managment`
+  String get hospitalManagement {
+    return Intl.message(
+      'Gestión del Hospital',
+      name: 'hospitalManagement',
+      desc: '',
+      args: [],
+    );
+  }
+/// `Cantidad de habitaciones`
+  String get roomsCounts {
+    return Intl.message(
+      'Cantidad de habitaciones',
+      name: 'roomsCounts',
+      desc: '',
+      args: [],
+    );
+  } 
 }
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   const AppLocalizationDelegate();

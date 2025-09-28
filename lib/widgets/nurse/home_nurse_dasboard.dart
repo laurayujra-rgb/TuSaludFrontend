@@ -6,8 +6,9 @@ import '../../generated/l10.dart';
 import '../../style/app_style.dart';
 
 
-class HomeDashboard extends StatelessWidget {
-  const HomeDashboard({super.key});
+class HomeNurseDashBoard extends StatelessWidget {
+  
+  const HomeNurseDashBoard({super.key});
 
   @override
   Widget build(BuildContext context) {

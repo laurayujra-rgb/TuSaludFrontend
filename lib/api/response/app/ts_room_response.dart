@@ -6,8 +6,8 @@ import 'package:tusalud/api/response/ts_response.dart';
 class TsRoomResponse implements TsResponseService{
   int roomId;
   String? roomName;
-  int roomStatus;
-  TsAuditResponse audit;
+  int? roomStatus;
+  TsAuditResponse? audit;
 
   TsRoomResponse({
     required this.roomId,
@@ -27,17 +27,19 @@ class TsRoomResponse implements TsResponseService{
   String toJson() => json.encode(toMap());
 
   factory TsRoomResponse.fromJson(Map<String, dynamic> json) => TsRoomResponse(
-    roomId: json["roomId"] as int,
-    roomName: json["roomName"] as String,
-    roomStatus: json["roomStatus"] as int,
-    audit: TsAuditResponse.fromJson(json["audit"] as Map<String, dynamic>),
+    roomId: json["roomId"] as int? ??0,
+    roomName: json["roomName"] as String?,
+    roomStatus: json["roomStatus"] as int? ??0,
+    audit: json["audit"] != null 
+        ? TsAuditResponse.fromJson(json["audit"]) 
+        : TsAuditResponse.createEmpty(),
   );
     @override
   Map<String, dynamic> toMap() =>{
         "roomId": roomId,
         "roomName": roomName,
         "roomStatus": roomStatus,
-        "audit": audit.toJson(),
+        "audit": audit?.toJson(),
   };
     @override
   TsRoomResponse fromJson(String json) {
@@ -46,9 +48,11 @@ class TsRoomResponse implements TsResponseService{
 
   @override
   TsRoomResponse fromMap(Map<String, dynamic> json) => TsRoomResponse(
-        roomId: json["roomId"],
-        roomName: json["roomName"],
-        roomStatus: json["roomStatus"],
-        audit: TsAuditResponse.fromJson(json["audit"]),
+        roomId: json["roomId"] as int? ??0,
+        roomName: json["roomName"] as String?,
+        roomStatus: json["roomStatus"] as int? ??0,
+            audit: json["audit"] != null 
+        ? TsAuditResponse.fromJson(json["audit"]) 
+        : TsAuditResponse.createEmpty(),
       );
 }

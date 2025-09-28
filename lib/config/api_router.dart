@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:tusalud/providers/admin/beds_admin_provider.dart';
+import 'package:tusalud/providers/admin/rooms_admin_provider.dart';
 import 'package:tusalud/providers/app/home_provider.dart';
 import 'package:tusalud/providers/app/select_mdoe_provider.dart';
 import 'package:tusalud/providers/auth/login_provider.dart';
 import 'package:tusalud/providers/auth/sign_up_provider.dart';
 import 'package:tusalud/providers/auth/splashView.dart';
-import 'package:tusalud/views/admin/home_admin_view.dart';
+import 'package:tusalud/views/admin/hospital_admin_view.dart';
 import 'package:tusalud/views/app/nav_bar_view.dart';
-import 'package:tusalud/views/auth/login_view.dart';
+
 
 import '../providers/auth/user_provider.dart';
 import '../views/views.dart';
@@ -41,15 +43,32 @@ class AppRouter{
             builder: (context, state) => const SplashView(),
           ),
           GoRoute(
+//-------------------------------------------------------------------------------------------------------------------------
+// ADMIN SECTION
+// ------------------------------------------------------------------------------------------------------------------------
+
+          // HOME ADMIN
             name: HomeAdminView.routerName,
             path: HomeAdminView.routerPath,
             builder: (context, state) => const HomeAdminView(),
           ),
+          // HOSPITAL ADMIN
+          GoRoute(
+            name: HospitalAdminView.routerName,
+            path: HospitalAdminView.routerPath,
+            builder: (context, state) => const HospitalAdminView(),
+          ),
+//-------------------------------------------------------------------------------------------------------------------------
+// NURSE SECTION
+// ------------------------------------------------------------------------------------------------------------------------
           GoRoute(
             name: HomeNurseView.routerName,
             path: HomeNurseView.routerPath,
             builder: (context, state) => const HomeNurseView(),
           ),
+//-------------------------------------------------------------------------------------------------------------------------
+// SUPERVISOR SECTION
+// ------------------------------------------------------------------------------------------------------------------------
           GoRoute(
             name: HomeSupervisorView.routerName,
             path: HomeSupervisorView.routerPath,
@@ -66,6 +85,8 @@ class AppRouter{
           ChangeNotifierProvider(create: (_) => SignUpProvider()),
           ChangeNotifierProvider(create: (_) => UserProvider()),
           ChangeNotifierProvider(create: (_) => HomeProvider()),
+          ChangeNotifierProvider(create: (_) => BedsAdminProvider()),
+           ChangeNotifierProvider(create: (_) => RoomsAdminProvider()),
           // ----------------------------------------------------------
         
           
