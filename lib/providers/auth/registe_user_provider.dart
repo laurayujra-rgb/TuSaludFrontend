@@ -43,10 +43,12 @@ class RegisterUserProvider extends ChangeNotifier {
       if (response.isSuccess()) {
         // Registro exitoso
         debugPrint('Registro exitoso: ${response.data}');
+        _errorMessage = null; // 👈 MUY IMPORTANTE: limpiar error
       } else {
         // Manejar error de backend
         _errorMessage = response.message ?? 'Error al registrar el usuario';
       }
+
     } catch (e, stackTrace) {
       debugPrint('Error en registerUser: $e');
       debugPrint('Stack trace: $stackTrace');

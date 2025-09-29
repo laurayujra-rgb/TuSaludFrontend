@@ -37,7 +37,6 @@ class _AddPatientCardState extends State<AddPatientCard> {
       });
     }
   }
-
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 

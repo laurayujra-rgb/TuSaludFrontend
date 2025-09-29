@@ -168,5 +168,6 @@ class AppRouter {
     ChangeNotifierProvider(create: (_) => GenderAdminProvider()),
     ChangeNotifierProvider(create: (_) => RoleAdminProvider()),
     ChangeNotifierProvider(create: (_) => PeopleAdminProvider()),
+    ChangeNotifierProvider(create: (_) => RegisterUserProvider()),
   ];
 }

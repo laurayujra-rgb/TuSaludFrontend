@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tusalud/api/request/app/ts_bed_request.dart';
 import 'package:tusalud/api/request/app/ts_gender_request.dart';
@@ -225,42 +226,71 @@ Future<http.Response> httpDelete(String baseUrl, dynamic header) async {
 /// AUTH SECTION
 /// ----------------------------------------------------------------------------
 /// 
+
+
 ///-----------------------------------------------------------------------------
-// SIGNUP
+// CREATE A PERSON
 /// ----------------------------------------------------------------------------------------------------
-Future<TsResponse<TsPersonResponse>> registerUser(TsPersonRequest personRequest) async {
+Future<TsResponse<TsPeopleResponse>> registerUser(TsPersonRequest personRequest) async {
   try {
-    final response = await httpPost('$_baseUrl/persons/create', getHeaders(), jsonEncode(personRequest.toJson()));
+    final response = await httpPost(
+      '$_baseUrl/persons/create',
+      getHeaders(),
+      jsonEncode(personRequest.toJson()),
+    );
+
+    // 🔹 Si hubo error HTTP
     if (response.statusCode >= HttpStatus.badRequest) {
-      if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
-        return TsResponse<TsPersonResponse>(status: HttpStatus.networkConnectTimeoutError);
-      }
-      try {
-        final errorJson = json.decode(response.body);
-        return TsResponse<TsPersonResponse>(
-          status: response.statusCode,
-          message: errorJson['message'] ?? 'Error al crear la persona',
-          error: errorJson['error'] ?? '',
-        );
-      } catch (e) {
-        return TsResponse<TsPersonResponse>.createEmpty();
-      }
+      final errorJson = json.decode(response.body);
+      return TsResponse<TsPeopleResponse>(
+        status: response.statusCode,
+        message: errorJson['message'] ?? 'Error al crear la persona',
+        error: errorJson['error'] ?? '',
+      );
     }
+
+    // 🔹 Procesar respuesta en caso de éxito
     final responseJson = json.decode(response.body);
-    final personData = TsPersonResponse.createEmpty().fromMap(responseJson['data']);
-    return TsResponse<TsPersonResponse>(
+
+    final personData = TsPeopleResponse.createEmpty().fromMap(
+      Map<String, dynamic>.from(responseJson['data']),
+    );
+
+    return TsResponse<TsPeopleResponse>(
       data: personData,
       status: response.statusCode,
       message: responseJson['message'],
     );
   } catch (e) {
-    return TsResponse<TsPersonResponse>(
+    return TsResponse<TsPeopleResponse>(
       status: HttpStatus.internalServerError,
-      message: 'Error durante la creación de la persona',
+      message: 'Error inesperado al procesar la respuesta',
       error: e.toString(),
     );
   }
 }
+  /// ------------------------------------------------------------------------------------------------
+  /// GET PEOPLE BY ROLE
+  /// ------------------------------------------------------------------------------------------------
+  Future<TsResponse<TsPeopleResponse>> getPeopleByRole(int roleId) async {
+    try {
+      final response = await httpGet('$_baseUrl/persons/role/$roleId', getHeaders());
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsPeopleResponse>(status: HttpStatus.networkConnectTimeoutError);
+        }
+        return TsResponse.createEmpty();
+      }
+      TsResponse<TsPeopleResponse> responseData =
+          TsResponse.fromJsonList(utf8.decode(response.bodyBytes), TsPeopleResponse.createEmpty());
+      return responseData;
+    } catch (e) {
+      return TsResponse.createEmpty();
+    }
+  }
+
+
+
 ///----------------------------------------------------------------------------------------------------
 /// GENDER SECTION
 /// ----------------------------------------------------------------------------
@@ -835,23 +865,5 @@ Future<TsResponse<TsBedsResponse>> createBed(TsBedsRequest bedRequest) async {
   }
   //  ------------------------------------------------------------------------------------------------
 
-  /// ------------------------------------------------------------------------------------------------
-  /// GET PEOPLE BY ROLE
-  /// ------------------------------------------------------------------------------------------------
-  Future<TsResponse<TsPeopleResponse>> getPeopleByRole(int roleId) async {
-    try {
-      final response = await httpGet('$_baseUrl/persons/role/$roleId', getHeaders());
-      if (response.statusCode >= HttpStatus.badRequest) {
-        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
-          return TsResponse<TsPeopleResponse>(status: HttpStatus.networkConnectTimeoutError);
-        }
-        return TsResponse.createEmpty();
-      }
-      TsResponse<TsPeopleResponse> responseData =
-          TsResponse.fromJsonList(utf8.decode(response.bodyBytes), TsPeopleResponse.createEmpty());
-      return responseData;
-    } catch (e) {
-      return TsResponse.createEmpty();
-    }
-  }
+
 }
