@@ -1,129 +1,121 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tusalud/providers/auth/user_provider.dart';
+import 'package:tusalud/providers/admin/beds_admin_provider.dart';
+import 'package:tusalud/providers/admin/rooms_admin_provider.dart';
+import 'package:tusalud/style/app_style.dart';
 
-import '../../generated/l10.dart';
-import '../../style/app_style.dart';
-
-
-class HomeNurseDashBoard extends StatelessWidget {
-  
+class HomeNurseDashBoard extends StatefulWidget {
   const HomeNurseDashBoard({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
-    // final walletProvider = Provider.of<WalletProvider>(context, listen: false);
-    // final vehiclesProvider = Provider.of<VehiclesCustomerProvider>(context, listen: false);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final personId = userProvider.personId;
-      if (personId != null) {
-        // vehiclesProvider.loadCustomerVehicles(personId);
-        // walletProvider.loadUserVehicles();
-      }
-    });
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: AppStyle.white, width: 1),
-            borderRadius: BorderRadius.circular(8),
-            color: AppStyle.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 4,
-                spreadRadius: 1,
-              ),
-            ],
-          ),
-          width: double.infinity,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
-            child: Text(
-              S.of(context).welcomeMessage,
-              style: const TextStyle(
-                color: AppStyle.primary,
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-      ],
-    );
-  }
+  State<HomeNurseDashBoard> createState() => _HomeNurseDashBoardState();
 }
-class HomeCard extends StatelessWidget {
-  const HomeCard({
-    super.key,
-    required this.data,
-    required this.icon,
-    required this.title,
-    this.subtitle = '',
-  });
 
-  final String data;
-  final Widget icon;
-  final String title;
-  final String subtitle;
+class _HomeNurseDashBoardState extends State<HomeNurseDashBoard> {
+  int? selectedRoomId;
+
+  @override
+  void initState() {
+    super.initState();
+    // cargar datos al inicio
+    Future.microtask(() {
+      Provider.of<BedsAdminProvider>(context, listen: false).loadAllBeds();
+      Provider.of<RoomsAdminProvider>(context, listen: false).loadRooms();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppStyle.white, width: 1),
-        borderRadius: BorderRadius.circular(8),
-        color: AppStyle.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
+    return Consumer2<BedsAdminProvider, RoomsAdminProvider>(
+      builder: (context, bedsProvider, roomsProvider, child) {
+        final totalBeds = bedsProvider.allBeds.length;
+        final occupiedBeds = bedsProvider.allBeds.where((b) => b.bedStatus == 1).length;
+        final freeBeds = totalBeds - occupiedBeds;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            icon,
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    data,
-                    style: const TextStyle(
-                      color: AppStyle.primary,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  if (subtitle.isNotEmpty)
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: 12.0,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                ],
+            // 📊 Resumen general de camas
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard("Total de camas", totalBeds.toString(), Colors.blue),
+                ),
+                Expanded(
+                  child: _buildStatCard("Ocupadas", occupiedBeds.toString(), Colors.red),
+                ),
+                Expanded(
+                  child: _buildStatCard("Libres", freeBeds.toString(), Colors.green),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // 🏥 Selector de sala
+            Text("Selecciona una sala:", style: AppStyle.subtitle),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<int>(
+              value: selectedRoomId,
+              hint: const Text("Elegir sala"),
+              items: roomsProvider.rooms.map((room) {
+                return DropdownMenuItem<int>(
+                  value: room.roomId,
+                  child: Text(room.roomName ?? ''),
+                );
+              }).toList(),
+              onChanged: (roomId) {
+                setState(() => selectedRoomId = roomId);
+                if (roomId != null) {
+                  bedsProvider.loadBedsByRoom(roomId);
+                }
+              },
+              decoration: InputDecoration(
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                filled: true,
+                fillColor: Colors.white,
               ),
+            ),
+            const SizedBox(height: 20),
+
+            // 🛏️ Lista de camas de la sala
+            if (selectedRoomId != null)
+              bedsProvider.isLoading == true
+                  ? const Center(child: CircularProgressIndicator())
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Camas en la sala:", style: AppStyle.subtitle),
+                        const SizedBox(height: 10),
+                        ...bedsProvider.bedsByRoom.map((bed) => Card(
+                              child: ListTile(
+                                title: Text(bed.bedName ?? 'Sin nombre'),
+                                trailing: Icon(
+                                  bed.bedStatus == 1 ? Icons.bed : Icons.bed_outlined,
+                                  color: bed.bedStatus == 1 ? Colors.red : Colors.green,
+                                ),
+                              ),
+                            )),
+                      ],
+                    ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildStatCard(String title, String value, Color color) {
+    return Card(
+      margin: const EdgeInsets.all(8),
+      elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: color),
             ),
           ],
         ),

@@ -14,6 +14,10 @@ import 'package:tusalud/providers/app/select_mdoe_provider.dart';
 import 'package:tusalud/providers/auth/login_provider.dart';
 import 'package:tusalud/providers/auth/registe_user_provider.dart';
 import 'package:tusalud/providers/auth/splashView.dart';
+import 'package:tusalud/providers/nurse/diet_nurse_provider.dart';
+import 'package:tusalud/providers/nurse/medicine_nurse_provider.dart';
+import 'package:tusalud/providers/nurse/patients_nurse_provider.dart';
+import 'package:tusalud/providers/nurse/via_nurse_provider.dart';
 import 'package:tusalud/views/admin/hospital/bed/beds_admin_view.dart';
 import 'package:tusalud/views/admin/hospital/hospital_admin_view.dart';
 import 'package:tusalud/views/admin/hospital/rooms/room_admin_view.dart';
@@ -24,7 +28,14 @@ import 'package:tusalud/views/admin/peoples/people_admin.view.dart';
 import 'package:tusalud/views/admin/peoples/supervisor/supervisor_admin_view.dart';
 import 'package:tusalud/views/admin/settings/gender/gender_admin_view.dart';
 import 'package:tusalud/views/admin/settings/settings_admin_view.dart';
-import 'package:tusalud/views/app/nav_bar_view.dart';
+import 'package:tusalud/views/app/nav_bar_admin_view.dart';
+import 'package:tusalud/views/app/nav_bar_nurse_view.dart';
+import 'package:tusalud/views/app/nav_bar_supervisor_view.dart';
+import 'package:tusalud/views/nurse/diet_nurse_view.dart';
+import 'package:tusalud/views/nurse/medicine_nurse_view.dart';
+import 'package:tusalud/views/nurse/patientes_nurse_view.dart';
+import 'package:tusalud/views/nurse/settings_nurse_view.dart';
+import 'package:tusalud/views/nurse/via_nurse_view.dart';
 
 import '../providers/auth/user_provider.dart';
 import '../views/admin/peoples/nurses/add_nurse_admin_view.dart';
@@ -43,124 +54,149 @@ class AppRouter {
     navigatorKey: rootNavigatorKey,
     debugLogDiagnostics: kDebugMode,
     routes: [
+      // LOGIN / SPLASH fuera de ShellRoute
       GoRoute(
         name: LoginView.routerName,
         path: LoginView.routerPath,
         builder: (context, state) => const LoginView(),
       ),
+      GoRoute(
+        name: SplashView.routerName,
+        path: SplashView.routerPath,
+        builder: (context, state) => const SplashView(),
+      ),
+
+      //-------------------------------------------------------------------
+      // ADMIN SECTION
+      //-------------------------------------------------------------------
       ShellRoute(
-        navigatorKey: shellNavigatorKey,
-        builder: (BuildContext context, GoRouterState state, Widget child) {
-          return NavBarView(child: child);
+        builder: (context, state, child) {
+          return NavBarAdminView(child: child);
         },
-        routes: <RouteBase>[
-          GoRoute(
-            name: SplashView.routerName,
-            path: SplashView.routerPath,
-            builder: (context, state) => const SplashView(),
-          ),
-
-//-------------------------------------------------------------------------------------------------------------------------
-// ADMIN SECTION
-//-------------------------------------------------------------------------------------------------------------------------
-
-          // HOME ADMIN
+        routes: [
           GoRoute(
             name: HomeAdminView.routerName,
             path: HomeAdminView.routerPath,
             builder: (context, state) => const HomeAdminView(),
           ),
-          // HOSPITAL ADMIN
           GoRoute(
             name: HospitalAdminView.routerName,
             path: HospitalAdminView.routerPath,
             builder: (context, state) => const HospitalAdminView(),
           ),
-          // ROOMS ADMIN
           GoRoute(
             name: RoomsAdminView.routerName,
             path: RoomsAdminView.routerPath,
             builder: (context, state) => const RoomsAdminView(),
           ),
-          // BEDS ADMIN
           GoRoute(
             name: BedsAdminView.routerName,
             path: BedsAdminView.routerPath,
             builder: (context, state) => const BedsAdminView(),
           ),
-          // PEOPLE ADMIN
           GoRoute(
             name: PeopleAdminView.routerName,
             path: PeopleAdminView.routerPath,
             builder: (context, state) => const PeopleAdminView(),
           ),
-          // NURSE ADMIN
           GoRoute(
             name: NursesAdminView.routerName,
             path: NursesAdminView.routerPath,
             builder: (context, state) => const NursesAdminView(),
           ),
-          // SUPERVISOR ADMIN
           GoRoute(
             name: SupervisorsAdminView.routerName,
             path: SupervisorsAdminView.routerPath,
             builder: (context, state) => const SupervisorsAdminView(),
           ),
-          // PATIENT ADMIN
           GoRoute(
             name: PatientsAdminView.routerName,
             path: PatientsAdminView.routerPath,
             builder: (context, state) => const PatientsAdminView(),
           ),
-          // SETTINGS ADMIN
           GoRoute(
             name: SettingsAdminView.routerName,
             path: SettingsAdminView.routerPath,
             builder: (context, state) => const SettingsAdminView(),
           ),
-          // GENDER ADMIN
           GoRoute(
             name: GenderAdminView.routerName,
             path: GenderAdminView.routerPath,
             builder: (context, state) => const GenderAdminView(),
           ),
-          // ROLE ADMIN
           GoRoute(
             name: RoleAdminView.routerName,
             path: RoleAdminView.routerPath,
             builder: (context, state) => const RoleAdminView(),
           ),
-          // ADD PATIENT
           GoRoute(
             name: AddPatientView.routerName,
             path: AddPatientView.routerPath,
             builder: (context, state) => const AddPatientView(),
           ),
-          // ADD NURSE
           GoRoute(
             name: AddNurseAdminView.routerName,
             path: AddNurseAdminView.routerPath,
             builder: (context, state) => const AddNurseAdminView(),
           ),
+        ],
+      ),
 
-
-//-------------------------------------------------------------------------------------------------------------------------
-// NURSE SECTION
-//-------------------------------------------------------------------------------------------------------------------------
+      //-------------------------------------------------------------------
+      // NURSE SECTION
+      //-------------------------------------------------------------------
+      ShellRoute(
+        builder: (context, state, child) {
+          return NavBarNurseView(child: child);
+        },
+        routes: [
           GoRoute(
             name: HomeNurseView.routerName,
             path: HomeNurseView.routerPath,
             builder: (context, state) => const HomeNurseView(),
           ),
+          GoRoute(
+            name: PatientsNurseView.routerName,
+            path: PatientsNurseView.routerPath,
+            builder: (context, state) => const PatientsNurseView(),
+          ),
+          GoRoute(
+            name: SettingsView.routerName,
+            path: SettingsView.routerPath,
+            builder: (context, state) => const SettingsView(),
+          ),
+          GoRoute(
+            name: ViasView.routerName,
+            path: ViasView.routerPath,
+            builder: (context, state) => const ViasView(),
+          ),
+          GoRoute(
+            name: DietNurseView.routerName,
+            path: DietNurseView.routerPath,
+            builder: (context, state) => const DietNurseView(),
+          ),
+          GoRoute(
+            name: MedicineNurseView.routerName,
+            path: MedicineNurseView.routerPath,
+            builder: (context, state) => const MedicineNurseView(),
+          ),
+        ],
+      ),
 
-//-------------------------------------------------------------------------------------------------------------------------
-// SUPERVISOR SECTION
-//-------------------------------------------------------------------------------------------------------------------------
+      //-------------------------------------------------------------------
+      // SUPERVISOR SECTION
+      //-------------------------------------------------------------------
+      ShellRoute(
+        builder: (context, state, child) {
+          return NavBarSupervisorView(child: child);
+        },
+        routes: [
           GoRoute(
             name: HomeSupervisorView.routerName,
             path: HomeSupervisorView.routerPath,
             builder: (context, state) => const HomeSupervisorView(),
           ),
+          // aquí también podrías meter más rutas de supervisor
         ],
       ),
     ],
@@ -179,5 +215,9 @@ class AppRouter {
     ChangeNotifierProvider(create: (_) => PeopleAdminProvider()),
     ChangeNotifierProvider(create: (_) => RegisterUserProvider()),
     ChangeNotifierProvider(create: (_) => RegisterUserAdminProvider()),
+    ChangeNotifierProvider(create: (_) => PatientsNurseProvider()),
+    ChangeNotifierProvider(create: (_) => ViaNurseProvider()),
+    ChangeNotifierProvider(create: (_) => DietNurseProvider()),
+    ChangeNotifierProvider(create: (_) => MedicineNurseProvider()),
   ];
 }

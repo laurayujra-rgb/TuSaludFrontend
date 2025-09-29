@@ -7,8 +7,8 @@ import 'package:tusalud/widgets/app/custom_icon.dart';
 
 import '../../style/app_style.dart';
 
-class NavBarView extends StatelessWidget {
-  const NavBarView({super.key, required this.child});
+class NavBarAdminView extends StatelessWidget {
+  const NavBarAdminView({super.key, required this.child});
   final Widget child;
 
   @override

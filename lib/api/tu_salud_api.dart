@@ -3,21 +3,27 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tusalud/api/request/app/ts_bed_request.dart';
+import 'package:tusalud/api/request/app/ts_diet_request.dart';
 import 'package:tusalud/api/request/app/ts_gender_request.dart';
+import 'package:tusalud/api/request/app/ts_medication_request.dart';
 import 'package:tusalud/api/request/app/ts_role_request.dart';
 import 'package:tusalud/api/request/app/ts_room_request.dart';
 import 'package:tusalud/api/request/auth/ts_person_request.dart';
 
 import 'package:tusalud/api/request/auth/ts_auth_request.dart';
 import 'package:tusalud/api/response/app/ts_bed_response.dart';
+import 'package:tusalud/api/response/app/ts_diet_response.dart';
 import 'package:tusalud/api/response/app/ts_gender_response.dart';
+import 'package:tusalud/api/response/app/ts_medication_response.dart';
 import 'package:tusalud/api/response/app/ts_register_user_admin_response.dart';
 import 'package:tusalud/api/response/app/ts_role_response.dart';
 import 'package:tusalud/api/response/app/ts_room_response.dart';
+import 'package:tusalud/api/response/app/ts_via_response.dart';
 import 'package:tusalud/api/response/auth/ts_person_response.dart';
 import 'package:tusalud/api/response/ts_response.dart';
 import 'package:tusalud/config/enviroment.dart';
 
+import 'request/app/ts_via_request.dart';
 import 'request/auth/ts_register_user_admin_request.dart';
 import 'request/auth/ts_token_request.dart';
 import 'response/app/ts_people_response.dart';
@@ -331,6 +337,27 @@ Future<TsResponse<TsPeopleResponse>> registerUser(TsPersonRequest personRequest)
       return TsResponse.createEmpty();
     }
   }
+  /// ------------------------------------------------------------------------------------------------
+  /// GET ALL PATIENTS
+  /// ------------------------------------------------------------------------------------------------
+Future<TsResponse<TsPeopleResponse>> getAllPatients() async {
+  try {
+    // 🔹 roleId = 4 para pacientes
+    final response = await httpGet('$_baseUrl/persons/role/4', getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse.createEmpty();
+    }
+
+    return TsResponse.fromJsonList(
+      utf8.decode(response.bodyBytes),
+      TsPeopleResponse.createEmpty(),
+    );
+  } catch (e) {
+    return TsResponse.createEmpty();
+  }
+}
+
 
 
 
@@ -906,7 +933,541 @@ Future<TsResponse<TsBedsResponse>> createBed(TsBedsRequest bedRequest) async {
       );
     }
   }
-  //  ------------------------------------------------------------------------------------------------
+  /// ------------------------------------------------------------------------------------------------
+  /// VIA SECTION (MEDICATION ADMINISTRATION ROUTE)
+  ///  ------------------------------------------------------------------------------------------------ 
+  
+    /// CREATE VIA
+  Future<TsResponse<TsViaResponse>> createVia(TsViaRequest viaRequest) async {
+    try {
+      final response = await httpPost(
+        '$_baseUrl/via/create',
+        getHeaders(),
+        jsonEncode(viaRequest.toJson()),
+      );
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsViaResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsViaResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al crear la vía',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (_) {
+          return TsResponse<TsViaResponse>.createEmpty();
+        }
+      }
+
+      final responseJson = json.decode(response.body);
+      final viaData =
+          TsViaResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsViaResponse>(
+        data: viaData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsViaResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la creación de la vía',
+        error: e.toString(),
+      );
+    }
+  }
+
+  /// GET ALL VIAS
+  Future<TsResponse<TsViaResponse>> getAllVias() async {
+    try {
+      final response = await httpGet('$_baseUrl/via/all', getHeaders());
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsViaResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        return TsResponse.createEmpty();
+      }
+
+      return TsResponse.fromJsonList(
+        utf8.decode(response.bodyBytes),
+        TsViaResponse.createEmpty(),
+      );
+    } catch (_) {
+      return TsResponse.createEmpty();
+    }
+  }
+
+  /// GET VIA BY ID
+  Future<TsResponse<TsViaResponse>> getVia(int viaId) async {
+    try {
+      final response = await httpGet('$_baseUrl/via/$viaId', getHeaders());
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsViaResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        return TsResponse.createEmpty();
+      }
+
+      return TsResponse.fromJson(
+        utf8.decode(response.bodyBytes),
+      );
+    } catch (_) {
+      return TsResponse.createEmpty();
+    }
+  }
+
+  /// UPDATE VIA
+  Future<TsResponse<TsViaResponse>> updateVia(
+      int viaId, TsViaRequest viaRequest) async {
+    try {
+      final response = await httpPut(
+        '$_baseUrl/via/update/$viaId',
+        getHeaders(),
+        jsonEncode(viaRequest.toJson()),
+      );
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsViaResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsViaResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al actualizar la vía',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (_) {
+          return TsResponse<TsViaResponse>.createEmpty();
+        }
+      }
+
+      final responseJson = json.decode(response.body);
+      final viaData =
+          TsViaResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsViaResponse>(
+        data: viaData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsViaResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la actualización de la vía',
+        error: e.toString(),
+      );
+    }
+  }
+
+  /// DELETE VIA
+  Future<TsResponse<TsViaResponse>> deleteVia(int viaId) async {
+    try {
+      final response = await httpDelete('$_baseUrl/via/delete/$viaId', getHeaders());
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsViaResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsViaResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al eliminar la vía',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (_) {
+          return TsResponse<TsViaResponse>.createEmpty();
+        }
+      }
+
+      final responseJson = json.decode(response.body);
+      final viaData =
+          TsViaResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsViaResponse>(
+        data: viaData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsViaResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la eliminación de la vía',
+        error: e.toString(),
+      );
+    }
+  }
+/// ------------------------------------------------------------------------------------------------
+/// DIET SECTION (DIETS MANAGEMENT)
+/// ------------------------------------------------------------------------------------------------
+
+  /// CREATE DIET
+  Future<TsResponse<TsDietResponse>> createDiet(TsDietRequest dietRequest) async {
+    try {
+      final response = await httpPost(
+        '$_baseUrl/diets/create',
+        getHeaders(),
+        jsonEncode(dietRequest.toJson()),
+      );
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsDietResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsDietResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al crear la dieta',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (_) {
+          return TsResponse<TsDietResponse>.createEmpty();
+        }
+      }
+
+      final responseJson = json.decode(response.body);
+      final dietData =
+          TsDietResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsDietResponse>(
+        data: dietData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsDietResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la creación de la dieta',
+        error: e.toString(),
+      );
+    }
+  }
+
+  /// GET ALL DIETS
+  Future<TsResponse<TsDietResponse>> getAllDiets() async {
+    try {
+      final response = await httpGet('$_baseUrl/diets/all', getHeaders());
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsDietResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        return TsResponse.createEmpty();
+      }
+
+      return TsResponse.fromJsonList(
+        utf8.decode(response.bodyBytes),
+        TsDietResponse.createEmpty(),
+      );
+    } catch (_) {
+      return TsResponse.createEmpty();
+    }
+  }
+
+  /// GET DIET BY ID
+  Future<TsResponse<TsDietResponse>> getDiet(int dietId) async {
+    try {
+      final response = await httpGet('$_baseUrl/diets/$dietId', getHeaders());
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsDietResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        return TsResponse.createEmpty();
+      }
+
+      return TsResponse.fromJson(
+        utf8.decode(response.bodyBytes),
+      );
+    } catch (_) {
+      return TsResponse.createEmpty();
+    }
+  }
+
+  /// UPDATE DIET
+  Future<TsResponse<TsDietResponse>> updateDiet(
+      int dietId, TsDietRequest dietRequest) async {
+    try {
+      final response = await httpPut(
+        '$_baseUrl/diets/update/$dietId',
+        getHeaders(),
+        jsonEncode(dietRequest.toJson()),
+      );
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsDietResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsDietResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al actualizar la dieta',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (_) {
+          return TsResponse<TsDietResponse>.createEmpty();
+        }
+      }
+
+      final responseJson = json.decode(response.body);
+      final dietData =
+          TsDietResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsDietResponse>(
+        data: dietData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsDietResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la actualización de la dieta',
+        error: e.toString(),
+      );
+    }
+  }
+
+  /// DELETE DIET
+  Future<TsResponse<TsDietResponse>> deleteDiet(int dietId) async {
+    try {
+      final response =
+          await httpDelete('$_baseUrl/diets/delete/$dietId', getHeaders());
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsDietResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsDietResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al eliminar la dieta',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (_) {
+          return TsResponse<TsDietResponse>.createEmpty();
+        }
+      }
+
+      final responseJson = json.decode(response.body);
+      final dietData =
+          TsDietResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsDietResponse>(
+        data: dietData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsDietResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la eliminación de la dieta',
+        error: e.toString(),
+      );
+    }
+  }
+/// ------------------------------------------------------------------------------------------------
+/// MEDICINE SECTION
+/// ------------------------------------------------------------------------------------------------
+
+/// CREATE MEDICINE
+Future<TsResponse<TsMedicineResponse>> createMedicine(
+    TsMedicineRequest medicineRequest) async {
+  try {
+    final response = await httpPost(
+      '$_baseUrl/medicine/create',
+      getHeaders(),
+      jsonEncode(medicineRequest.toJson()),
+    );
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+        return TsResponse<TsMedicineResponse>(
+          status: HttpStatus.networkConnectTimeoutError,
+        );
+      }
+      try {
+        final errorJson = json.decode(response.body);
+        return TsResponse<TsMedicineResponse>(
+          status: response.statusCode,
+          message: errorJson['message'] ?? 'Error al crear el medicamento',
+          error: errorJson['error'] ?? '',
+        );
+      } catch (_) {
+        return TsResponse<TsMedicineResponse>.createEmpty();
+      }
+    }
+
+    final responseJson = json.decode(response.body);
+    final medData =
+        TsMedicineResponse.createEmpty().fromMap(responseJson['data']);
+    return TsResponse<TsMedicineResponse>(
+      data: medData,
+      status: response.statusCode,
+      message: responseJson['message'],
+    );
+  } catch (e) {
+    return TsResponse<TsMedicineResponse>(
+      status: HttpStatus.internalServerError,
+      message: 'Error durante la creación del medicamento',
+      error: e.toString(),
+    );
+  }
+}
+
+/// GET ALL MEDICINES
+Future<TsResponse<TsMedicineResponse>> getAllMedicines() async {
+  try {
+    final response = await httpGet('$_baseUrl/medicine/all', getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+        return TsResponse<TsMedicineResponse>(
+          status: HttpStatus.networkConnectTimeoutError,
+        );
+      }
+      return TsResponse.createEmpty();
+    }
+
+    return TsResponse.fromJsonList(
+      utf8.decode(response.bodyBytes),
+      TsMedicineResponse.createEmpty(),
+    );
+  } catch (_) {
+    return TsResponse.createEmpty();
+  }
+}
+
+/// GET MEDICINE BY ID
+Future<TsResponse<TsMedicineResponse>> getMedicine(int medicineId) async {
+  try {
+    final response =
+        await httpGet('$_baseUrl/medicine/$medicineId', getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+        return TsResponse<TsMedicineResponse>(
+          status: HttpStatus.networkConnectTimeoutError,
+        );
+      }
+      return TsResponse.createEmpty();
+    }
+
+    return TsResponse.fromJson(
+      utf8.decode(response.bodyBytes),
+    );
+  } catch (_) {
+    return TsResponse.createEmpty();
+  }
+}
+
+/// UPDATE MEDICINE
+Future<TsResponse<TsMedicineResponse>> updateMedicine(
+    int medicineId, TsMedicineRequest medicineRequest) async {
+  try {
+    final response = await httpPut(
+      '$_baseUrl/medicine/update/$medicineId',
+      getHeaders(),
+      jsonEncode(medicineRequest.toJson()),
+    );
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+        return TsResponse<TsMedicineResponse>(
+          status: HttpStatus.networkConnectTimeoutError,
+        );
+      }
+      try {
+        final errorJson = json.decode(response.body);
+        return TsResponse<TsMedicineResponse>(
+          status: response.statusCode,
+          message: errorJson['message'] ?? 'Error al actualizar el medicamento',
+          error: errorJson['error'] ?? '',
+        );
+      } catch (_) {
+        return TsResponse<TsMedicineResponse>.createEmpty();
+      }
+    }
+
+    final responseJson = json.decode(response.body);
+    final medData =
+        TsMedicineResponse.createEmpty().fromMap(responseJson['data']);
+    return TsResponse<TsMedicineResponse>(
+      data: medData,
+      status: response.statusCode,
+      message: responseJson['message'],
+    );
+  } catch (e) {
+    return TsResponse<TsMedicineResponse>(
+      status: HttpStatus.internalServerError,
+      message: 'Error durante la actualización del medicamento',
+      error: e.toString(),
+    );
+  }
+}
+
+/// DELETE MEDICINE
+Future<TsResponse<TsMedicineResponse>> deleteMedicine(int medicineId) async {
+  try {
+    final response =
+        await httpDelete('$_baseUrl/medicine/delete/$medicineId', getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+        return TsResponse<TsMedicineResponse>(
+          status: HttpStatus.networkConnectTimeoutError,
+        );
+      }
+      try {
+        final errorJson = json.decode(response.body);
+        return TsResponse<TsMedicineResponse>(
+          status: response.statusCode,
+          message: errorJson['message'] ?? 'Error al eliminar el medicamento',
+          error: errorJson['error'] ?? '',
+        );
+      } catch (_) {
+        return TsResponse<TsMedicineResponse>.createEmpty();
+      }
+    }
+
+    final responseJson = json.decode(response.body);
+    final medData =
+        TsMedicineResponse.createEmpty().fromMap(responseJson['data']);
+    return TsResponse<TsMedicineResponse>(
+      data: medData,
+      status: response.statusCode,
+      message: responseJson['message'],
+    );
+  } catch (e) {
+    return TsResponse<TsMedicineResponse>(
+      status: HttpStatus.internalServerError,
+      message: 'Error durante la eliminación del medicamento',
+      error: e.toString(),
+    );
+  }
+}
 
 
 }
