@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tusalud/providers/admin/people_admin_provider.dart';
 import 'package:tusalud/style/app_style.dart';
+import 'package:tusalud/views/admin/peoples/nurses/add_nurse_admin_view.dart';
 import 'package:tusalud/widgets/admin/people/nurse/nurses_admin_card.dart';
 
 class NursesAdminView extends StatelessWidget {
@@ -18,7 +20,7 @@ class NursesAdminView extends StatelessWidget {
         backgroundColor: AppStyle.ligthGrey,
         body: Column(
           children: [
-            // 🔹 Header en forma de tarjeta
+            // 🔹 Header
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Container(
@@ -61,12 +63,32 @@ class NursesAdminView extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // 🔹 Botón Agregar Enfermera
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      icon: const Icon(Icons.add, size: 20),
+                      label: const Text(
+                        "Agregar",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () {
+                        context.push(AddNurseAdminView.routerPath);
+                      },
+                    ),
                   ],
                 ),
               ),
             ),
 
-            // 🔹 Listado de enfermeras
+            // 🔹 Listado
             Expanded(
               child: Consumer<PeopleAdminProvider>(
                 builder: (context, provider, child) {
@@ -77,7 +99,8 @@ class NursesAdminView extends StatelessWidget {
                     return Center(child: Text(provider.errorMessage!));
                   }
                   if (provider.people.isEmpty) {
-                    return const Center(child: Text("No hay enfermeras registradas"));
+                    return const Center(
+                        child: Text("No hay enfermeras registradas"));
                   }
                   return ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),

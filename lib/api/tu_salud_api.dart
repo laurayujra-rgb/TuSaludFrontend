@@ -6,17 +6,19 @@ import 'package:tusalud/api/request/app/ts_bed_request.dart';
 import 'package:tusalud/api/request/app/ts_gender_request.dart';
 import 'package:tusalud/api/request/app/ts_role_request.dart';
 import 'package:tusalud/api/request/app/ts_room_request.dart';
-import 'package:tusalud/api/request/auth/sign_up_request.dart';
+import 'package:tusalud/api/request/auth/ts_person_request.dart';
 
 import 'package:tusalud/api/request/auth/ts_auth_request.dart';
 import 'package:tusalud/api/response/app/ts_bed_response.dart';
 import 'package:tusalud/api/response/app/ts_gender_response.dart';
+import 'package:tusalud/api/response/app/ts_register_user_admin_response.dart';
 import 'package:tusalud/api/response/app/ts_role_response.dart';
 import 'package:tusalud/api/response/app/ts_room_response.dart';
 import 'package:tusalud/api/response/auth/ts_person_response.dart';
 import 'package:tusalud/api/response/ts_response.dart';
 import 'package:tusalud/config/enviroment.dart';
 
+import 'request/auth/ts_register_user_admin_request.dart';
 import 'request/auth/ts_token_request.dart';
 import 'response/app/ts_people_response.dart';
 
@@ -269,6 +271,47 @@ Future<TsResponse<TsPeopleResponse>> registerUser(TsPersonRequest personRequest)
     );
   }
 }
+// ------------------------------------------------------------------------------------------------
+/// REGISTER USER ADMIN (PERSON + ACCOUNT)
+/// ------------------------------------------------------------------------------------------------
+/// 🔹 Registrar usuario (person + account)
+  Future<TsResponse<TsRegisterUserAdminResponse>> registerAdminUser(TsRegisterUserAdminRequest request) async {
+      try {
+        final response = await httpPost(
+          "$_baseUrl/users/register",
+          getHeaders(),
+          request.toJson(),
+        );
+  
+        if (response.statusCode >= HttpStatus.badRequest) {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsRegisterUserAdminResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al registrar usuario',
+            error: errorJson['error'] ?? '',
+          );
+        }
+  
+        final responseJson = json.decode(response.body);
+  
+        final userData = TsRegisterUserAdminResponse.createEmpty().fromMap(
+          Map<String, dynamic>.from(responseJson['data']),
+        );
+  
+        return TsResponse<TsRegisterUserAdminResponse>(
+          data: userData,
+          status: response.statusCode,
+          message: responseJson['message'] ?? "Registro exitoso",
+        );
+      } catch (e) {
+        return TsResponse<TsRegisterUserAdminResponse>(
+          status: HttpStatus.internalServerError,
+          message: "Error inesperado al registrar usuario",
+          error: e.toString(),
+        );
+      }
+    }
+ 
   /// ------------------------------------------------------------------------------------------------
   /// GET PEOPLE BY ROLE
   /// ------------------------------------------------------------------------------------------------

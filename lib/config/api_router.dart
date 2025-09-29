@@ -6,6 +6,7 @@ import 'package:provider/single_child_widget.dart';
 import 'package:tusalud/providers/admin/beds_admin_provider.dart';
 import 'package:tusalud/providers/admin/gender_provider.dart';
 import 'package:tusalud/providers/admin/people_admin_provider.dart';
+import 'package:tusalud/providers/admin/register_user_admin_provider.dart';
 import 'package:tusalud/providers/admin/role_provider.dart';
 import 'package:tusalud/providers/admin/rooms_admin_provider.dart';
 import 'package:tusalud/providers/app/home_provider.dart';
@@ -26,6 +27,7 @@ import 'package:tusalud/views/admin/settings/settings_admin_view.dart';
 import 'package:tusalud/views/app/nav_bar_view.dart';
 
 import '../providers/auth/user_provider.dart';
+import '../views/admin/peoples/nurses/add_nurse_admin_view.dart';
 import '../views/admin/settings/role/role_admin_view.dart';
 import '../views/views.dart';
 
@@ -134,6 +136,13 @@ class AppRouter {
             path: AddPatientView.routerPath,
             builder: (context, state) => const AddPatientView(),
           ),
+          // ADD NURSE
+          GoRoute(
+            name: AddNurseAdminView.routerName,
+            path: AddNurseAdminView.routerPath,
+            builder: (context, state) => const AddNurseAdminView(),
+          ),
+
 
 //-------------------------------------------------------------------------------------------------------------------------
 // NURSE SECTION
@@ -169,5 +178,6 @@ class AppRouter {
     ChangeNotifierProvider(create: (_) => RoleAdminProvider()),
     ChangeNotifierProvider(create: (_) => PeopleAdminProvider()),
     ChangeNotifierProvider(create: (_) => RegisterUserProvider()),
+    ChangeNotifierProvider(create: (_) => RegisterUserAdminProvider()),
   ];
 }

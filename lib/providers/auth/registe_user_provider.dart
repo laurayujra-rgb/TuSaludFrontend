@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tusalud/api/request/auth/sign_up_request.dart';
+import 'package:tusalud/api/request/auth/ts_person_request.dart';
 import 'package:tusalud/api/tu_salud_api.dart';
 
 class RegisterUserProvider extends ChangeNotifier {

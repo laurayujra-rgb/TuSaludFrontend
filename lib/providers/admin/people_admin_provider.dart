@@ -1,33 +1,4 @@
-// import 'package:flutter/material.dart';
-// import 'package:tusalud/api/response/app/ts_role_response.dart';
-// import 'package:tusalud/api/response/auth/ts_person_response.dart';
 
-// class PeopleAdminProvider extends ChangeNotifier {
-//   List<TsRoleResponse> _allRoles = [];
-//   List<TsRoleResponse> _roles = [];
-//   bool _isLoading = false;
-//   String? _errorMessage = '';
-//   String? _selectedPeopleTypes = '';
-//   int? _currentRolPersonId;
-
-//   List<TsRoleResponse> get roles => _roles; // Lista filtrada de roles
-//   List<TsRoleResponse> get allRoles => _allRoles; // Lista completa de roles
-//   bool get isLoading => _isLoading;
-//   String? get errorMessage => _errorMessage;
-//   String? get selectedPeopleTypes => _selectedPeopleTypes;
-//   int? get currentRolPersonId => _currentRolPersonId;
-
-//   void searchPersonRoles(String query){
-//     if(query.isEmpty){
-//       _roles = List.from(_allRoles);
-//     }else{
-//       _roles = _allRoles.where((roles)=>
-//         roles.roleName?.toLowerCase().contains(query.toLowerCase()) ?? false
-//       ).toList();
-//     }
-//     notifyListeners();
-//   }
-// }
 import 'package:flutter/material.dart';
 import 'package:tusalud/api/response/app/ts_people_response.dart';
 import 'package:tusalud/api/tu_salud_api.dart';
