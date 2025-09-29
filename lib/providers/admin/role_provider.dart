@@ -3,7 +3,7 @@ import 'package:tusalud/api/request/app/ts_role_request.dart';
 import 'package:tusalud/api/response/app/ts_role_response.dart';
 import 'package:tusalud/api/tu_salud_api.dart';
 
-class RoleProvider extends ChangeNotifier {
+class RoleAdminProvider extends ChangeNotifier {
   List<TsRoleResponse> _allRoles = [];
   List<TsRoleResponse> _roles = [];
   

@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:tusalud/generated/l10.dart';
-import 'package:tusalud/providers/admin/gender_provider.dart';
 import 'package:tusalud/providers/admin/role_provider.dart';
-import 'package:tusalud/providers/auth/sign_up_provider.dart';
+import 'package:tusalud/providers/auth/registe_user_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/widgets/app/custom_app_bar.dart';
 import 'package:tusalud/widgets/app/custom_field.dart';
-
+import '../../providers/admin/gender_provider.dart';
 import '../../widgets/app/custom_button.dart';
 
 class SignUpView extends StatelessWidget {
@@ -25,7 +24,6 @@ class SignUpView extends StatelessWidget {
           text: S.of(context).signUp,
         ),
         backgroundColor: AppStyle.white,
-       
         body: isMobile
             ? const SingleChildScrollView(
                 child: Padding(
@@ -50,7 +48,6 @@ class SignUpTabletView extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Row(
       children: [
-      
         Expanded(
           flex: 2,
           child: SingleChildScrollView(
@@ -68,6 +65,7 @@ class SignUpTabletView extends StatelessWidget {
     );
   }
 }
+
 class SignUpForm extends StatefulWidget {
   const SignUpForm({super.key});
 
@@ -76,29 +74,18 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
-  
   final _formKey = GlobalKey<FormState>();
-  int _currentStep = 0;
+
   // Controllers
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
   final _birthdateController = TextEditingController();
-  final _whatsappController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
   final _dniController = TextEditingController();
-  final _addressController = TextEditingController();
   final _ageController = TextEditingController();
 
   // Dropdown values
   String? _selectedGenderId;
   String? _selectedRoleId;
-  String? _selectedCountryId;
-  String? _selectedCityId;
-
-  bool _obscurePassword = true;
-bool _obscureConfirmPassword = true;
 
   @override
   void initState() {
@@ -108,10 +95,8 @@ bool _obscureConfirmPassword = true;
 
   void _loadInitialData() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final genderProvider = Provider.of<GenderProvider>(context, listen: false);
-      final roleProvider = Provider.of<RoleProvider>(context, listen: false);
-      genderProvider.loadGenders();
-      roleProvider.loadRoles();
+      Provider.of<GenderAdminProvider>(context, listen: false).loadGenders();
+      Provider.of<RoleAdminProvider>(context, listen: false).loadRoles();
     });
   }
 
@@ -124,56 +109,45 @@ bool _obscureConfirmPassword = true;
     );
     if (picked != null) {
       setState(() {
-        _birthdateController.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+        _birthdateController.text =
+            "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
       });
     }
   }
 
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_passwordController.text != _confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.of(context).passwordsDontMatch)),
-      );
-      return;
-    }
 
-    final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
-    
-    await signUpProvider.signup(
+    final registerUserProvider =
+        Provider.of<RegisterUserProvider>(context, listen: false);
+
+    await registerUserProvider.registerUser(
       _nameController.text,
       _surnameController.text,
-      _birthdateController.text,
-      _whatsappController.text,
-      _emailController.text,
-      _passwordController.text,
+      "", // mother surname (si no tienes campo extra)
       _dniController.text,
-      _addressController.text,
-      _ageController.text,
+      _birthdateController.text,
+      int.tryParse(_ageController.text) ?? 0,
       int.parse(_selectedGenderId!),
       int.parse(_selectedRoleId!),
-      int.parse(_selectedCountryId!),
-      int.parse(_selectedCityId!),
     );
 
-    if (signUpProvider.errorMessage == null) {
-      // Success - navigate or show success message
+    if (registerUserProvider.errorMessage == null) {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(S.of(context).registrationSuccessful)),
       );
     } else {
-      // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(signUpProvider.errorMessage!)),
+        SnackBar(content: Text(registerUserProvider.errorMessage!)),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final signUpProvider = Provider.of<SignUpProvider>(context);
-    
+    final registerUserProvider = Provider.of<RegisterUserProvider>(context);
+
     return Form(
       key: _formKey,
       child: Column(
@@ -184,199 +158,59 @@ bool _obscureConfirmPassword = true;
             hintText: S.of(context).name,
             keyboardType: TextInputType.name,
             prefixIcon: const Icon(Icons.person, color: AppStyle.primary),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return S.of(context).pleaseEnterName;
-              }
-              return null;
-            },
+            validator: (value) =>
+                (value == null || value.isEmpty) ? S.of(context).pleaseEnterName : null,
           ),
           const SizedBox(height: 16),
-          
+
           // Surname
           CustomField(
             controller: _surnameController,
             hintText: S.of(context).surname,
             keyboardType: TextInputType.name,
-            prefixIcon: const Icon(Icons.person_outline, color: AppStyle.primary),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return S.of(context).pleaseEnterSurname;
-              }
-              return null;
-            },
+            prefixIcon:
+                const Icon(Icons.person_outline, color: AppStyle.primary),
+            validator: (value) =>
+                (value == null || value.isEmpty) ? S.of(context).pleaseEnterSurname : null,
           ),
           const SizedBox(height: 16),
-          
+
           // Birthdate
           TextFormField(
             controller: _birthdateController,
             decoration: InputDecoration(
               hintText: S.of(context).birthdate,
-              prefixIcon: const Icon(Icons.calendar_today, color: AppStyle.primary),
+              prefixIcon:
+                  const Icon(Icons.calendar_today, color: AppStyle.primary),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
-                borderSide: const BorderSide(color: AppStyle.primary, width: 1.0),
+                borderSide:
+                    const BorderSide(color: AppStyle.primary, width: 1.0),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
-                borderSide: const BorderSide(color: AppStyle.primary, width: 1.0),
+                borderSide:
+                    const BorderSide(color: AppStyle.primary, width: 1.0),
               ),
             ),
             readOnly: true,
             onTap: () => _selectDate(context),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return S.of(context).pleaseSelectBirthdate;
-              }
-              return null;
-            },
+            validator: (value) =>
+                (value == null || value.isEmpty) ? S.of(context).pleaseSelectBirthdate : null,
           ),
           const SizedBox(height: 16),
-          
-          // WhatsApp Number
-          CustomField(
-            controller: _whatsappController,
-            hintText: S.of(context).whatsappNumber,
-            keyboardType: TextInputType.phone,
-            prefixIcon: const Icon(Icons.phone, color: AppStyle.primary),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return S.of(context).pleaseEnterWhatsappNumber;
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          
-          // Email
-          CustomField(
-            controller: _emailController,
-            hintText: S.of(context).email,
-            keyboardType: TextInputType.emailAddress,
-            prefixIcon: const Icon(Icons.email, color: AppStyle.primary),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return S.of(context).pleaseEnterEmail;
-              }
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                return S.of(context).pleaseEnterValidEmail;
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          
-          // Password
-            TextFormField(
-              controller: _passwordController,
-              obscureText: _obscurePassword,
-              decoration: InputDecoration(
-                hintText: S.of(context).password,
-                prefixIcon: const Icon(Icons.lock, color: AppStyle.primary),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                    color: AppStyle.primary,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(color: AppStyle.primary),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: const BorderSide(color: AppStyle.primary),
-                ),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return S.of(context).pleaseEnterPassword;
-                }
-                if (value.length < 6) {
-                  return S.of(context).passwordTooShort;
-                }
-                return null;
-              },
-            ),
 
-          const SizedBox(height: 16),
-          
-          // Confirm Password
-          TextFormField(
-            controller: _confirmPasswordController,
-            obscureText: _obscureConfirmPassword,
-            decoration: InputDecoration(
-              hintText: S.of(context).confirmPassword,
-              prefixIcon: const Icon(Icons.lock_outline, color: AppStyle.primary),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
-                  color: AppStyle.primary,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscureConfirmPassword = !_obscureConfirmPassword;
-                  });
-                },
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: const BorderSide(color: AppStyle.primary),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: const BorderSide(color: AppStyle.primary),
-              ),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return S.of(context).pleaseConfirmPassword;
-              }
-              if (value != _passwordController.text) {
-                return S.of(context).passwordsDontMatch;
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 16),
-          
           // DNI
           CustomField(
             controller: _dniController,
             hintText: S.of(context).dni,
             keyboardType: TextInputType.number,
             prefixIcon: const Icon(Icons.credit_card, color: AppStyle.primary),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return S.of(context).pleaseEnterDni;
-              }
-              return null;
-            },
+            validator: (value) =>
+                (value == null || value.isEmpty) ? S.of(context).pleaseEnterDni : null,
           ),
           const SizedBox(height: 16),
-          
-          // Address
-          CustomField(
-            controller: _addressController,
-            hintText: S.of(context).address,
-            keyboardType: TextInputType.streetAddress,
-            prefixIcon: const Icon(Icons.home, color: AppStyle.primary),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return S.of(context).pleaseEnterAddress;
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          
+
           // Age
           CustomField(
             controller: _ageController,
@@ -394,9 +228,9 @@ bool _obscureConfirmPassword = true;
             },
           ),
           const SizedBox(height: 16),
-          
+
           // Gender Dropdown
-          Consumer<GenderProvider>(
+          Consumer<GenderAdminProvider>(
             builder: (context, genderProvider, _) {
               return DropdownButtonFormField<String>(
                 value: _selectedGenderId,
@@ -413,29 +247,28 @@ bool _obscureConfirmPassword = true;
                   });
                 },
                 decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.transgender, color: AppStyle.primary),
+                  prefixIcon:
+                      const Icon(Icons.transgender, color: AppStyle.primary),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(color: AppStyle.primary, width: 1.0),
+                    borderSide:
+                        const BorderSide(color: AppStyle.primary, width: 1.0),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(color: AppStyle.primary, width: 1.0),
+                    borderSide:
+                        const BorderSide(color: AppStyle.primary, width: 1.0),
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return S.of(context).pleaseSelectGender;
-                  }
-                  return null;
-                },
+                validator: (value) =>
+                    (value == null || value.isEmpty) ? S.of(context).pleaseSelectGender : null,
               );
             },
           ),
           const SizedBox(height: 16),
 
           // Role Dropdown
-          Consumer<RoleProvider>(
+          Consumer<RoleAdminProvider>(
             builder: (context, roleProvider, _) {
               return DropdownButtonFormField<String>(
                 value: _selectedRoleId,
@@ -455,38 +288,36 @@ bool _obscureConfirmPassword = true;
                   prefixIcon: const Icon(Icons.group, color: AppStyle.primary),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(color: AppStyle.primary, width: 1.0),
+                    borderSide:
+                        const BorderSide(color: AppStyle.primary, width: 1.0),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
-                    borderSide: const BorderSide(color: AppStyle.primary, width: 1.0),
+                    borderSide:
+                        const BorderSide(color: AppStyle.primary, width: 1.0),
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return S.of(context).pleaseSelectRole;
-                  }
-                  return null;
-                },
+                validator: (value) =>
+                    (value == null || value.isEmpty) ? S.of(context).pleaseSelectRole : null,
               );
             },
           ),
-          
+
           const SizedBox(height: 24),
-          // Submit Button
-          if (signUpProvider.isLoading)
+
+          if (registerUserProvider.isLoading)
             const CircularProgressIndicator(color: AppStyle.primary)
           else
             CustomButton(
               text: S.of(context).register,
               onPressed: _submitForm,
             ),
-          
-          if (signUpProvider.errorMessage != null)
+
+          if (registerUserProvider.errorMessage != null)
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: Text(
-                signUpProvider.errorMessage!,
+                registerUserProvider.errorMessage!,
                 style: const TextStyle(color: AppStyle.red),
               ),
             ),
@@ -500,12 +331,7 @@ bool _obscureConfirmPassword = true;
     _nameController.dispose();
     _surnameController.dispose();
     _birthdateController.dispose();
-    _whatsappController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
     _dniController.dispose();
-    _addressController.dispose();
     _ageController.dispose();
     super.dispose();
   }

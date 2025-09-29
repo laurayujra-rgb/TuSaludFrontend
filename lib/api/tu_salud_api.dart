@@ -17,6 +17,7 @@ import 'package:tusalud/api/response/ts_response.dart';
 import 'package:tusalud/config/enviroment.dart';
 
 import 'request/auth/ts_token_request.dart';
+import 'response/app/ts_people_response.dart';
 
 class TuSaludApi {
 
@@ -227,7 +228,7 @@ Future<http.Response> httpDelete(String baseUrl, dynamic header) async {
 ///-----------------------------------------------------------------------------
 // SIGNUP
 /// ----------------------------------------------------------------------------------------------------
-Future<TsResponse<TsPersonResponse>> signup(TsSignUpRequest personRequest) async {
+Future<TsResponse<TsPersonResponse>> registerUser(TsPersonRequest personRequest) async {
   try {
     final response = await httpPost('$_baseUrl/persons/create', getHeaders(), jsonEncode(personRequest.toJson()));
     if (response.statusCode >= HttpStatus.badRequest) {
@@ -303,7 +304,7 @@ Future<TsResponse<TsPersonResponse>> signup(TsSignUpRequest personRequest) async
 /// ----------------------------------------------------------------------------------------------------
   Future<TsResponse<TsGenderResponse>> getAllGenders() async{
     try{
-      final response = await httpGet('$_baseUrl/gender', getHeaders());
+      final response = await httpGet('$_baseUrl/gender/all', getHeaders());
       if(response.statusCode >= HttpStatus.badRequest){
         if(response.statusCode == HttpStatus.networkConnectTimeoutError){
           TsResponse<TsGenderResponse> responseData = TsResponse(status: HttpStatus.networkConnectTimeoutError);
@@ -454,7 +455,7 @@ Future<TsResponse<TsPersonResponse>> signup(TsSignUpRequest personRequest) async
 /// ----------------------------------------------------------------------------------------------------
   Future<TsResponse<TsRoleResponse>> getAllRoles() async{
     try{
-      final response = await httpGet('$_baseUrl/roles', getHeaders());
+      final response = await httpGet('$_baseUrl/roles/all', getHeaders());
       if(response.statusCode >= HttpStatus.badRequest){
         if(response.statusCode == HttpStatus.networkConnectTimeoutError){
           TsResponse<TsRoleResponse> responseData = TsResponse(status: HttpStatus.networkConnectTimeoutError);
@@ -830,6 +831,27 @@ Future<TsResponse<TsBedsResponse>> createBed(TsBedsRequest bedRequest) async {
         message: 'Error durante la eliminación de la cama',
         error: e.toString(),
       );
+    }
+  }
+  //  ------------------------------------------------------------------------------------------------
+
+  /// ------------------------------------------------------------------------------------------------
+  /// GET PEOPLE BY ROLE
+  /// ------------------------------------------------------------------------------------------------
+  Future<TsResponse<TsPeopleResponse>> getPeopleByRole(int roleId) async {
+    try {
+      final response = await httpGet('$_baseUrl/persons/role/$roleId', getHeaders());
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsPeopleResponse>(status: HttpStatus.networkConnectTimeoutError);
+        }
+        return TsResponse.createEmpty();
+      }
+      TsResponse<TsPeopleResponse> responseData =
+          TsResponse.fromJsonList(utf8.decode(response.bodyBytes), TsPeopleResponse.createEmpty());
+      return responseData;
+    } catch (e) {
+      return TsResponse.createEmpty();
     }
   }
 }

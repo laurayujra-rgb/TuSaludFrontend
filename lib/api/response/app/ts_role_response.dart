@@ -8,7 +8,7 @@ class TsRoleResponse implements TsResponseService{
 int roleId;
 String? roleName;
 int roleStatus;
-TsAuditResponse audit;
+TsAuditResponse? audit;
 
   TsRoleResponse({
     required this.roleId,
@@ -28,17 +28,19 @@ TsAuditResponse audit;
   String toJson() => json.encode(toMap());
 
   factory TsRoleResponse.fromJson(Map<String, dynamic> json) => TsRoleResponse(
-      roleId: json["roleId"] as int,
-      roleName: json["roleName"] as String,
-      roleStatus: json["roleStatus"] as int,
-      audit: TsAuditResponse.fromJson(json["audit"] as Map<String, dynamic>),
+      roleId: json["roleId"] as int? ?? 0,
+      roleName: json["roleName"] as String?,
+      roleStatus: json["roleStatus"] as int? ?? 0,
+      audit: json["audit"] != null 
+        ? TsAuditResponse.fromJson(json["audit"]) 
+        : TsAuditResponse.createEmpty(),
     );
     @override
     Map<String, dynamic> toMap() =>{
         "roleId": roleId,
         "roleName": roleName,
         "roleStatus": roleStatus,
-        "audit": audit.toJson(),
+        "audit": audit?.toJson(),
 };
 
   @override
@@ -48,9 +50,11 @@ TsAuditResponse audit;
 
   @override
   TsRoleResponse fromMap(Map<String, dynamic> json) => TsRoleResponse(
-        roleId: json["roleId"],
-        roleName: json["roleName"],
-        roleStatus: json["roleStatus"],
-        audit: TsAuditResponse.fromJson(json["audit"]),
+        roleId: json["roleId"] as int? ?? 0,
+        roleName: json["roleName"]as String?,
+        roleStatus: json["roleStatus"] as int? ?? 0,
+        audit: json["audit"] != null 
+        ? TsAuditResponse.fromJson(json["audit"]) 
+        : TsAuditResponse.createEmpty(),
       );
 }

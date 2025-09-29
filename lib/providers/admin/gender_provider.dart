@@ -4,7 +4,7 @@ import 'package:tusalud/api/tu_salud_api.dart';
 
 import '../../api/response/app/ts_gender_response.dart';
 
-class GenderProvider  extends ChangeNotifier{
+class GenderAdminProvider  extends ChangeNotifier{
     List<TsGenderResponse> _allGenders = [];
   List<TsGenderResponse> _genders = [];
   

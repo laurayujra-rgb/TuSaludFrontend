@@ -7,8 +7,8 @@ class TsGenderResponse implements TsResponseService{
 
   int genderId;
   String? genderName;
-  int genderStatus;
-  TsAuditResponse audit;
+  int? genderStatus;
+  TsAuditResponse? audit;
 
   TsGenderResponse({
     required this.genderId,
@@ -28,10 +28,12 @@ class TsGenderResponse implements TsResponseService{
   String toJson() => json.encode(toMap());
 
 factory TsGenderResponse.fromJson(Map<String, dynamic> json) => TsGenderResponse(
-      genderId: json["genderId"] as int,
+      genderId: json["genderId"] as int? ?? 0,
       genderName: json["genderName"] as String,
-      genderStatus: json["genderStatus"] as int,
-      audit: TsAuditResponse.fromJson(json["audit"] as Map<String, dynamic>),
+      genderStatus: json["genderStatus"] as int? ?? 0,
+          audit: json["audit"] != null 
+        ? TsAuditResponse.fromJson(json["audit"]) 
+        : TsAuditResponse.createEmpty(),
     );
   
   @override
@@ -39,7 +41,7 @@ factory TsGenderResponse.fromJson(Map<String, dynamic> json) => TsGenderResponse
         "genderId": genderId,
         "genderName": genderName,
         "genderStatus": genderStatus,
-        "audit": audit.toJson(),
+        "audit": audit?.toJson(),
   };
   
   @override
@@ -52,6 +54,8 @@ factory TsGenderResponse.fromJson(Map<String, dynamic> json) => TsGenderResponse
         genderId: json["genderId"],
         genderName: json["genderName"],
         genderStatus: json["genderStatus"],
-        audit: TsAuditResponse.fromJson(json["audit"]),
+        audit: json["audit"] != null 
+        ? TsAuditResponse.fromJson(json["audit"]) 
+        : TsAuditResponse.createEmpty(),
       );
 }

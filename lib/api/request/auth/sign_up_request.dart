@@ -1,50 +1,65 @@
+import 'dart:convert';
 
-class TsSignUpRequest{
-  final String personName;
-  final String personSurname;
-  final String personBirthdate;
-  final String personWhatsappNumber;
-  final String personEmail;
-  final String personPassword;
-  final String personDni;
-  final String personAddress;
-  final String personAge;
-  final int idGender;
-  final int idPersonType;
-  final int idCountry;
-  final int idCity;
+class TsPersonRequest {
+  String? personName;
+  String? personFatherSurname;
+  String? personMotherSurname;
+  String? personDni;
+  String? personBirthdate;
+  int? personAge;
+  int genderId;
+  int roleId;
 
-  TsSignUpRequest({
-    required this.personName,
-    required this.personSurname,
-    required this.personBirthdate,
-    required this.personWhatsappNumber,
-    required this.personEmail,
-    required this.personPassword,
-    required this.personDni,
-    required this.personAddress,
-    required this.personAge,
-    required this.idGender,
-    required this.idPersonType,
-    required this.idCountry,
-    required this.idCity,
+  TsPersonRequest({
+    this.personName,
+    this.personFatherSurname,
+    this.personMotherSurname,
+    this.personDni,
+    this.personBirthdate,
+    this.personAge,
+    required this.genderId,
+    required this.roleId,
   });
 
-  Map<String, dynamic> toJson() {
-    return {
-      'personName': personName,
-      'personSurname': personSurname,
-      'personBirthdate': personBirthdate,
-      'personWhatsappNumber': personWhatsappNumber,
-      'personEmail': personEmail,
-      'personPassword': personPassword,
-      'personDni': personDni,
-      'personAddress': personAddress,
-      'personAge': personAge,
-      'idGender': idGender,
-      'idPersonType': idPersonType,
-      'idCountry': idCountry,
-      'idCity': idCity,
-    };
-  }
+  factory TsPersonRequest.createEmpty() => TsPersonRequest(
+        personName: '',
+        personFatherSurname: '',
+        personMotherSurname: '',
+        personDni: '',
+        personBirthdate: '',
+        personAge: 0,
+        genderId: 0,
+        roleId: 0,
+      );
+
+  Map<String, dynamic> toMap() => {
+        "personName": personName,
+        "personFatherSurname": personFatherSurname,
+        "personMotherSurname": personMotherSurname,
+        "personDni": personDni,
+        "personBirthdate": personBirthdate,
+        "personAge": personAge,
+        "gender": {
+          "genderId": genderId,
+        },
+        "role": {
+          "roleId": roleId,
+        },
+      };
+
+  String toJson() => json.encode(toMap());
+
+  factory TsPersonRequest.fromJson(Map<String, dynamic> json) =>
+      TsPersonRequest(
+        personName: json["personName"] as String?,
+        personFatherSurname: json["personFatherSurname"] as String?,
+        personMotherSurname: json["personMotherSurname"] as String?,
+        personDni: json["personDni"] as String?,
+        personBirthdate: json["personBirthdate"] as String?,
+        personAge: json["personAge"] as int?,
+        genderId: (json["gender"]?["genderId"] as int?) ?? 0,
+        roleId: (json["role"]?["roleId"] as int?) ?? 0,
+      );
+
+  TsPersonRequest fromMap(Map<String, dynamic> json) => TsPersonRequest.fromJson(json);
 }

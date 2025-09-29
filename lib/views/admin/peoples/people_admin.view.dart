@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:tusalud/views/admin/peoples/nurses/nurses_admin_view.dart';
+import 'package:tusalud/views/admin/peoples/patients/patients_admin_view.dart';
 import 'package:tusalud/widgets/app/drawer.dart';
 import '../../../style/app_style.dart';
+
+// 👉 Importa las vistas específicas
+import 'supervisor/supervisor_admin_view.dart';
 
 class PeopleAdminView extends StatelessWidget {
   static const String routerName = 'peopleAdmin';
   static const String routerPath = '/people_admin';
 
   const PeopleAdminView({Key? key}) : super(key: key);
-
-  void _navigate(BuildContext context, String route) {
-    Navigator.pushNamed(context, route);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,7 @@ class PeopleAdminView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 🔹 Encabezado como tarjeta (ya no título del AppBar)
+            // 🔹 Encabezado como tarjeta
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -98,7 +99,14 @@ class PeopleAdminView extends StatelessWidget {
               title: "Gestión de Enfermeras",
               icon: Icons.local_hospital,
               color: Colors.pinkAccent,
-              route: "/nurses_admin",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const NursesAdminView(),
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 16),
             _buildOptionCard(
@@ -106,7 +114,14 @@ class PeopleAdminView extends StatelessWidget {
               title: "Gestión de Pacientes",
               icon: Icons.person,
               color: Colors.teal,
-              route: "/patients_admin",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const PatientsAdminView(),
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 16),
             _buildOptionCard(
@@ -114,7 +129,14 @@ class PeopleAdminView extends StatelessWidget {
               title: "Gestión de Supervisoras",
               icon: Icons.supervisor_account,
               color: Colors.deepPurple,
-              route: "/supervisors_admin",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const SupervisorsAdminView(),
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -127,10 +149,10 @@ class PeopleAdminView extends StatelessWidget {
     required String title,
     required IconData icon,
     required Color color,
-    required String route,
+    required VoidCallback onTap,
   }) {
     return InkWell(
-      onTap: () => _navigate(context, route),
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(

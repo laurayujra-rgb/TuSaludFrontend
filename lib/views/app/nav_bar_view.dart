@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tusalud/views/admin/hospital/hospital_admin_view.dart';
 import 'package:tusalud/views/admin/peoples/people_admin.view.dart';
+import 'package:tusalud/views/admin/settings/settings_admin_view.dart';
 import 'package:tusalud/views/views.dart';
 import 'package:tusalud/widgets/app/custom_icon.dart';
 
@@ -15,34 +16,65 @@ class NavBarView extends StatelessWidget {
     return Scaffold(
       body: child,
       bottomNavigationBar: Container(
+        margin: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppStyle.white,
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: AppStyle.black.withOpacity(0.1),
-              blurRadius: 5,
-              spreadRadius: 2,
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
+          border: Border.all(
+            color: const Color(0xFF4CAF50).withOpacity(0.2), // verde salud
+            width: 1,
+          ),
         ),
         height: 72,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            CustomIcon(icon:Icon(Icons.home, color: AppStyle.primary), index: 0, label: 'Inicio', route: HomeAdminView.routerName),
-            CustomIcon(icon:Icon(Icons.person_3_rounded, color: AppStyle.primary), index: 1, label: 'Perfil'),
-            CustomIcon(icon:Icon(Icons.local_hospital_rounded, color: AppStyle.primary), index: 2, label: 'Hospital', route: HospitalAdminView.routerName),
-            CustomIcon(icon:Icon(Icons.person_add_alt_1_rounded, color: AppStyle.primary),index:3,label: 'Personal', route: PeopleAdminView.routerName),
-            CustomIcon(icon:Icon(Icons.assignment_add, color: AppStyle.primary),index:4,label: 'Asignar'),
-            CustomIcon(icon:Icon(Icons.logout, color: AppStyle.primary),index:5,label: 'Salir')
-
-//             CustomIcon(icon: Icon(Icons.account_circle_rounded, color: AppStyle.primary), index: 1, label: S.of(context).profile, route: ProfileCustomerView.routerName),
-//             CustomIcon(icon: Icon(Icons.car_crash_outlined, color: AppStyle.primary), index: 3, label: S.of(context).vehicle, route: VehiclesCustomerView.routerName),
-//             CustomIcon(icon: Icon(Icons.wallet_outlined, color: AppStyle.primary), index: 4, label: S.of(context).wallet, route: WalletView.routerName),
-//             // logout button
-//             CustomIcon(icon: const Icon(Icons.logout, color: AppStyle.primary), index: 5,label: S.of(context).logout,onTap: () => showLogoutConfirmation(context),),
-
-          
+          children: const [
+            CustomIcon(
+              icon: Icon(Icons.home, color: Color(0xFF4CAF50)), // verde esmeralda
+              index: 0,
+              label: 'Inicio',
+              route: HomeAdminView.routerName,
+            ),
+            CustomIcon(
+              icon: Icon(Icons.person_3_rounded, color: Color(0xFF009688)), // turquesa
+              index: 1,
+              label: 'Perfil',
+            ),
+            CustomIcon(
+              icon: Icon(Icons.local_hospital_rounded, color: Color(0xFF26A69A)), // teal más suave
+              index: 2,
+              label: 'Hospital',
+              route: HospitalAdminView.routerName,
+            ),
+            CustomIcon(
+              icon: Icon(Icons.person_add_alt_1_rounded, color: Color(0xFF43A047)), // verde oscuro
+              index: 3,
+              label: 'Personal',
+              route: PeopleAdminView.routerName,
+            ),
+            CustomIcon(
+              icon: Icon(Icons.assignment_add, color: Color(0xFF00796B)), // verde profundo
+              index: 4,
+              label: 'Asignar',
+            ),
+            // CustomIcon(
+            //   icon: Icon(Icons.logout, color: Colors.redAccent), // logout en rojo
+            //   index: 5,
+            //   label: 'Salir',
+            // ),
+            CustomIcon(
+              icon: Icon(Icons.settings, color: Color(0xFF388E3C)), // verde medio
+              index: 6,
+              label: 'Ajustes',
+              route: SettingsAdminView.routerName,
+            ),
           ],
         ),
       ),
