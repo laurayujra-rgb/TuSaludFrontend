@@ -5,13 +5,13 @@ import 'package:tusalud/style/app_style.dart';
 class PatientsNurseCard extends StatelessWidget {
   final TsPeopleResponse patient;
   final VoidCallback onVitalSigns;
-  final VoidCallback onKardex;
+  final VoidCallback onReports;
 
   const PatientsNurseCard({
     super.key,
     required this.patient,
     required this.onVitalSigns,
-    required this.onKardex,
+    required this.onReports,
   });
 
   @override
@@ -73,7 +73,7 @@ class PatientsNurseCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: onKardex,
+                  onPressed: onReports,
                   icon: const Icon(Icons.note_alt_outlined, size: 18),
                   label: const Text("Reportes"),
                 ),

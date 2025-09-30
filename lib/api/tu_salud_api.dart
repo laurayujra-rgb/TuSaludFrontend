@@ -6,6 +6,7 @@ import 'package:tusalud/api/request/app/ts_diet_request.dart';
 import 'package:tusalud/api/request/app/ts_gender_request.dart';
 import 'package:tusalud/api/request/app/ts_kardex_request.dart';
 import 'package:tusalud/api/request/app/ts_medication_request.dart';
+import 'package:tusalud/api/request/app/ts_reports_request.dart';
 import 'package:tusalud/api/request/app/ts_role_request.dart';
 import 'package:tusalud/api/request/app/ts_room_request.dart';
 import 'package:tusalud/api/request/app/ts_vital_signs_request.dart';
@@ -18,6 +19,7 @@ import 'package:tusalud/api/response/app/ts_gender_response.dart';
 import 'package:tusalud/api/response/app/ts_kardex_response.dart';
 import 'package:tusalud/api/response/app/ts_medication_response.dart';
 import 'package:tusalud/api/response/app/ts_register_user_admin_response.dart';
+import 'package:tusalud/api/response/app/ts_reports_response.dart';
 import 'package:tusalud/api/response/app/ts_role_response.dart';
 import 'package:tusalud/api/response/app/ts_room_response.dart';
 import 'package:tusalud/api/response/app/ts_via_response.dart';
@@ -1923,6 +1925,162 @@ Future<TsResponse<TsVitalSignsResponse>> deleteVitalSign(
       message: 'Error durante la eliminación del signo vital',
       error: e.toString(),
     );
+  }
+}
+
+/// ----------------------------------------------------------------------------------------------------
+/// CREATE REPORT
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsReportsResponse>> createReport(TsReportsRequest request) async {
+  try {
+    final response = await httpPost(
+      "$_baseUrl/reports/create",
+      getHeaders(),
+      jsonEncode(request.toJson()),
+    );
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse<TsReportsResponse>(
+        status: response.statusCode,
+        message: json.decode(response.body)["message"] ?? "Error al crear reporte",
+        error: json.decode(response.body)["error"] ?? "",
+      );
+    }
+
+    final responseJson = json.decode(response.body);
+    final modelData = TsReportsResponse.createEmpty().fromMap(responseJson["data"]);
+    return TsResponse<TsReportsResponse>(
+      data: modelData,
+      status: response.statusCode,
+      message: responseJson["message"],
+    );
+  } catch (e) {
+    return TsResponse<TsReportsResponse>(
+      status: HttpStatus.internalServerError,
+      message: "Error durante la creación del reporte",
+      error: e.toString(),
+    );
+  }
+}
+
+/// ----------------------------------------------------------------------------------------------------
+/// GET ALL REPORTS
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsReportsResponse>> getAllReports() async {
+  try {
+    final response = await httpGet("$_baseUrl/reports/all", getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse.createEmpty();
+    }
+
+    return TsResponse.fromJsonList(
+      utf8.decode(response.bodyBytes),
+      TsReportsResponse.createEmpty(),
+    );
+  } catch (_) {
+    return TsResponse.createEmpty();
+  }
+}
+
+/// ----------------------------------------------------------------------------------------------------
+/// GET REPORT BY ID
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsReportsResponse>> getReportById(int reportId) async {
+  try {
+    final response = await httpGet("$_baseUrl/reports$reportId", getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse.createEmpty();
+    }
+
+    final responseJson = json.decode(response.body);
+    final modelData = TsReportsResponse.createEmpty().fromMap(responseJson["data"]);
+    return TsResponse<TsReportsResponse>(
+      data: modelData,
+      status: response.statusCode,
+      message: responseJson["message"],
+    );
+  } catch (_) {
+    return TsResponse.createEmpty();
+  }
+}
+
+/// ----------------------------------------------------------------------------------------------------
+/// GET REPORTS BY KARDEX
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsReportsResponse>> getReportsByKardex(int kardexId) async {
+  try {
+    final response = await httpGet("$_baseUrl/reports/kardex/$kardexId", getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse.createEmpty();
+    }
+
+    return TsResponse.fromJsonList(
+      utf8.decode(response.bodyBytes),
+      TsReportsResponse.createEmpty(),
+    );
+  } catch (_) {
+    return TsResponse.createEmpty();
+  }
+}
+
+/// ----------------------------------------------------------------------------------------------------
+/// UPDATE REPORT
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsReportsResponse>> updateReport(int reportId, TsReportsRequest request) async {
+  try {
+    final response = await httpPut(
+      "$_baseUrl/reports/update/$reportId",
+      getHeaders(),
+      jsonEncode(request.toJson()),
+    );
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse<TsReportsResponse>(
+        status: response.statusCode,
+        message: json.decode(response.body)["message"] ?? "Error al actualizar reporte",
+        error: json.decode(response.body)["error"] ?? "",
+      );
+    }
+
+    final responseJson = json.decode(response.body);
+    final modelData = TsReportsResponse.createEmpty().fromMap(responseJson["data"]);
+    return TsResponse<TsReportsResponse>(
+      data: modelData,
+      status: response.statusCode,
+      message: responseJson["message"],
+    );
+  } catch (e) {
+    return TsResponse<TsReportsResponse>(
+      status: HttpStatus.internalServerError,
+      message: "Error durante la actualización del reporte",
+      error: e.toString(),
+    );
+  }
+}
+
+/// ----------------------------------------------------------------------------------------------------
+/// DELETE REPORT
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsReportsResponse>> deleteReport(int reportId) async {
+  try {
+    final response = await httpDelete("$_baseUrl/reports/delete/$reportId", getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse.createEmpty();
+    }
+
+    final responseJson = json.decode(response.body);
+    final modelData = TsReportsResponse.createEmpty().fromMap(responseJson["data"]);
+    return TsResponse<TsReportsResponse>(
+      data: modelData,
+      status: response.statusCode,
+      message: responseJson["message"],
+    );
+  } catch (_) {
+    return TsResponse.createEmpty();
   }
 }
 

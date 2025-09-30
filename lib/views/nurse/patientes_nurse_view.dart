@@ -4,6 +4,7 @@ import 'package:tusalud/api/tu_salud_api.dart';
 import 'package:tusalud/providers/nurse/patients_nurse_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/views/nurse/kardex_nurse_view.dart';
+import 'package:tusalud/views/nurse/reports_nurse_view.dart';
 import 'package:tusalud/views/nurse/vital_signs_nurse_view.dart';
 import '../../widgets/nurse/patients_nurse_card.dart';
 import 'package:go_router/go_router.dart';
@@ -111,13 +112,34 @@ class _PatientsNurseViewState extends State<PatientsNurseView> {
                     );
                   }
                 },
-                onKardex: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const KardexNurseView()),
-                  );
-                },
+                  onReports: () async {
+                    final response =
+                        await TuSaludApi().getKardexByPatientId(patient.personId);
+
+                    if (response.dataList != null && response.dataList!.isNotEmpty) {
+                      // tomar el último kardex real desde la API
+                      final kardex = response.dataList!.last;
+
+                      context.pushNamed(
+                        ReportsNurseView.routerName,
+                        queryParameters: {
+                          'kardexId': kardex.kardexId.toString(),
+                          'headerSubtitle':
+                              "Paciente: ${patient.personName} ${patient.personFahterSurname ?? ''}",
+                        },
+                      );
+                    } else {
+                      // ⚡ Igual entramos a la pantalla, pero con un kardexId = 0 (dummy)
+                      context.pushNamed(
+                        ReportsNurseView.routerName,
+                        queryParameters: {
+                          'kardexId': '0',
+                          'headerSubtitle':
+                              "Paciente: ${patient.personName} ${patient.personFahterSurname ?? ''}",
+                        },
+                      );
+                    }
+                  },
               );
             },
           );

@@ -18,6 +18,7 @@ import 'package:tusalud/providers/nurse/diet_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/kardex_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/medicine_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/patients_nurse_provider.dart';
+import 'package:tusalud/providers/nurse/reports_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/via_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/vital_signs_provider.dart';
 import 'package:tusalud/views/admin/hospital/bed/beds_admin_view.dart';
@@ -34,11 +35,13 @@ import 'package:tusalud/views/app/nav_bar_admin_view.dart';
 import 'package:tusalud/views/app/nav_bar_nurse_view.dart';
 import 'package:tusalud/views/app/nav_bar_supervisor_view.dart';
 import 'package:tusalud/views/nurse/add_kardex_nurse_view.dart';
+import 'package:tusalud/views/nurse/add_reports_nurse_view.dart';
 import 'package:tusalud/views/nurse/add_vital_signs_nurse_view.dart';
 import 'package:tusalud/views/nurse/diet_nurse_view.dart';
 import 'package:tusalud/views/nurse/kardex_nurse_view.dart';
 import 'package:tusalud/views/nurse/medicine_nurse_view.dart';
 import 'package:tusalud/views/nurse/patientes_nurse_view.dart';
+import 'package:tusalud/views/nurse/reports_nurse_view.dart';
 import 'package:tusalud/views/nurse/settings_nurse_view.dart';
 import 'package:tusalud/views/nurse/via_nurse_view.dart';
 import 'package:tusalud/views/nurse/vital_signs_nurse_view.dart';
@@ -229,7 +232,42 @@ class AppRouter {
 
               return AddVitalSignNurseView(kardexId: kardexId);
             },
-          )
+          ),
+          GoRoute(
+            name: ReportsNurseView.routerName,
+            path: ReportsNurseView.routerPath,
+            builder: (context, state) {
+              final kardexId = int.tryParse(state.uri.queryParameters['kardexId'] ?? '');
+              final headerSubtitle = state.uri.queryParameters['headerSubtitle'];
+
+              if (kardexId == null) {
+                return const Scaffold(
+                  body: Center(child: Text('Error: kardexId es requerido')),
+                );
+              }
+
+              return ReportsNurseView(
+                kardexId: kardexId,
+                headerSubtitle: headerSubtitle,
+              );
+            },
+          ),
+          GoRoute(
+              name: AddReportsNurseView.routerName,
+              path: AddReportsNurseView.routerPath,
+              builder: (context, state) {
+                final kardexId = int.tryParse(state.uri.queryParameters['kardexId'] ?? '');
+
+                if (kardexId == null) {
+                  return const Scaffold(
+                    body: Center(child: Text('Error: kardexId es requerido')),
+                  );
+                }
+
+                return AddReportsNurseView(kardexId: kardexId);
+              },
+            ),
+
 
 
         ],
@@ -273,5 +311,6 @@ class AppRouter {
     ChangeNotifierProvider(create: (_) => MedicineNurseProvider()),
     ChangeNotifierProvider(create: (_) => KardexNurseProvider()),
     ChangeNotifierProvider(create: (_) => VitalSignsNurseProvider()),
+    ChangeNotifierProvider(create: (_) => ReportsNurseProvider()),
   ];
 }
