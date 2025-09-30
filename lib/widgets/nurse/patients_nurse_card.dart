@@ -4,13 +4,13 @@ import 'package:tusalud/style/app_style.dart';
 
 class PatientsNurseCard extends StatelessWidget {
   final TsPeopleResponse patient;
-  final VoidCallback onMedication;
+  final VoidCallback onVitalSigns;
   final VoidCallback onKardex;
 
   const PatientsNurseCard({
     super.key,
     required this.patient,
-    required this.onMedication,
+    required this.onVitalSigns,
     required this.onKardex,
   });
 
@@ -20,15 +20,16 @@ class PatientsNurseCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 5,
-      shadowColor: Colors.blueAccent.withOpacity(0.2),
+      shadowColor: Colors.black.withOpacity(0.1),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Nombre destacado
             Text(
-              "${patient.personName ?? ''} ${patient.personFahterSurname ?? ''} ${patient.personMotherSurname ?? ''}",
+              "${patient.personName ?? ''} "
+              "${patient.personFahterSurname ?? ''} "
+              "${patient.personMotherSurname ?? ''}",
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -48,34 +49,33 @@ class PatientsNurseCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 14),
-            // Botones
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade600,
+                    backgroundColor: AppStyle.primary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: onMedication,
+                  onPressed: onVitalSigns,
                   icon: const Icon(Icons.medical_services_outlined, size: 18),
-                  label: const Text("Medicación"),
+                  label: const Text("Signos Vitales"),
                 ),
                 const SizedBox(width: 10),
                 OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.blue.shade700,
-                    side: BorderSide(color: Colors.blue.shade400, width: 1.5),
+                    foregroundColor: AppStyle.primary,
+                    side: BorderSide(color: AppStyle.primary, width: 1.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   onPressed: onKardex,
                   icon: const Icon(Icons.note_alt_outlined, size: 18),
-                  label: const Text("Kardex"),
+                  label: const Text("Reportes"),
                 ),
               ],
             ),

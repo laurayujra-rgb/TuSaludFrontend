@@ -40,5 +40,24 @@ class AppStyle{
     fontWeight: FontWeight.w600,
     color: AppStyle.darkGrey,
   );
+  static const TextStyle subtitleStyle = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    color: AppStyle.lightBlack,
+  );
+
+
+
+
+  // gris muy claro
+  static const Color card = Color(0xFFFFFFFF);       // blanco puro
+  static const Color accent = Color(0xFF6C63FF);     // morado suave (puedes cambiarlo)
+  static const Color success = Color(0xFF4CAF50);    // verde
+  static const Color danger = Color(0xFFE53935);     // rojo
+  static const Color warning = Color(0xFFFFB300);    // amarillo suave
+  static const Color textDark = Color(0xFF2C2C2C);
+  static const Color textLight = Color(0xFF7A7A7A);
+
+
 
 }

@@ -29,26 +29,26 @@ class PatientsNurseProvider extends ChangeNotifier {
   }
 
   /// 🔹 Cargar pacientes desde la API
-  Future<void> loadPatients() async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+Future<void> loadPatients() async {
+  _isLoading = true;
+  _errorMessage = null;
+  notifyListeners();
 
-    try {
-      final response = await TuSaludApi().getAllPatients();
-      if (response.isSuccess() && response.dataList != null) {
-        _allPatients = response.dataList!;
-        _patients = List.from(_allPatients);
-      } else {
-        _errorMessage = response.message ?? 'Error al cargar pacientes';
-      }
-    } catch (e) {
-      _errorMessage = 'Error de conexión: ${e.toString()}';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+  try {
+    final response = await TuSaludApi().getAllPatientsByRole(); // 🔹 ahora solo role=4
+    if (response.isSuccess() && response.dataList != null) {
+      _allPatients = response.dataList!;
+      _patients = List.from(_allPatients);
+    } else {
+      _errorMessage = response.message ?? 'Error al cargar pacientes';
     }
+  } catch (e) {
+    _errorMessage = 'Error de conexión: ${e.toString()}';
+  } finally {
+    _isLoading = false;
+    notifyListeners();
   }
+}
 
   /// 🔹 Reintentar carga
   void retryLoading() {

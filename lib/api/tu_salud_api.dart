@@ -1,50 +1,45 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tusalud/api/request/app/ts_bed_request.dart';
 import 'package:tusalud/api/request/app/ts_diet_request.dart';
 import 'package:tusalud/api/request/app/ts_gender_request.dart';
+import 'package:tusalud/api/request/app/ts_kardex_request.dart';
 import 'package:tusalud/api/request/app/ts_medication_request.dart';
 import 'package:tusalud/api/request/app/ts_role_request.dart';
 import 'package:tusalud/api/request/app/ts_room_request.dart';
+import 'package:tusalud/api/request/app/ts_vital_signs_request.dart';
 import 'package:tusalud/api/request/auth/ts_person_request.dart';
 
 import 'package:tusalud/api/request/auth/ts_auth_request.dart';
 import 'package:tusalud/api/response/app/ts_bed_response.dart';
 import 'package:tusalud/api/response/app/ts_diet_response.dart';
 import 'package:tusalud/api/response/app/ts_gender_response.dart';
+import 'package:tusalud/api/response/app/ts_kardex_response.dart';
 import 'package:tusalud/api/response/app/ts_medication_response.dart';
 import 'package:tusalud/api/response/app/ts_register_user_admin_response.dart';
 import 'package:tusalud/api/response/app/ts_role_response.dart';
 import 'package:tusalud/api/response/app/ts_room_response.dart';
 import 'package:tusalud/api/response/app/ts_via_response.dart';
-import 'package:tusalud/api/response/auth/ts_person_response.dart';
+import 'package:tusalud/api/response/app/ts_vital_signs_response.dart';
 import 'package:tusalud/api/response/ts_response.dart';
 import 'package:tusalud/config/enviroment.dart';
-
 import 'request/app/ts_via_request.dart';
 import 'request/auth/ts_register_user_admin_request.dart';
 import 'request/auth/ts_token_request.dart';
 import 'response/app/ts_people_response.dart';
-
 class TuSaludApi {
-
   static const int authorizationForbidden = 403;
   static const int authorizationUnauthorized = 401;
-
   static final String _baseUrl = Enviroment.apiTuSaludURL;
   static final String _baseAuthUrl = Enviroment.apiTuSaludAuthURL;
-
   Future<TsResponse<TsTokenRequest>> autenticateUser(TsAuthRequest authRequest) async{
     try{
       final response = await httpPost('$_baseAuthUrl/auth/login', getHeaders(), authRequest.toJson());
-
       if(response.statusCode >= HttpStatus.badRequest){
         if(response.statusCode == HttpStatus.networkConnectTimeoutError){
           return TsResponse<TsTokenRequest>(status: HttpStatus.networkConnectTimeoutError);
         }
-
         try{
           final errorJson = json.decode(response.body);
           return TsResponse<TsTokenRequest>(
@@ -57,7 +52,6 @@ class TuSaludApi {
         }
       }
       final responseJson = json.decode(response.body);
-
       // Manejar el caso cuando la respuesta no tiene el formato esperado
       if(responseJson['data'] == null){
         return TsResponse<TsTokenRequest>(
@@ -66,10 +60,8 @@ class TuSaludApi {
           error: 'Datos no encontrados',
         );
       }
-
       //Crear la respuesta con los tokens
       final tokenData = TsTokenRequest.createEmpty().fromMap(responseJson['data']);
-
       return TsResponse<TsTokenRequest>(
         data: tokenData,
         status: responseJson['status'] ?? response.statusCode,
@@ -83,7 +75,6 @@ class TuSaludApi {
         error: 'Error del servidor',
       );
     }
-    
   }
 /// ------------------------------------------------------------------------------------
 /// DEFAULT METHODS
@@ -1464,6 +1455,472 @@ Future<TsResponse<TsMedicineResponse>> deleteMedicine(int medicineId) async {
     return TsResponse<TsMedicineResponse>(
       status: HttpStatus.internalServerError,
       message: 'Error durante la eliminación del medicamento',
+      error: e.toString(),
+    );
+  }
+}
+/// ------------------------------------------------------------------------------------------------
+/// KARDEX SECTION 
+/// ------------------------------------------------------------------------------------------------
+  ///Get kardexby parsonId and rolebyid
+  
+/// GET KARDEX BY PATIENT + ROLE
+Future<TsResponse<TsKardexResponse>> getKardexByPatientAndRole(
+    int patientId, int roleId) async {
+  try {
+    final response = await httpGet(
+      '$_baseUrl/kardex/patient/$patientId/role/$roleId',
+      getHeaders(),
+    );
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+        return TsResponse<TsKardexResponse>(
+          status: HttpStatus.networkConnectTimeoutError,
+        );
+      }
+      return TsResponse.createEmpty();
+    }
+
+    return TsResponse.fromJsonList(
+      utf8.decode(response.bodyBytes),
+      TsKardexResponse.createEmpty(),
+    );
+  } catch (_) {
+    return TsResponse.createEmpty();
+  }
+}
+Future<TsResponse<TsKardexResponse>> getKardexByPatientId(int patientId) async {
+  try {
+    final response = await httpGet(
+      '$_baseUrl/kardex/patient/$patientId/role/4', // roleId=4 (paciente)
+      getHeaders(),
+    );
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse.createEmpty();
+    }
+
+    return TsResponse.fromJsonList(
+      utf8.decode(response.bodyBytes),
+      TsKardexResponse.createEmpty(),
+    );
+  } catch (_) {
+    return TsResponse.createEmpty();
+  }
+}
+
+Future<TsResponse<TsPeopleResponse>> getAllPatientsByRole() async {
+  try {
+    final response = await httpGet('$_baseUrl/persons/role/4', getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse.createEmpty();
+    }
+
+    return TsResponse.fromJsonList(
+      utf8.decode(response.bodyBytes),
+      TsPeopleResponse.createEmpty(),
+    );
+  } catch (_) {
+    return TsResponse.createEmpty();
+  }
+}
+
+
+
+  /// CREATE KARDEX
+  Future<TsResponse<TsKardexResponse>> createKardex(
+      TsKardexRequest kardexRequest) async {
+    try {
+      final response = await httpPost(
+        '$_baseUrl/kardex/create',
+        getHeaders(),
+        jsonEncode(kardexRequest.toJson()),
+      );
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsKardexResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsKardexResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al crear el kardex',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (_) {
+          return TsResponse<TsKardexResponse>.createEmpty();
+        }
+      }
+
+      final responseJson = json.decode(response.body);
+      final kardexData =
+          TsKardexResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsKardexResponse>(
+        data: kardexData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsKardexResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la creación del kardex',
+        error: e.toString(),
+      );
+    }
+  }
+
+  /// GET ALL KARDEX
+  Future<TsResponse<TsKardexResponse>> getAllKardex() async {
+    try {
+      final response = await httpGet('$_baseUrl/kardex/all', getHeaders());
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsKardexResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        return TsResponse.createEmpty();
+      }
+
+      return TsResponse.fromJsonList(
+        utf8.decode(response.bodyBytes),
+        TsKardexResponse.createEmpty(),
+      );
+    } catch (_) {
+      return TsResponse.createEmpty();
+    }
+  }
+
+  /// GET KARDEX BY ID
+  Future<TsResponse<TsKardexResponse>> getKardex(int kardexId) async {
+    try {
+      final response =
+          await httpGet('$_baseUrl/kardex/$kardexId', getHeaders());
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsKardexResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        return TsResponse.createEmpty();
+      }
+
+      return TsResponse.fromJson(
+        utf8.decode(response.bodyBytes),
+      );
+    } catch (_) {
+      return TsResponse.createEmpty();
+    }
+  }
+  
+
+  /// UPDATE KARDEX
+  Future<TsResponse<TsKardexResponse>> updateKardex(
+      int kardexId, TsKardexRequest kardexRequest) async {
+    try {
+      final response = await httpPut(
+        '$_baseUrl/kardex/update/$kardexId',
+        getHeaders(),
+        jsonEncode(kardexRequest.toJson()),
+      );
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsKardexResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsKardexResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al actualizar el kardex',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (_) {
+          return TsResponse<TsKardexResponse>.createEmpty();
+        }
+      }
+
+      final responseJson = json.decode(response.body);
+      final kardexData =
+          TsKardexResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsKardexResponse>(
+        data: kardexData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsKardexResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la actualización del kardex',
+        error: e.toString(),
+      );
+    }
+  }
+
+  /// DELETE KARDEX
+  Future<TsResponse<TsKardexResponse>> deleteKardex(int kardexId) async {
+    try {
+      final response =
+          await httpDelete('$_baseUrl/kardex/delete/$kardexId', getHeaders());
+
+      if (response.statusCode >= HttpStatus.badRequest) {
+        if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+          return TsResponse<TsKardexResponse>(
+            status: HttpStatus.networkConnectTimeoutError,
+          );
+        }
+        try {
+          final errorJson = json.decode(response.body);
+          return TsResponse<TsKardexResponse>(
+            status: response.statusCode,
+            message: errorJson['message'] ?? 'Error al eliminar el kardex',
+            error: errorJson['error'] ?? '',
+          );
+        } catch (_) {
+          return TsResponse<TsKardexResponse>.createEmpty();
+        }
+      }
+
+      final responseJson = json.decode(response.body);
+      final kardexData =
+          TsKardexResponse.createEmpty().fromMap(responseJson['data']);
+      return TsResponse<TsKardexResponse>(
+        data: kardexData,
+        status: response.statusCode,
+        message: responseJson['message'],
+      );
+    } catch (e) {
+      return TsResponse<TsKardexResponse>(
+        status: HttpStatus.internalServerError,
+        message: 'Error durante la eliminación del kardex',
+        error: e.toString(),
+      );
+    }
+  }
+  /// ----------------------------------------------------------------------------------------------------
+/// CREATE VITAL SIGN
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsVitalSignsResponse>> createVitalSign(
+    TsVitalSignsRequest request) async {
+  try {
+    final response = await httpPost(
+      '$_baseUrl/vitalSigns/create',
+      getHeaders(),
+      jsonEncode(request.toJson()),
+    );
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+        return TsResponse<TsVitalSignsResponse>(
+          status: HttpStatus.networkConnectTimeoutError,
+        );
+      }
+      try {
+        final errorJson = json.decode(response.body);
+        return TsResponse<TsVitalSignsResponse>(
+          status: response.statusCode,
+          message: errorJson['message'] ?? 'Error al crear el signo vital',
+          error: errorJson['error'] ?? '',
+        );
+      } catch (e) {
+        return TsResponse<TsVitalSignsResponse>.createEmpty();
+      }
+    }
+
+    final responseJson = json.decode(response.body);
+    final modelData = TsVitalSignsResponse.createEmpty()
+        .fromMap(responseJson['data']);
+    return TsResponse<TsVitalSignsResponse>(
+      data: modelData,
+      status: response.statusCode,
+      message: responseJson['message'],
+    );
+  } catch (e) {
+    return TsResponse<TsVitalSignsResponse>(
+      status: HttpStatus.internalServerError,
+      message: 'Error durante la creación del signo vital',
+      error: e.toString(),
+    );
+  }
+}
+
+/// ----------------------------------------------------------------------------------------------------
+/// GET ALL VITAL SIGNS
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsVitalSignsResponse>> getAllVitalSigns() async {
+  try {
+    final response = await httpGet('$_baseUrl/vitalSigns/all', getHeaders());
+    if (response.statusCode >= HttpStatus.badRequest) {
+      if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+        return TsResponse<TsVitalSignsResponse>(
+          status: HttpStatus.networkConnectTimeoutError,
+        );
+      }
+      return TsResponse.createEmpty();
+    }
+    TsResponse<TsVitalSignsResponse> responseData =
+        TsResponse.fromJsonList(utf8.decode(response.bodyBytes),
+            TsVitalSignsResponse.createEmpty());
+    return responseData;
+  } catch (e) {
+    return TsResponse.createEmpty();
+  }
+}
+
+/// ----------------------------------------------------------------------------------------------------
+/// GET VITAL SIGN BY ID
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsVitalSignsResponse>> getVitalSignById(
+    int vitalSignId) async {
+  try {
+    final response =
+        await httpGet('$_baseUrl/vitalsigns/$vitalSignId', getHeaders());
+    if (response.statusCode >= HttpStatus.badRequest) {
+      if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+        return TsResponse<TsVitalSignsResponse>(
+          status: HttpStatus.networkConnectTimeoutError,
+        );
+      }
+      return TsResponse.createEmpty();
+    }
+    final responseJson = json.decode(response.body);
+    final modelData = TsVitalSignsResponse.createEmpty()
+        .fromMap(responseJson['data']);
+    return TsResponse<TsVitalSignsResponse>(
+      data: modelData,
+      status: response.statusCode,
+      message: responseJson['message'],
+    );
+  } catch (e) {
+    return TsResponse.createEmpty();
+  }
+}
+Future<TsResponse<TsVitalSignsResponse>> getVitalSignsByKardexId(int kardexId) async {
+  try {
+    final response = await httpGet("$_baseUrl/vitalSigns/kardex/$kardexId", getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse.createEmpty();
+    }
+
+    return TsResponse.fromJsonList(
+      utf8.decode(response.bodyBytes),
+      TsVitalSignsResponse.createEmpty(),
+    );
+  } catch (_) {
+    return TsResponse.createEmpty();
+  }
+}
+
+Future<TsResponse<TsVitalSignsResponse>> getVitalSignsByKardex(int kardexId) async {
+  try {
+    final response = await httpGet("$_baseUrl/vitalSigns/kardex/$kardexId", getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse.createEmpty();
+    }
+
+    return TsResponse.fromJsonList(
+      utf8.decode(response.bodyBytes),
+      TsVitalSignsResponse.createEmpty(),
+    );
+  } catch (_) {
+    return TsResponse.createEmpty();
+  }
+}
+
+
+/// ----------------------------------------------------------------------------------------------------
+/// UPDATE VITAL SIGN
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsVitalSignsResponse>> updateVitalSign(
+    int vitalSignId, TsVitalSignsRequest request) async {
+  try {
+    final response = await httpPut(
+      '$_baseUrl/vitalsigns/update/$vitalSignId',
+      getHeaders(),
+      jsonEncode(request.toJson()),
+    );
+    if (response.statusCode >= HttpStatus.badRequest) {
+      if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+        return TsResponse<TsVitalSignsResponse>(
+          status: HttpStatus.networkConnectTimeoutError,
+        );
+      }
+      try {
+        final errorJson = json.decode(response.body);
+        return TsResponse<TsVitalSignsResponse>(
+          status: response.statusCode,
+          message: errorJson['message'] ?? 'Error al actualizar el signo vital',
+          error: errorJson['error'] ?? '',
+        );
+      } catch (e) {
+        return TsResponse<TsVitalSignsResponse>.createEmpty();
+      }
+    }
+    final responseJson = json.decode(response.body);
+    final modelData = TsVitalSignsResponse.createEmpty()
+        .fromMap(responseJson['data']);
+    return TsResponse<TsVitalSignsResponse>(
+      data: modelData,
+      status: response.statusCode,
+      message: responseJson['message'],
+    );
+  } catch (e) {
+    return TsResponse<TsVitalSignsResponse>(
+      status: HttpStatus.internalServerError,
+      message: 'Error durante la actualización del signo vital',
+      error: e.toString(),
+    );
+  }
+}
+
+/// ----------------------------------------------------------------------------------------------------
+/// DELETE VITAL SIGN
+/// ----------------------------------------------------------------------------------------------------
+Future<TsResponse<TsVitalSignsResponse>> deleteVitalSign(
+    int vitalSignId) async {
+  try {
+    final response =
+        await httpDelete('$_baseUrl/vitalsigns/delete/$vitalSignId', getHeaders());
+    if (response.statusCode >= HttpStatus.badRequest) {
+      if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
+        return TsResponse<TsVitalSignsResponse>(
+          status: HttpStatus.networkConnectTimeoutError,
+        );
+      }
+      try {
+        final errorJson = json.decode(response.body);
+        return TsResponse<TsVitalSignsResponse>(
+          status: response.statusCode,
+          message: errorJson['message'] ?? 'Error al eliminar el signo vital',
+          error: errorJson['error'] ?? '',
+        );
+      } catch (e) {
+        return TsResponse<TsVitalSignsResponse>.createEmpty();
+      }
+    }
+    final responseJson = json.decode(response.body);
+    final modelData = TsVitalSignsResponse.createEmpty()
+        .fromMap(responseJson['data']);
+    return TsResponse<TsVitalSignsResponse>(
+      data: modelData,
+      status: response.statusCode,
+      message: responseJson['message'],
+    );
+  } catch (e) {
+    return TsResponse<TsVitalSignsResponse>(
+      status: HttpStatus.internalServerError,
+      message: 'Error durante la eliminación del signo vital',
       error: e.toString(),
     );
   }

@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tusalud/api/tu_salud_api.dart';
 import 'package:tusalud/providers/nurse/patients_nurse_provider.dart';
 import 'package:tusalud/style/app_style.dart';
+import 'package:tusalud/views/nurse/kardex_nurse_view.dart';
+import 'package:tusalud/views/nurse/vital_signs_nurse_view.dart';
 import '../../widgets/nurse/patients_nurse_card.dart';
+import 'package:go_router/go_router.dart';
 
 class PatientsNurseView extends StatefulWidget {
   static const String routerName = 'patientsNurse';
   static const String routerPath = '/patients_nurse';
 
-  const PatientsNurseView({super.key});
+  final String? headerSubtitle;
+
+  const PatientsNurseView({super.key, this.headerSubtitle});
 
   @override
   State<PatientsNurseView> createState() => _PatientsNurseViewState();
@@ -19,7 +25,8 @@ class _PatientsNurseViewState extends State<PatientsNurseView> {
   void initState() {
     super.initState();
     Future.microtask(() =>
-        Provider.of<PatientsNurseProvider>(context, listen: false).loadPatients());
+        Provider.of<PatientsNurseProvider>(context, listen: false)
+            .loadPatients());
   }
 
   @override
@@ -75,14 +82,40 @@ class _PatientsNurseViewState extends State<PatientsNurseView> {
               final patient = provider.patients[index];
               return PatientsNurseCard(
                 patient: patient,
-                onMedication: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Medicación de ${patient.personName}")),
-                  );
+                onVitalSigns: () async {
+                  final response =
+                      await TuSaludApi().getKardexByPatientId(patient.personId);
+
+                  if (response.dataList != null &&
+                      response.dataList!.isNotEmpty) {
+                    // tomar el último kardex real desde la API
+                    final kardex = response.dataList!.last;
+
+                    context.pushNamed(
+                      VitalSignsNurseView.routerName,
+                      queryParameters: {
+                        'kardexId': kardex.kardexId.toString(),
+                        'headerSubtitle':
+                            "Paciente: ${patient.personName} ${patient.personFahterSurname ?? ''}",
+                      },
+                    );
+                  } else {
+                    // ⚡ Igual entramos a la pantalla, pero con un kardexId = 0 (dummy)
+                    context.pushNamed(
+                      VitalSignsNurseView.routerName,
+                      queryParameters: {
+                        'kardexId': '0',
+                        'headerSubtitle':
+                            "Paciente: ${patient.personName} ${patient.personFahterSurname ?? ''}",
+                      },
+                    );
+                  }
                 },
                 onKardex: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Kardex de ${patient.personName}")),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const KardexNurseView()),
                   );
                 },
               );

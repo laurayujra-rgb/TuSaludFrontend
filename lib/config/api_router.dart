@@ -15,9 +15,11 @@ import 'package:tusalud/providers/auth/login_provider.dart';
 import 'package:tusalud/providers/auth/registe_user_provider.dart';
 import 'package:tusalud/providers/auth/splashView.dart';
 import 'package:tusalud/providers/nurse/diet_nurse_provider.dart';
+import 'package:tusalud/providers/nurse/kardex_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/medicine_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/patients_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/via_nurse_provider.dart';
+import 'package:tusalud/providers/nurse/vital_signs_provider.dart';
 import 'package:tusalud/views/admin/hospital/bed/beds_admin_view.dart';
 import 'package:tusalud/views/admin/hospital/hospital_admin_view.dart';
 import 'package:tusalud/views/admin/hospital/rooms/room_admin_view.dart';
@@ -31,11 +33,15 @@ import 'package:tusalud/views/admin/settings/settings_admin_view.dart';
 import 'package:tusalud/views/app/nav_bar_admin_view.dart';
 import 'package:tusalud/views/app/nav_bar_nurse_view.dart';
 import 'package:tusalud/views/app/nav_bar_supervisor_view.dart';
+import 'package:tusalud/views/nurse/add_kardex_nurse_view.dart';
+import 'package:tusalud/views/nurse/add_vital_signs_nurse_view.dart';
 import 'package:tusalud/views/nurse/diet_nurse_view.dart';
+import 'package:tusalud/views/nurse/kardex_nurse_view.dart';
 import 'package:tusalud/views/nurse/medicine_nurse_view.dart';
 import 'package:tusalud/views/nurse/patientes_nurse_view.dart';
 import 'package:tusalud/views/nurse/settings_nurse_view.dart';
 import 'package:tusalud/views/nurse/via_nurse_view.dart';
+import 'package:tusalud/views/nurse/vital_signs_nurse_view.dart';
 
 import '../providers/auth/user_provider.dart';
 import '../views/admin/peoples/nurses/add_nurse_admin_view.dart';
@@ -158,8 +164,8 @@ class AppRouter {
           GoRoute(
             name: PatientsNurseView.routerName,
             path: PatientsNurseView.routerPath,
-            builder: (context, state) => const PatientsNurseView(),
-          ),
+            builder: (context, state) =>  const PatientsNurseView(),
+            ),
           GoRoute(
             name: SettingsView.routerName,
             path: SettingsView.routerPath,
@@ -180,6 +186,52 @@ class AppRouter {
             path: MedicineNurseView.routerPath,
             builder: (context, state) => const MedicineNurseView(),
           ),
+          GoRoute(
+            name: KardexNurseView.routerName,
+            path: KardexNurseView.routerPath,
+            builder: (context, state) => const KardexNurseView(),
+          ),
+          GoRoute(
+            name: AddKardexNurseView.routerName,
+            path: AddKardexNurseView.routerPath,
+            builder: (context, state) => const AddKardexNurseView(),
+          ),
+          GoRoute(
+            name: VitalSignsNurseView.routerName,
+            path: VitalSignsNurseView.routerPath,
+            builder: (context, state) {
+              final kardexId = int.tryParse(state.uri.queryParameters['kardexId'] ?? '');
+              final headerSubtitle = state.uri.queryParameters['headerSubtitle'];
+
+              if (kardexId == null) {
+                return const Scaffold(
+                  body: Center(child: Text('Error: kardexId es requerido')),
+                );
+              }
+
+              return VitalSignsNurseView(
+                kardexId: kardexId,
+                headerSubtitle: headerSubtitle,
+              );
+            },
+          ),
+          GoRoute(
+            name: AddVitalSignNurseView.routerName,
+            path: AddVitalSignNurseView.routerPath,
+            builder: (context, state) {
+              final kardexId = int.tryParse(state.uri.queryParameters['kardexId'] ?? '');
+
+              if (kardexId == null) {
+                return const Scaffold(
+                  body: Center(child: Text('Error: kardexId es requerido')),
+                );
+              }
+
+              return AddVitalSignNurseView(kardexId: kardexId);
+            },
+          )
+
+
         ],
       ),
 
@@ -219,5 +271,7 @@ class AppRouter {
     ChangeNotifierProvider(create: (_) => ViaNurseProvider()),
     ChangeNotifierProvider(create: (_) => DietNurseProvider()),
     ChangeNotifierProvider(create: (_) => MedicineNurseProvider()),
+    ChangeNotifierProvider(create: (_) => KardexNurseProvider()),
+    ChangeNotifierProvider(create: (_) => VitalSignsNurseProvider()),
   ];
 }

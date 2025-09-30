@@ -29,23 +29,73 @@ class _HomeNurseDashBoardState extends State<HomeNurseDashBoard> {
     return Consumer2<BedsAdminProvider, RoomsAdminProvider>(
       builder: (context, bedsProvider, roomsProvider, child) {
         final totalBeds = bedsProvider.allBeds.length;
-        final occupiedBeds = bedsProvider.allBeds.where((b) => b.bedStatus == 1).length;
+        final occupiedBeds =
+            bedsProvider.allBeds.where((b) => b.bedStatus == 1).length;
         final freeBeds = totalBeds - occupiedBeds;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 🔹 Encabezado de bienvenida
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+                border: Border.all(color: AppStyle.primary.withOpacity(0.2)),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppStyle.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    child: const Icon(
+                      Icons.local_hospital_rounded,
+                      size: 36,
+                      color: AppStyle.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  const Expanded(
+                    child: Text(
+                      "Bienvenida, enfermera 👩‍⚕️ Camila Vallejos",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
             // 📊 Resumen general de camas
             Row(
               children: [
                 Expanded(
-                  child: _buildStatCard("Total de camas", totalBeds.toString(), Colors.blue),
+                  child: _buildStatCard("Total de camas", totalBeds.toString(),
+                      AppStyle.primary),
                 ),
                 Expanded(
-                  child: _buildStatCard("Ocupadas", occupiedBeds.toString(), Colors.red),
+                  child: _buildStatCard(
+                      "Ocupadas", occupiedBeds.toString(), Colors.red),
                 ),
                 Expanded(
-                  child: _buildStatCard("Libres", freeBeds.toString(), Colors.green),
+                  child: _buildStatCard(
+                      "Libres", freeBeds.toString(), Colors.green),
                 ),
               ],
             ),
@@ -70,7 +120,9 @@ class _HomeNurseDashBoardState extends State<HomeNurseDashBoard> {
                 }
               },
               decoration: InputDecoration(
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 filled: true,
                 fillColor: Colors.white,
               ),
@@ -86,15 +138,21 @@ class _HomeNurseDashBoardState extends State<HomeNurseDashBoard> {
                       children: [
                         Text("Camas en la sala:", style: AppStyle.subtitle),
                         const SizedBox(height: 10),
-                        ...bedsProvider.bedsByRoom.map((bed) => Card(
-                              child: ListTile(
-                                title: Text(bed.bedName ?? 'Sin nombre'),
-                                trailing: Icon(
-                                  bed.bedStatus == 1 ? Icons.bed : Icons.bed_outlined,
-                                  color: bed.bedStatus == 1 ? Colors.red : Colors.green,
-                                ),
+                        ...bedsProvider.bedsByRoom.map(
+                          (bed) => Card(
+                            child: ListTile(
+                              title: Text(bed.bedName ?? 'Sin nombre'),
+                              trailing: Icon(
+                                bed.bedStatus == 1
+                                    ? Icons.bed
+                                    : Icons.bed_outlined,
+                                color: bed.bedStatus == 1
+                                    ? Colors.red
+                                    : Colors.green,
                               ),
-                            )),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
           ],
@@ -111,11 +169,17 @@ class _HomeNurseDashBoardState extends State<HomeNurseDashBoard> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+            Text(title,
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Text(
               value,
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: color),
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
           ],
         ),

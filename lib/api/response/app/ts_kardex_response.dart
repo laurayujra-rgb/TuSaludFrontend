@@ -1,36 +1,30 @@
 import 'dart:convert';
-
-import 'package:tusalud/api/response/app/ts_audit_response.dart';
-import 'package:tusalud/api/response/app/ts_kardex_medicine_response.dart';
 import 'package:tusalud/api/response/ts_response.dart';
-
-import 'ts_diet_response.dart';
 
 class TsKardexResponse implements TsResponseService {
   int kardexId;
-  int? kardexNumber;
+  int kardexNumber;
   String? kardexDiagnosis;
   String? kardexDate;
   String? kardexHour;
-  int? kardexStatus;
-  TsDietResponse? diet;
-  List<TsKardexMedicineResponse> kardexMedicines;
+  int kardexStatus;
   String? nursingActions;
-  TsAuditResponse? audit;
+  int? dietId;
+  String? dietName;
 
   TsKardexResponse({
     required this.kardexId,
-    this.kardexNumber,
+    required this.kardexNumber,
     this.kardexDiagnosis,
     this.kardexDate,
     this.kardexHour,
-    this.kardexStatus,
-    this.diet,
-    this.kardexMedicines = const [],
+    required this.kardexStatus,
     this.nursingActions,
-    this.audit,
+    this.dietId,
+    this.dietName,
   });
 
+  /// Constructor vacío
   factory TsKardexResponse.createEmpty() => TsKardexResponse(
         kardexId: 0,
         kardexNumber: 0,
@@ -38,35 +32,26 @@ class TsKardexResponse implements TsResponseService {
         kardexDate: '',
         kardexHour: '',
         kardexStatus: 0,
-        diet: TsDietResponse.createEmpty(),
-        kardexMedicines: [],
         nursingActions: '',
-        audit: TsAuditResponse.createEmpty(),
+        dietId: 0,
+        dietName: '',
       );
 
   @override
   String toJson() => json.encode(toMap());
 
+  /// fromJson directo desde un Map
   factory TsKardexResponse.fromJson(Map<String, dynamic> json) =>
       TsKardexResponse(
-        kardexId: json["kardexId"] as int? ?? 0,
-        kardexNumber: json["kardexNumber"] as int?,
-        kardexDiagnosis: json["kardexDiagnosis"] as String?,
-        kardexDate: json["kardexDate"] as String?,
-        kardexHour: json["kardexHour"] as String?,
-        kardexStatus: json["kardexStatus"] as int?,
-        diet: json["diets"] != null
-            ? TsDietResponse.fromJson(json["diets"])
-            : TsDietResponse.createEmpty(),
-        kardexMedicines: json["kardexMedicines"] != null
-            ? List<TsKardexMedicineResponse>.from(
-                (json["kardexMedicines"] as List)
-                    .map((x) => TsKardexMedicineResponse.fromJson(x)))
-            : [],
-        nursingActions: json["nursingActions"] as String?,
-        audit: json["audit"] != null
-            ? TsAuditResponse.fromJson(json["audit"])
-            : TsAuditResponse.createEmpty(),
+        kardexId: json['kardexId'] as int? ?? 0,
+        kardexNumber: json['kardexNumber'] as int? ?? 0,
+        kardexDiagnosis: json['kardexDiagnosis'] as String? ?? '',
+        kardexDate: json['kardexDate'] as String? ?? '',
+        kardexHour: json['kardexHour'] as String? ?? '',
+        kardexStatus: json['kardexStatus'] as int? ?? 0,
+        nursingActions: json['nursingActions'] as String? ?? '',
+        dietId: json['dietId'] as int?,
+        dietName: json['dietName'] as String?,
       );
 
   @override
@@ -77,11 +62,9 @@ class TsKardexResponse implements TsResponseService {
         "kardexDate": kardexDate,
         "kardexHour": kardexHour,
         "kardexStatus": kardexStatus,
-        "diets": diet?.toMap(),
-        "kardexMedicines":
-            kardexMedicines.map((x) => x.toMap()).toList(),
         "nursingActions": nursingActions,
-        "audit": audit?.toJson(),
+        "dietId": dietId,
+        "dietName": dietName,
       };
 
   @override
@@ -91,23 +74,14 @@ class TsKardexResponse implements TsResponseService {
 
   @override
   TsKardexResponse fromMap(Map<String, dynamic> json) => TsKardexResponse(
-        kardexId: json["kardexId"] as int? ?? 0,
-        kardexNumber: json["kardexNumber"] as int?,
-        kardexDiagnosis: json["kardexDiagnosis"] as String?,
-        kardexDate: json["kardexDate"] as String?,
-        kardexHour: json["kardexHour"] as String?,
-        kardexStatus: json["kardexStatus"] as int?,
-        diet: json["diets"] != null
-            ? TsDietResponse.fromJson(json["diets"])
-            : TsDietResponse.createEmpty(),
-        kardexMedicines: json["kardexMedicines"] != null
-            ? List<TsKardexMedicineResponse>.from(
-                (json["kardexMedicines"] as List)
-                    .map((x) => TsKardexMedicineResponse.fromJson(x)))
-            : [],
-        nursingActions: json["nursingActions"] as String?,
-        audit: json["audit"] != null
-            ? TsAuditResponse.fromJson(json["audit"])
-            : TsAuditResponse.createEmpty(),
+        kardexId: json['kardexId'] as int? ?? 0,
+        kardexNumber: json['kardexNumber'] as int? ?? 0,
+        kardexDiagnosis: json['kardexDiagnosis'] as String? ?? '',
+        kardexDate: json['kardexDate'] as String? ?? '',
+        kardexHour: json['kardexHour'] as String? ?? '',
+        kardexStatus: json['kardexStatus'] as int? ?? 0,
+        nursingActions: json['nursingActions'] as String? ?? '',
+        dietId: json['dietId'] as int?,
+        dietName: json['dietName'] as String?,
       );
 }
