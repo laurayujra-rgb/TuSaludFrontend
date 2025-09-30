@@ -1822,7 +1822,9 @@ Future<TsResponse<TsVitalSignsResponse>> getVitalSignsByKardexId(int kardexId) a
     return TsResponse.createEmpty();
   }
 }
-
+// ----------------------------------------------------------------------------------------------------
+/// GET VITAL SIGNS BY KARDEX ID
+///   -------------------------------------------------------------------------------------------------
 Future<TsResponse<TsVitalSignsResponse>> getVitalSignsByKardex(int kardexId) async {
   try {
     final response = await httpGet("$_baseUrl/vitalSigns/kardex/$kardexId", getHeaders());

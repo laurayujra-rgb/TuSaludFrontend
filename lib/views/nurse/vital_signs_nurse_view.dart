@@ -79,7 +79,7 @@ class _VitalSignsNurseViewState extends State<VitalSignsNurseView> {
 
           // filtrar por kardexId
           final vitalSigns = provider.allVitalSigns
-              .where((vs) => vs.kardex.kardexId == widget.kardexId)
+              .where((vs) => vs.kardexId == widget.kardexId)
               .toList();
 
           if (vitalSigns.isEmpty) {
