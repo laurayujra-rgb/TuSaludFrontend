@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tusalud/views/nurse/patientes_nurse_view.dart';
+import 'package:tusalud/views/nurse/patients/patientes_nurse_view.dart';
 import 'package:tusalud/views/nurse/settings_nurse_view.dart';
 import 'package:tusalud/views/views.dart';
 import 'package:tusalud/widgets/app/custom_icon.dart';

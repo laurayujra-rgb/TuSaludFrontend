@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/providers/nurse/reports_nurse_provider.dart';
-import 'package:tusalud/views/nurse/add_reports_nurse_view.dart';
-import 'package:tusalud/widgets/nurse/reports_nurse_card.dart';
+import 'package:tusalud/views/nurse/Reports/add_reports_nurse_view.dart';
+import 'package:tusalud/widgets/nurse/reports/reports_nurse_card.dart';
 
 class ReportsNurseView extends StatefulWidget {
   static const String routerName = 'reportsNurse';

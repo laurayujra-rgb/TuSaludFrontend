@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:tusalud/api/response/app/ts_kardex_response.dart';
 import 'package:tusalud/style/app_style.dart';
 
-class KardexNurseCard extends StatelessWidget {
+class KardexNursingLicCard extends StatelessWidget {
   final TsKardexResponse kardex;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
-  const KardexNurseCard({
+  const KardexNursingLicCard({
     super.key,
     required this.kardex,
     this.onEdit,

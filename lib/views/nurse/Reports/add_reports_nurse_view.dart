@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/api/request/app/ts_reports_request.dart';
 import 'package:tusalud/providers/nurse/reports_nurse_provider.dart';
-import 'package:tusalud/widgets/nurse/add_reports_nurse_card.dart';
+import 'package:tusalud/widgets/nurse/reports/add_reports_nurse_card.dart';
 
 class AddReportsNurseView extends StatefulWidget {
   static const String routerName = 'addReportsNurse';

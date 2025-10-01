@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tusalud/views/supervisor/home_supervisor_view.dart';
 
 import '../../views/views.dart';
 

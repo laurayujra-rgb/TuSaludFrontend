@@ -1,27 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tusalud/providers/nurse/kardex_nurse_provider.dart';
+import 'package:tusalud/providers/nursing%20Lic/kardex_nursing_lic_provider.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/views/nurse/add_kardex_nurse_view.dart';
-import 'package:tusalud/widgets/nurse/kardex_nurse_card.dart';
+import 'package:tusalud/views/nursing%20Lic/kardex/add_kardex_nursing_lic_view.dart';
+import 'package:tusalud/widgets/nursing%20Lic/kardex/kardex_nursing_lic_card.dart';
 
-class KardexNurseView extends StatefulWidget {
-  static const String routerName = 'kardexNurse';
-  static const String routerPath = '/kardex_nurse';
+class KardexNursingLicView extends StatefulWidget {
+  static const String routerName = 'kardexNursingLic';
+  static const String routerPath = '/kardex_nursing_lic';
 
-  const KardexNurseView({super.key});
+  final int patientId;
+  final String? headerSubtitle;
+
+  const KardexNursingLicView({
+    super.key,
+    required this.patientId,
+    this.headerSubtitle,
+  });
 
   @override
-  State<KardexNurseView> createState() => _KardexNurseViewState();
+  State<KardexNursingLicView> createState() => _KardexNursingLicViewState();
 }
 
-class _KardexNurseViewState extends State<KardexNurseView> {
+class _KardexNursingLicViewState extends State<KardexNursingLicView> {
 @override
 void initState() {
   super.initState();
   Future.microtask(() =>
-      Provider.of<KardexNurseProvider>(context, listen: false)
-          .loadKardexByPatientAndRole(10, 4)); // <-- usa patientId dinámico
+      Provider.of<KardexNursingLicProvider>(context, listen: false)
+          .loadKardexByPatientAndRole(widget.patientId, 4));
 }
 
 
@@ -74,7 +81,7 @@ void initState() {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const AddKardexNurseView()),
+                        MaterialPageRoute(builder: (_) => const AddKardexNursingLicView()),
                       );
                     },
                   )
@@ -84,7 +91,7 @@ void initState() {
 
             // 🔹 Lista de Kardex
             Expanded(
-              child: Consumer<KardexNurseProvider>(
+              child: Consumer<KardexNursingLicProvider>(
                 builder: (context, provider, child) {
                   if (provider.isLoading) {
                     return const Center(child: CircularProgressIndicator());
@@ -100,7 +107,7 @@ void initState() {
                     itemCount: provider.kardexList.length,
                     itemBuilder: (context, index) {
                       final kardex = provider.kardexList[index];
-                      return KardexNurseCard(
+                      return KardexNursingLicCard(
                         kardex: kardex,
                         onEdit: () {
                           ScaffoldMessenger.of(context).showSnackBar(

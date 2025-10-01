@@ -4,14 +4,13 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:tusalud/providers/auth/user_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/widgets/app/drawer.dart';
+import 'package:tusalud/widgets/nursing%20Lic/home/home_nursing_lic_dasboard.dart';
 
-import '../../widgets/nursing Lic/home/home_nursing_lic_dasboard.dart';
 
-
-class HomeSupervisorView extends StatelessWidget{
-  static const String routerName = 'supervisorHome';
-  static const String routerPath = '/supervisorHome';
-  const HomeSupervisorView({Key? key}) : super (key: key);
+class HomeNursingLicView extends StatelessWidget{
+  static const String routerName = 'nursingLicHome';
+  static const String routerPath = '/nursingLicHome';
+  const HomeNursingLicView({Key? key}) : super (key: key);
 
     @override
   Widget build(BuildContext context) {

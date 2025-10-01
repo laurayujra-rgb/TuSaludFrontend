@@ -3,10 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:tusalud/api/tu_salud_api.dart';
 import 'package:tusalud/providers/nurse/patients_nurse_provider.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/views/nurse/kardex_nurse_view.dart';
-import 'package:tusalud/views/nurse/reports_nurse_view.dart';
-import 'package:tusalud/views/nurse/vital_signs_nurse_view.dart';
-import '../../widgets/nurse/patients_nurse_card.dart';
+import 'package:tusalud/views/nurse/Reports/reports_nurse_view.dart';
+import 'package:tusalud/views/nurse/Vital%20Signs/vital_signs_nurse_view.dart';
+import '../../../widgets/nurse/patients/patients_nurse_card.dart';
 import 'package:go_router/go_router.dart';
 
 class PatientsNurseView extends StatefulWidget {

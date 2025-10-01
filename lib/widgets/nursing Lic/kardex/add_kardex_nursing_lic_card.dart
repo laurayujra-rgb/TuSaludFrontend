@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tusalud/style/app_style.dart';
 
-class AddKardexNurseCard extends StatefulWidget {
-  const AddKardexNurseCard({super.key});
+class AddKardexNursingLicCard extends StatefulWidget {
+  const AddKardexNursingLicCard({super.key});
 
   @override
-  State<AddKardexNurseCard> createState() => _AddKardexNurseCardState();
+  State<AddKardexNursingLicCard> createState() => _AddKardexNursingLicCardState();
 }
 
-class _AddKardexNurseCardState extends State<AddKardexNurseCard> {
+class _AddKardexNursingLicCardState extends State<AddKardexNursingLicCard> {
   final _formKey = GlobalKey<FormState>();
 
   // Controladores

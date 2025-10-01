@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/views/nurse/add_vital_signs_nurse_view.dart';
-import 'package:tusalud/widgets/nurse/vital_signs_nurse_card.dart';
-import '../../providers/nurse/vital_signs_provider.dart';
+import 'package:tusalud/views/nurse/Vital%20Signs/add_vital_signs_nurse_view.dart';
+import 'package:tusalud/widgets/nurse/vital%20signs/vital_signs_nurse_card.dart';
+import '../../../providers/nurse/vital_signs_provider.dart';
 
 class VitalSignsNurseView extends StatefulWidget {
   static const String routerName = 'vitalSignsNurse';

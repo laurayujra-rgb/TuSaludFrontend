@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/providers/nurse/diet_nurse_provider.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/widgets/nurse/diet_nurse_card.dart';
+import 'package:tusalud/widgets/nursing%20Lic/diet/diet_nurse_card.dart';
 
 class DietNurseView extends StatefulWidget {
   static const String routerName = 'dietsNurse';

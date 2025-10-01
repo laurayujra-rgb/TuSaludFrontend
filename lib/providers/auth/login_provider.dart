@@ -12,6 +12,7 @@ import 'package:tusalud/utils/utils.dart';
 import 'package:tusalud/views/app/select_mode_view.dart';
 import 'package:tusalud/widgets/app/loading.dart';
 
+import '../../views/supervisor/home_supervisor_view.dart';
 import '../../views/views.dart';
 
 class LoginProvider extends ChangeNotifier{

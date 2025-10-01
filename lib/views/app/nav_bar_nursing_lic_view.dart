@@ -1,14 +1,13 @@
+
+
 import 'package:flutter/material.dart';
-import 'package:tusalud/views/admin/hospital/hospital_admin_view.dart';
-import 'package:tusalud/views/admin/peoples/people_admin.view.dart';
-import 'package:tusalud/views/admin/settings/settings_admin_view.dart';
-import 'package:tusalud/views/views.dart';
+import 'package:tusalud/style/app_style.dart';
+import 'package:tusalud/views/nursing%20Lic/home/home_nursing_lic_view.dart';
+import 'package:tusalud/views/nursing%20Lic/patient/patients_nursing_lic_view.dart';
 import 'package:tusalud/widgets/app/custom_icon.dart';
 
-import '../../style/app_style.dart';
-
-class NavBarSupervisorView extends StatelessWidget {
-  const NavBarSupervisorView({super.key, required this.child});
+class NavBarNursingLicView extends StatelessWidget {
+  const NavBarNursingLicView({super.key, required this.child});
   final Widget child;
 
   @override
@@ -40,7 +39,7 @@ class NavBarSupervisorView extends StatelessWidget {
               icon: Icon(Icons.home, color: Color(0xFF4CAF50)), // verde esmeralda
               index: 0,
               label: 'Inicio',
-              route: HomeAdminView.routerName,
+              route: HomeNursingLicView.routerName,
             ),
             CustomIcon(
               icon: Icon(Icons.person_3_rounded, color: Color(0xFF009688)), // turquesa
@@ -50,30 +49,31 @@ class NavBarSupervisorView extends StatelessWidget {
             CustomIcon(
               icon: Icon(Icons.local_hospital_rounded, color: Color(0xFF26A69A)), // teal más suave
               index: 2,
-              label: 'Hospital',
-              route: HospitalAdminView.routerName,
-            ),
-            CustomIcon(
-              icon: Icon(Icons.person_add_alt_1_rounded, color: Color(0xFF43A047)), // verde oscuro
-              index: 3,
-              label: 'Personal',
-              route: PeopleAdminView.routerName,
-            ),
-            CustomIcon(
-              icon: Icon(Icons.assignment_add, color: Color(0xFF00796B)), // verde profundo
-              index: 4,
-              label: 'Asignar',
+              label: 'Pacientes',
+              route: PatientsNursingLicView.routerName,
             ),
             // CustomIcon(
-            //   icon: Icon(Icons.logout, color: Colors.redAccent), // logout en rojo
+            //   icon: Icon(Icons.person_add_alt_1_rounded, color: Color(0xFF43A047)), // verde oscuro
+            //   index: 3,
+            //   label: 'Personal',
+            //   route: PeopleAdminView.routerName,
+            // ),
+            // CustomIcon(
+            //   icon: Icon(Icons.assignment_add, color: Color(0xFF00796B)), // verde profundo
+            //   index: 4,
+            //   label: 'Asignar',
+            // ),
+
+            // CustomIcon(
+            //   icon: Icon(Icons.settings, color: Color(0xFF388E3C)), // verde medio
             //   index: 5,
-            //   label: 'Salir',
+            //   label: 'Ajustes',
+            //   route: SettingsAdminView.routerName,
             // ),
             CustomIcon(
-              icon: Icon(Icons.settings, color: Color(0xFF388E3C)), // verde medio
+              icon: Icon(Icons.logout, color: Colors.redAccent), // logout en rojo
               index: 6,
-              label: 'Ajustes',
-              route: SettingsAdminView.routerName,
+              label: 'Salir',
             ),
           ],
         ),

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/widgets/nurse/add_kardex_nurse_card.dart';
+import 'package:tusalud/widgets/nurse/vital%20signs/add_vital_signs_nurse_card.dart';
 
-class AddKardexNurseView extends StatelessWidget {
-  static const String routerName = 'addKardexNurse';
-  static const String routerPath = '/add_kardex_nurse';
+class AddVitalSignNurseView extends StatelessWidget {
+  static const String routerName = 'addVitalSignNurse';
+  static const String routerPath = '/add_vital_sign_nurse';
 
-  const AddKardexNurseView({super.key});
+  final int kardexId;
+
+  const AddVitalSignNurseView({super.key, required this.kardexId});
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +20,12 @@ class AddKardexNurseView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // 🔹 Header con mejor diseño
+              // 🔹 Header con diseño
               Container(
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [AppStyle.primary, Colors.blueAccent],
+                    colors: [AppStyle.primary, AppStyle.accent],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -38,11 +40,11 @@ class AddKardexNurseView extends StatelessWidget {
                 ),
                 child: Row(
                   children: const [
-                    Icon(Icons.assignment_add, size: 36, color: Colors.white),
+                    Icon(Icons.monitor_heart, size: 36, color: Colors.white),
                     SizedBox(width: 14),
                     Expanded(
                       child: Text(
-                        "Nuevo Kardex",
+                        "Nuevo Signo Vital",
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -57,7 +59,7 @@ class AddKardexNurseView extends StatelessWidget {
               const SizedBox(height: 24),
 
               // 🔹 Formulario con estilo
-              const AddKardexNurseCard(),
+              AddVitalSignNurseCard(kardexId: kardexId),
             ],
           ),
         ),

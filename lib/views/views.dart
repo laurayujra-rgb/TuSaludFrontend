@@ -4,6 +4,6 @@ export 'package:tusalud/views/auth/signup_view.dart';
 // Adminsitration
 export 'package:tusalud/views/admin/home_admin_view.dart';
 // Nurse
-export 'package:tusalud/views/nurse/home_nurse_view.dart';
+export 'package:tusalud/views/nurse/home/home_nurse_view.dart';
 // Supervisor
-export 'package:tusalud/views/supervisor/home_supervisor_view.dart';
+export 'package:tusalud/views/nursing%20Lic/home/home_nursing_lic_view.dart';

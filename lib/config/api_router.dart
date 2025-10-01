@@ -1,3 +1,4 @@
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -21,6 +22,7 @@ import 'package:tusalud/providers/nurse/patients_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/reports_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/via_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/vital_signs_provider.dart';
+import 'package:tusalud/providers/nursing%20Lic/patients_nursing_lic_provider.dart';
 import 'package:tusalud/views/admin/hospital/bed/beds_admin_view.dart';
 import 'package:tusalud/views/admin/hospital/hospital_admin_view.dart';
 import 'package:tusalud/views/admin/hospital/rooms/room_admin_view.dart';
@@ -33,22 +35,25 @@ import 'package:tusalud/views/admin/settings/gender/gender_admin_view.dart';
 import 'package:tusalud/views/admin/settings/settings_admin_view.dart';
 import 'package:tusalud/views/app/nav_bar_admin_view.dart';
 import 'package:tusalud/views/app/nav_bar_nurse_view.dart';
-import 'package:tusalud/views/app/nav_bar_supervisor_view.dart';
-import 'package:tusalud/views/nurse/add_kardex_nurse_view.dart';
-import 'package:tusalud/views/nurse/add_reports_nurse_view.dart';
-import 'package:tusalud/views/nurse/add_vital_signs_nurse_view.dart';
-import 'package:tusalud/views/nurse/diet_nurse_view.dart';
-import 'package:tusalud/views/nurse/kardex_nurse_view.dart';
-import 'package:tusalud/views/nurse/medicine_nurse_view.dart';
-import 'package:tusalud/views/nurse/patientes_nurse_view.dart';
-import 'package:tusalud/views/nurse/reports_nurse_view.dart';
+import 'package:tusalud/views/app/nav_bar_nursing_lic_view.dart';
+import 'package:tusalud/views/nursing%20Lic/kardex/add_kardex_nursing_lic_view.dart';
+import 'package:tusalud/views/nurse/Reports/add_reports_nurse_view.dart';
+import 'package:tusalud/views/nurse/Vital%20Signs/add_vital_signs_nurse_view.dart';
+import 'package:tusalud/views/nursing%20Lic/diet/diet_nurse_view.dart';
+import 'package:tusalud/views/nursing%20Lic/kardex/kardex_nursing_lic_view.dart';
+import 'package:tusalud/views/nursing%20Lic/medicine/medicine_nursing_lic_view.dart';
+import 'package:tusalud/views/nurse/patients/patientes_nurse_view.dart';
+import 'package:tusalud/views/nurse/Reports/reports_nurse_view.dart';
 import 'package:tusalud/views/nurse/settings_nurse_view.dart';
-import 'package:tusalud/views/nurse/via_nurse_view.dart';
-import 'package:tusalud/views/nurse/vital_signs_nurse_view.dart';
+import 'package:tusalud/views/nursing%20Lic/patient/patients_nursing_lic_view.dart';
+import 'package:tusalud/views/nursing%20Lic/via%20Medicine/via_nurse_view.dart';
+import 'package:tusalud/views/nurse/Vital%20Signs/vital_signs_nurse_view.dart';
 
 import '../providers/auth/user_provider.dart';
+import '../providers/nursing Lic/kardex_nursing_lic_provider.dart';
 import '../views/admin/peoples/nurses/add_nurse_admin_view.dart';
 import '../views/admin/settings/role/role_admin_view.dart';
+
 import '../views/views.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey =
@@ -76,7 +81,7 @@ class AppRouter {
       ),
 
       //-------------------------------------------------------------------
-      // ADMIN SECTION
+      // ADMIN SECTION   - SUPERVISOR
       //-------------------------------------------------------------------
       ShellRoute(
         builder: (context, state, child) {
@@ -184,21 +189,8 @@ class AppRouter {
             path: DietNurseView.routerPath,
             builder: (context, state) => const DietNurseView(),
           ),
-          GoRoute(
-            name: MedicineNurseView.routerName,
-            path: MedicineNurseView.routerPath,
-            builder: (context, state) => const MedicineNurseView(),
-          ),
-          GoRoute(
-            name: KardexNurseView.routerName,
-            path: KardexNurseView.routerPath,
-            builder: (context, state) => const KardexNurseView(),
-          ),
-          GoRoute(
-            name: AddKardexNurseView.routerName,
-            path: AddKardexNurseView.routerPath,
-            builder: (context, state) => const AddKardexNurseView(),
-          ),
+
+
           GoRoute(
             name: VitalSignsNurseView.routerName,
             path: VitalSignsNurseView.routerPath,
@@ -274,17 +266,52 @@ class AppRouter {
       ),
 
       //-------------------------------------------------------------------
-      // SUPERVISOR SECTION
+      // LICENCIADA SECTION
       //-------------------------------------------------------------------
       ShellRoute(
         builder: (context, state, child) {
-          return NavBarSupervisorView(child: child);
+          return NavBarNursingLicView(child: child);
         },
         routes: [
           GoRoute(
-            name: HomeSupervisorView.routerName,
-            path: HomeSupervisorView.routerPath,
-            builder: (context, state) => const HomeSupervisorView(),
+            name: HomeNursingLicView.routerName,
+            path: HomeNursingLicView.routerPath,
+            builder: (context, state) => const HomeNursingLicView(),
+          ),
+          GoRoute(
+            name: PatientsNursingLicView.routerName,
+            path: PatientsNursingLicView.routerPath,
+            builder: (context, state) => const PatientsNursingLicView(),
+          ),
+          GoRoute(
+            name: MedicineNurseView.routerName,
+            path: MedicineNurseView.routerPath,
+            builder: (context, state) => const MedicineNurseView(),
+          ),
+          GoRoute(
+            name: KardexNursingLicView.routerName,
+            path: KardexNursingLicView.routerPath,
+            builder: (context, state) {
+              final patientId = int.tryParse(state.uri.queryParameters['patientId'] ?? '');
+              final headerSubtitle = state.uri.queryParameters['headerSubtitle'];
+
+              if (patientId == null) {
+                return const Scaffold(
+                  body: Center(child: Text('Error: patientId es requerido')),
+                );
+              }
+
+              return KardexNursingLicView(
+                patientId: patientId,
+                headerSubtitle: headerSubtitle,
+              );
+            },
+          ),
+
+          GoRoute(
+            name: AddKardexNursingLicView.routerName,
+            path: AddKardexNursingLicView.routerPath,
+            builder: (context, state) => const AddKardexNursingLicView(),
           ),
           // aquí también podrías meter más rutas de supervisor
         ],
@@ -309,8 +336,9 @@ class AppRouter {
     ChangeNotifierProvider(create: (_) => ViaNurseProvider()),
     ChangeNotifierProvider(create: (_) => DietNurseProvider()),
     ChangeNotifierProvider(create: (_) => MedicineNurseProvider()),
-    ChangeNotifierProvider(create: (_) => KardexNurseProvider()),
+    ChangeNotifierProvider(create: (_) => KardexNursingLicProvider()),
     ChangeNotifierProvider(create: (_) => VitalSignsNurseProvider()),
     ChangeNotifierProvider(create: (_) => ReportsNurseProvider()),
+    ChangeNotifierProvider(create: (_) => PatientsNursingLicProvider())
   ];
 }

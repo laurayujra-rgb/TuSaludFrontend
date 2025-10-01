@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/config/preferences.dart';
+import '../../views/supervisor/home_supervisor_view.dart';
 import '../../views/views.dart';
 import 'user_provider.dart';
 class SplashView extends StatefulWidget {
@@ -28,18 +29,18 @@ class _SplashViewState extends State<SplashView> {
     if (token.isNotEmpty) {
       userProvider.setUserData(name, lastName, role, email, personId);
       if (!mounted) return;
-      if (role == 'ROLE_ADMINISTRADOR') {
+      if (role == 'ROLE_SUPERVISORA') {
         context.goNamed(HomeAdminView.routerName);
       } else if (role == 'ROLE_ENFERMERA') {
         context.goNamed(HomeNurseView.routerName);
-      } else if (role == 'ROLE_SUPERVISOR') {
-        context.goNamed(HomeSupervisorView.routerName);
+      } else if (role == 'ROLE_LICENCIADA') {
+        context.goNamed(HomeNursingLicView.routerName);
       } else {
-        context.goNamed(HomeNurseView.routerName);
+        context.goNamed(HomeNursingLicView.routerName);
       }
     } else {
       if (mounted) {
-        context.goNamed(HomeNurseView.routerName);
+        context.goNamed(HomeNursingLicView.routerName);
       }
     }
   }
