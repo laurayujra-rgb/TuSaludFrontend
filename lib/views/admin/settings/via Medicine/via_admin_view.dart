@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tusalud/providers/nurse/via_nurse_provider.dart';
+import 'package:tusalud/providers/admin/via_admin_provider.dart';
 import 'package:tusalud/style/app_style.dart';
+import 'package:tusalud/views/admin/settings/via%20Medicine/add_via_admin_view.dart';
 import 'package:tusalud/widgets/admin/settings/via%20Medicine/via_admin_card.dart';
 
 class ViasView extends StatefulWidget {
@@ -19,7 +20,7 @@ class _ViasViewState extends State<ViasView> {
   void initState() {
     super.initState();
     Future.microtask(() =>
-        Provider.of<ViaNurseProvider>(context, listen: false).loadVias());
+        Provider.of<ViaAdminProvider>(context, listen: false).loadVias());
   }
 
   @override
@@ -30,17 +31,21 @@ class _ViasViewState extends State<ViasView> {
         appBar: AppBar(
           backgroundColor: AppStyle.ligthGrey,
           elevation: 0,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.add, color: AppStyle.primary),
-              tooltip: "Agregar nueva vía",
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Abrir formulario para nueva vía")),
-                );
-              },
-            ),
-          ],
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.add, color: AppStyle.primary),
+                tooltip: "Agregar nueva vía",
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AddViaAdminView(),
+                    ),
+                  );
+                },
+              ),
+            ],
+
         ),
         body: Column(
           children: [
@@ -94,7 +99,7 @@ class _ViasViewState extends State<ViasView> {
 
             // 🔹 Listado
             Expanded(
-              child: Consumer<ViaNurseProvider>(
+              child: Consumer<ViaAdminProvider>(
                 builder: (context, provider, child) {
                   if (provider.isLoading) {
                     return const Center(child: CircularProgressIndicator());

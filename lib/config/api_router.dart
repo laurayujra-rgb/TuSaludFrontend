@@ -19,7 +19,7 @@ import 'package:tusalud/providers/nurse/diet_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/medicine_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/patients_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/reports_nurse_provider.dart';
-import 'package:tusalud/providers/nurse/via_nurse_provider.dart';
+import 'package:tusalud/providers/admin/via_admin_provider.dart';
 import 'package:tusalud/providers/nurse/vital_signs_provider.dart';
 import 'package:tusalud/providers/nursing%20Lic/patients_nursing_lic_provider.dart';
 import 'package:tusalud/views/admin/hospital/bed/beds_admin_view.dart';
@@ -32,6 +32,7 @@ import 'package:tusalud/views/admin/peoples/people_admin.view.dart';
 import 'package:tusalud/views/admin/peoples/supervisor/supervisor_admin_view.dart';
 import 'package:tusalud/views/admin/settings/gender/gender_admin_view.dart';
 import 'package:tusalud/views/admin/settings/settings_admin_view.dart';
+import 'package:tusalud/views/admin/settings/via%20Medicine/add_via_admin_view.dart';
 import 'package:tusalud/views/app/nav_bar_admin_view.dart';
 import 'package:tusalud/views/app/nav_bar_nurse_view.dart';
 import 'package:tusalud/views/app/nav_bar_nursing_lic_view.dart';
@@ -156,6 +157,11 @@ class AppRouter {
             name: ViasView.routerName,
             path: ViasView.routerPath,
             builder: (context, state) => const ViasView(),
+          ),
+          GoRoute(
+            name: AddViaAdminView.routerName,
+            path: AddViaAdminView.routerPath,
+            builder: (context, state) => const AddViaAdminView(),
           ),
           GoRoute(
             name: DietNurseView.routerName,
@@ -331,7 +337,7 @@ class AppRouter {
     ChangeNotifierProvider(create: (_) => RegisterUserProvider()),
     ChangeNotifierProvider(create: (_) => RegisterUserAdminProvider()),
     ChangeNotifierProvider(create: (_) => PatientsNurseProvider()),
-    ChangeNotifierProvider(create: (_) => ViaNurseProvider()),
+    ChangeNotifierProvider(create: (_) => ViaAdminProvider()),
     ChangeNotifierProvider(create: (_) => DietNurseProvider()),
     ChangeNotifierProvider(create: (_) => MedicineNurseProvider()),
     ChangeNotifierProvider(create: (_) => KardexNursingLicProvider()),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tusalud/api/response/app/ts_via_response.dart';
 import 'package:tusalud/api/tu_salud_api.dart';
 
-class ViaNurseProvider extends ChangeNotifier {
+class ViaAdminProvider extends ChangeNotifier {
   List<TsViaResponse> _allVias = [];
   List<TsViaResponse> _vias = [];
 
