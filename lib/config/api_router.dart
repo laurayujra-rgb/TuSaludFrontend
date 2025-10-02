@@ -16,7 +16,6 @@ import 'package:tusalud/providers/auth/login_provider.dart';
 import 'package:tusalud/providers/auth/registe_user_provider.dart';
 import 'package:tusalud/providers/auth/splashView.dart';
 import 'package:tusalud/providers/nurse/diet_nurse_provider.dart';
-import 'package:tusalud/providers/nurse/kardex_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/medicine_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/patients_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/reports_nurse_provider.dart';
@@ -39,14 +38,14 @@ import 'package:tusalud/views/app/nav_bar_nursing_lic_view.dart';
 import 'package:tusalud/views/nursing%20Lic/kardex/add_kardex_nursing_lic_view.dart';
 import 'package:tusalud/views/nurse/Reports/add_reports_nurse_view.dart';
 import 'package:tusalud/views/nurse/Vital%20Signs/add_vital_signs_nurse_view.dart';
-import 'package:tusalud/views/nursing%20Lic/diet/diet_nurse_view.dart';
+import 'package:tusalud/views/admin/settings/diet/diet_nurse_view.dart';
 import 'package:tusalud/views/nursing%20Lic/kardex/kardex_nursing_lic_view.dart';
 import 'package:tusalud/views/nursing%20Lic/medicine/medicine_nursing_lic_view.dart';
 import 'package:tusalud/views/nurse/patients/patientes_nurse_view.dart';
 import 'package:tusalud/views/nurse/Reports/reports_nurse_view.dart';
 import 'package:tusalud/views/nurse/settings_nurse_view.dart';
 import 'package:tusalud/views/nursing%20Lic/patient/patients_nursing_lic_view.dart';
-import 'package:tusalud/views/nursing%20Lic/via%20Medicine/via_nurse_view.dart';
+import 'package:tusalud/views/admin/settings/via%20Medicine/via_admin_view.dart';
 import 'package:tusalud/views/nurse/Vital%20Signs/vital_signs_nurse_view.dart';
 
 import '../providers/auth/user_provider.dart';
@@ -153,6 +152,16 @@ class AppRouter {
             path: AddNurseAdminView.routerPath,
             builder: (context, state) => const AddNurseAdminView(),
           ),
+          GoRoute(
+            name: ViasView.routerName,
+            path: ViasView.routerPath,
+            builder: (context, state) => const ViasView(),
+          ),
+          GoRoute(
+            name: DietNurseView.routerName,
+            path: DietNurseView.routerPath,
+            builder: (context, state) => const DietNurseView(),
+          ),
         ],
       ),
 
@@ -174,22 +183,11 @@ class AppRouter {
             path: PatientsNurseView.routerPath,
             builder: (context, state) =>  const PatientsNurseView(),
             ),
-          GoRoute(
-            name: SettingsView.routerName,
-            path: SettingsView.routerPath,
-            builder: (context, state) => const SettingsView(),
-          ),
-          GoRoute(
-            name: ViasView.routerName,
-            path: ViasView.routerPath,
-            builder: (context, state) => const ViasView(),
-          ),
-          GoRoute(
-            name: DietNurseView.routerName,
-            path: DietNurseView.routerPath,
-            builder: (context, state) => const DietNurseView(),
-          ),
-
+          // GoRoute(
+          //   name: SettingsView.routerName,
+          //   path: SettingsView.routerPath,
+          //   builder: (context, state) => const SettingsView(),
+          // ),
 
           GoRoute(
             name: VitalSignsNurseView.routerName,

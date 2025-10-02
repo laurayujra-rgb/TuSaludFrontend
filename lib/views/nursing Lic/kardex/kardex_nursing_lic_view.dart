@@ -93,15 +93,20 @@ void initState() {
             Expanded(
               child: Consumer<KardexNursingLicProvider>(
                 builder: (context, provider, child) {
-                  if (provider.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (provider.errorMessage != null) {
-                    return Center(child: Text(provider.errorMessage!));
-                  }
-                  if (provider.kardexList.isEmpty) {
-                    return const Center(child: Text("No hay kardex registrados"));
-                  }
+                    if (provider.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (provider.errorMessage != null) {
+                      return Center(child: Text(provider.errorMessage!));
+                    }
+
+                    if (provider.kardexList.isEmpty) {
+                      return const Center(
+                        child: Text("Este paciente no tiene kardex registrados..."),
+                      );
+                    }
+
                   return ListView.builder(
                     padding: const EdgeInsets.only(bottom: 16),
                     itemCount: provider.kardexList.length,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/providers/nurse/via_nurse_provider.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/widgets/nursing%20Lic/via%20Medicine/via_nurse_card.dart';
+import 'package:tusalud/widgets/admin/settings/via%20Medicine/via_admin_card.dart';
 
 class ViasView extends StatefulWidget {
   static const String routerName = 'viasAdmin';

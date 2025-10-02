@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:tusalud/api/response/app/ts_kardex_response.dart';
 import 'package:tusalud/api/tu_salud_api.dart';
@@ -28,28 +30,43 @@ class KardexNursingLicProvider extends ChangeNotifier {
   }
 
   /// 🔹 Cargar kardex por patientId y roleId
-  Future<void> loadKardexByPatientAndRole(int patientId, int roleId) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+Future<void> loadKardexByPatientAndRole(int patientId, int roleId) async {
+  _isLoading = true;
+  _errorMessage = null;
+  notifyListeners();
 
-    try {
-      final response =
-          await TuSaludApi().getKardexByPatientAndRole(patientId, roleId);
+  try {
+    final response = await TuSaludApi().getKardexByPatientAndRole(patientId, roleId);
 
-      if (response.isSuccess() && response.dataList != null) {
-        _allKardex = response.dataList!;
-        _kardexList = List.from(_allKardex);
-      } else {
-        _errorMessage = response.message ?? 'No se encontraron kardex';
-      }
-    } catch (e) {
-      _errorMessage = 'Error de conexión: ${e.toString()}';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+    // Caso éxito con datos
+    if (response.isSuccess() && response.dataList != null && response.dataList!.isNotEmpty) {
+      _allKardex = response.dataList!;
+      _kardexList = List.from(_allKardex);
+      _errorMessage = null;
     }
+    // ✅ Caso "sin resultados": 404 o 2xx con lista vacía -> NO es error
+    else if (response.status == 404 ||
+             (response.isSuccess() && (response.dataList == null || response.dataList!.isEmpty))) {
+      _allKardex = [];
+      _kardexList = [];
+      _errorMessage = null; // 👈 clave: no mostrar error
+    }
+    // ❌ Errores reales (red/timeout/500, etc.)
+    else if (response.status == HttpStatus.networkConnectTimeoutError ||
+             response.status! >= HttpStatus.badRequest) {
+      _errorMessage = 'Error al cargar los kardex'; // tu mensaje genérico de error
+    } else {
+      _errorMessage = 'Error al cargar los kardex';
+    }
+  } catch (e) {
+    _errorMessage = 'Error de conexión: ${e.toString()}';
+  } finally {
+    _isLoading = false;
+    notifyListeners();
   }
+}
+
+
 
   /// 🔹 Reintentar carga
   void retryLoading(int patientId, int roleId) {

@@ -1468,30 +1468,48 @@ Future<TsResponse<TsMedicineResponse>> deleteMedicine(int medicineId) async {
   
 /// GET KARDEX BY PATIENT + ROLE
 Future<TsResponse<TsKardexResponse>> getKardexByPatientAndRole(
-    int patientId, int roleId) async {
+  int patientId, 
+  int roleId,
+) async {
   try {
     final response = await httpGet(
       '$_baseUrl/kardex/patient/$patientId/role/$roleId',
       getHeaders(),
     );
 
+    // Si viene error (>=400), devolvemos TsResponse con status y lista vacía
     if (response.statusCode >= HttpStatus.badRequest) {
-      if (response.statusCode == HttpStatus.networkConnectTimeoutError) {
-        return TsResponse<TsKardexResponse>(
-          status: HttpStatus.networkConnectTimeoutError,
-        );
-      }
-      return TsResponse.createEmpty();
+      // Intentamos leer el message del backend (aunque no lo uses para UI)
+      String? backendMessage;
+      try {
+        final Map<String, dynamic> jsonBody =
+            jsonDecode(utf8.decode(response.bodyBytes));
+        backendMessage = jsonBody['message']?.toString();
+      } catch (_) {}
+
+      return TsResponse<TsKardexResponse>(
+        status: response.statusCode,           // 👈 importante
+        message: backendMessage,               // opcional
+        dataList: const [],                    // 👈 vacío para provider
+      );
     }
 
+    // OK 2xx
     return TsResponse.fromJsonList(
       utf8.decode(response.bodyBytes),
       TsKardexResponse.createEmpty(),
     );
   } catch (_) {
-    return TsResponse.createEmpty();
+    return TsResponse<TsKardexResponse>(
+      status: HttpStatus.internalServerError,  // 👈 distingue error real
+      message: 'Error de conexión',
+      dataList: const [],
+    );
   }
 }
+// ----------------------------------------------------------------
+// GET KARDEX BY PATIENT ID (ROLE ID = 4 for patients)
+// ----------------------------------------------------------------
 Future<TsResponse<TsKardexResponse>> getKardexByPatientId(int patientId) async {
   try {
     final response = await httpGet(
@@ -1512,6 +1530,8 @@ Future<TsResponse<TsKardexResponse>> getKardexByPatientId(int patientId) async {
   }
 }
 
+
+
 Future<TsResponse<TsPeopleResponse>> getAllPatientsByRole() async {
   try {
     final response = await httpGet('$_baseUrl/persons/role/4', getHeaders());
@@ -1528,6 +1548,7 @@ Future<TsResponse<TsPeopleResponse>> getAllPatientsByRole() async {
     return TsResponse.createEmpty();
   }
 }
+
 
 
 

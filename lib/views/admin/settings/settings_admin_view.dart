@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:tusalud/style/app_style.dart';
+import 'package:tusalud/views/admin/settings/diet/diet_nurse_view.dart';
 import 'package:tusalud/views/admin/settings/gender/gender_admin_view.dart';
 import 'package:tusalud/views/admin/settings/role/role_admin_view.dart';
+import 'package:tusalud/views/admin/settings/via%20Medicine/via_admin_view.dart';
+import 'package:tusalud/views/nursing%20Lic/medicine/medicine_nursing_lic_view.dart';
+import 'package:tusalud/widgets/admin/settings/settings_admin_card.dart';
 
 class SettingsAdminView extends StatelessWidget {
   static const String routerName = 'settings_admin';
@@ -21,7 +25,7 @@ class SettingsAdminView extends StatelessWidget {
         ),
         body: Column(
           children: [
-            // Header en forma de Card
+            // Header
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Container(
@@ -69,14 +73,13 @@ class SettingsAdminView extends StatelessWidget {
               ),
             ),
 
-            // Opciones
+            // Contenido con ListView
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
+                child: ListView(
                   children: [
-                    _buildOptionCard(
-                      context,
+                    SettingsAdminCard(
                       title: "Gestión de Géneros",
                       subtitle: "Configura los géneros del sistema",
                       icon: Icons.wc,
@@ -91,8 +94,7 @@ class SettingsAdminView extends StatelessWidget {
                       },
                     ),
                     const SizedBox(height: 16),
-                    _buildOptionCard(
-                      context,
+                    SettingsAdminCard(
                       title: "Gestión de Roles",
                       subtitle: "Administra los roles de usuario",
                       icon: Icons.admin_panel_settings,
@@ -106,73 +108,55 @@ class SettingsAdminView extends StatelessWidget {
                         );
                       },
                     ),
+                    const SizedBox(height: 16),
+                    SettingsAdminCard(
+                      title: "Medicamentos",
+                      subtitle: "Controla los medicamentos registrados",
+                      icon: Icons.medication,
+                      color: Colors.green.shade50,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MedicineNurseView(),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    SettingsAdminCard(
+                      title: "Dietas",
+                      subtitle: "Gestiona los tipos de dieta",
+                      icon: Icons.restaurant_menu,
+                      color: Colors.orange.shade50,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const DietNurseView(),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    SettingsAdminCard(
+                      title: "Tipos de Vías de Administración",
+                      subtitle: "Oral, Intravenosa, Intramuscular, etc.",
+                      icon: Icons.local_pharmacy,
+                      color: Colors.purple.shade50,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ViasView(),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOptionCard(
-    BuildContext context, {
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: AppStyle.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              spreadRadius: 2,
-              offset: const Offset(2, 4),
-            ),
-          ],
-          border: Border.all(color: AppStyle.primary.withOpacity(0.2)),
-        ),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: color,
-              child: Icon(icon, size: 30, color: AppStyle.primary),
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
           ],
         ),
       ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
 import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:tusalud/config/api_router.dart';
@@ -19,7 +18,6 @@ void main() async{
   );
   // runApp(const MyApp());
 }
-
 class MyApp extends StatelessWidget{
   const MyApp({super.key});
 
