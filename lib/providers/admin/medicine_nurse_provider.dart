@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tusalud/api/request/app/ts_medication_request.dart';
 import 'package:tusalud/api/response/app/ts_medication_response.dart';
 import 'package:tusalud/api/tu_salud_api.dart';
 
@@ -48,6 +49,26 @@ class MedicineNurseProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+  Future<bool> createMedicine(TsMedicineRequest request) async {
+  try {
+    final response = await TuSaludApi().createMedicine(request);
+
+    if (response.isSuccess()) {
+      // recargar medicamentos después de crear
+      await loadMedicines();
+      return true;
+    } else {
+      _errorMessage = response.message ?? 'Error al crear el medicamento';
+      notifyListeners();
+      return false;
+    }
+  } catch (e) {
+    _errorMessage = 'Error de conexión: ${e.toString()}';
+    notifyListeners();
+    return false;
+  }
+}
+
 
   /// 🔹 Reintentar carga
   void retryLoading() {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/views/admin/settings/diet/diet_nurse_view.dart';
-import 'package:tusalud/views/nursing%20Lic/medicine/medicine_nursing_lic_view.dart';
+import 'package:tusalud/views/admin/settings/diet/diet_admin_view.dart';
+import 'package:tusalud/views/admin/settings/medicine/medicine_nursing_lic_view.dart';
 import 'package:tusalud/views/admin/settings/via%20Medicine/via_admin_view.dart';
 
 
@@ -105,7 +105,7 @@ class SettingsView extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const DietNurseView(),
+                            builder: (_) => const DietAdminView(),
                           ),
                         );
                       },

@@ -6,7 +6,7 @@ import 'package:tusalud/widgets/nursing%20Lic/patients/patients_nursing_lic_card
 import 'package:go_router/go_router.dart';
 
 import 'package:tusalud/views/nursing%20Lic/kardex/kardex_nursing_lic_view.dart';
-import 'package:tusalud/views/nursing%20Lic/medicine/medicine_nursing_lic_view.dart';
+import 'package:tusalud/views/admin/settings/medicine/medicine_nursing_lic_view.dart';
 
 class PatientsNursingLicView extends StatefulWidget {
   static const String routerName = 'patientsNursingLic';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tusalud/api/response/app/ts_diet_response.dart';
 import 'package:tusalud/api/tu_salud_api.dart';
 
-class DietNurseProvider extends ChangeNotifier {
+class DietAdminProvider extends ChangeNotifier {
   List<TsDietResponse> _allDiets = [];
   List<TsDietResponse> _diets = [];
 

@@ -6,10 +6,7 @@ import 'package:tusalud/api/response/ts_response.dart';
 class TsMedicineResponse implements TsResponseService {
   int medicineId;
   String? medicineName;
-  String? medicineDateToEnd;
-  String? medicineMoorning;
-  String? medicineAfternoon;
-  String? medicineEvening;
+  String? medicineLaboratory;
   int? medicineStatus;
   TsViaResponse via;
   List<TsKardexMedicineResponse> kardexMedicines;
@@ -17,10 +14,7 @@ class TsMedicineResponse implements TsResponseService {
   TsMedicineResponse({
     required this.medicineId,
     this.medicineName,
-    this.medicineDateToEnd,
-    this.medicineMoorning,
-    this.medicineAfternoon,
-    this.medicineEvening,
+    this.medicineLaboratory,
     this.medicineStatus,
     required this.via,
     this.kardexMedicines = const [],
@@ -29,10 +23,7 @@ class TsMedicineResponse implements TsResponseService {
   factory TsMedicineResponse.createEmpty() => TsMedicineResponse(
         medicineId: 0,
         medicineName: '',
-        medicineDateToEnd: '',
-        medicineMoorning: '',
-        medicineAfternoon: '',
-        medicineEvening: '',
+        medicineLaboratory: '',
         medicineStatus: 0,
         via: TsViaResponse.createEmpty(),
         kardexMedicines: [],
@@ -45,11 +36,7 @@ class TsMedicineResponse implements TsResponseService {
       TsMedicineResponse(
         medicineId: json["medicineId"] as int? ?? 0,
         medicineName: json["medicineName"] as String?,
-        medicineDateToEnd: json["medicineDateToEnd"] as String?,
-        medicineMoorning: json["medicineMoorning"] as String?,
-        medicineAfternoon: json["medicineAfternoon"] as String?,
-        medicineEvening: json["medicineEvening"] as String?,
-        medicineStatus: json["medicineStatus"] as int?,
+        medicineLaboratory: json["medicineLaboratory"] as String?,
         via: TsViaResponse.fromJson(json["via"]),
         kardexMedicines: json["kardexMedicines"] != null
             ? List<TsKardexMedicineResponse>.from(
@@ -62,10 +49,7 @@ class TsMedicineResponse implements TsResponseService {
   Map<String, dynamic> toMap() => {
         "medicineId": medicineId,
         "medicineName": medicineName,
-        "medicineDateToEnd": medicineDateToEnd,
-        "medicineMoorning": medicineMoorning,
-        "medicineAfternoon": medicineAfternoon,
-        "medicineEvening": medicineEvening,
+        "medicineLaboratory": medicineLaboratory,
         "medicineStatus": medicineStatus,
         "via": via.toMap(),
         "kardexMedicines":
@@ -82,10 +66,7 @@ class TsMedicineResponse implements TsResponseService {
       TsMedicineResponse(
         medicineId: json["medicineId"] as int? ?? 0,
         medicineName: json["medicineName"] as String?,
-        medicineDateToEnd: json["medicineDateToEnd"] as String?,
-        medicineMoorning: json["medicineMoorning"] as String?,
-        medicineAfternoon: json["medicineAfternoon"] as String?,
-        medicineEvening: json["medicineEvening"] as String?,
+        medicineLaboratory: json["medicineLaboratory"] as String?,
         medicineStatus: json["medicineStatus"] as int?,
         via: TsViaResponse.fromJson(json["via"]),
         kardexMedicines: json["kardexMedicines"] != null

@@ -1,3 +1,6 @@
 {
-    "cmake.sourceDirectory": "C:/Tallerres de Grado UCB/Laura/Proyecto Salud Plus/Sistema/Frontend/TuSaludFrontend/linux"
+    "cmake.sourceDirectory": "C:/Tallerres de Grado UCB/Laura/Proyecto Salud Plus/Sistema/Frontend/TuSaludFrontend/linux",
+    "java.project.sourcePaths": [
+        "lib/widgets/admin/settings/medicine"
+    ]
 }
