@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tusalud/providers/admin/gender_provider.dart';
 import 'package:tusalud/providers/auth/registe_user_provider.dart';
 import 'package:tusalud/widgets/app/custom_field.dart';
 import 'package:tusalud/widgets/app/custom_button.dart';
@@ -23,6 +24,14 @@ class _AddPatientCardState extends State<AddPatientCard> {
   String? _selectedGenderId;
   final int _roleId = 4; // Paciente = rolId = 4
 
+  @override
+  void initState() {
+    super.initState();
+    // 🔹 Cargar géneros al iniciar
+    Future.microtask(() =>
+        Provider.of<GenderAdminProvider>(context, listen: false).loadGenders());
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -34,9 +43,19 @@ class _AddPatientCardState extends State<AddPatientCard> {
       setState(() {
         _birthdateController.text =
             "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+
+        // 🔹 Calcular edad automáticamente
+        final today = DateTime.now();
+        int age = today.year - picked.year;
+        if (today.month < picked.month ||
+            (today.month == picked.month && today.day < picked.day)) {
+          age--; // aún no cumplió años este año
+        }
+        _ageController.text = age.toString();
       });
     }
   }
+
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -54,7 +73,8 @@ class _AddPatientCardState extends State<AddPatientCard> {
     );
 
     if (provider.errorMessage == null) {
-      Navigator.of(context).pop();
+      // 👈 devolvemos true para refrescar lista
+      Navigator.of(context).pop(true);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Paciente registrado con éxito")),
       );
@@ -67,7 +87,8 @@ class _AddPatientCardState extends State<AddPatientCard> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<RegisterUserProvider>(context);
+    final registerProvider = Provider.of<RegisterUserProvider>(context);
+    final genderProvider = Provider.of<GenderAdminProvider>(context);
 
     return Card(
       elevation: 6,
@@ -95,14 +116,16 @@ class _AddPatientCardState extends State<AddPatientCard> {
                 controller: _nameController,
                 hintText: "Nombre",
                 prefixIcon: Icon(Icons.person, color: Colors.teal[600]),
-                validator: (v) => v == null || v.isEmpty ? "Ingrese nombre" : null,
+                validator: (v) =>
+                    v == null || v.isEmpty ? "Ingrese nombre" : null,
               ),
               const SizedBox(height: 16),
               CustomField(
                 controller: _fatherSurnameController,
                 hintText: "Apellido Paterno",
                 prefixIcon: Icon(Icons.badge, color: Colors.teal[600]),
-                validator: (v) => v == null || v.isEmpty ? "Ingrese apellido paterno" : null,
+                validator: (v) =>
+                    v == null || v.isEmpty ? "Ingrese apellido paterno" : null,
               ),
               const SizedBox(height: 16),
               CustomField(
@@ -116,7 +139,8 @@ class _AddPatientCardState extends State<AddPatientCard> {
                 hintText: "DNI",
                 keyboardType: TextInputType.number,
                 prefixIcon: Icon(Icons.credit_card, color: Colors.teal[600]),
-                validator: (v) => v == null || v.isEmpty ? "Ingrese DNI" : null,
+                validator: (v) =>
+                    v == null || v.isEmpty ? "Ingrese DNI" : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -136,15 +160,22 @@ class _AddPatientCardState extends State<AddPatientCard> {
                     v == null || v.isEmpty ? "Seleccione fecha" : null,
               ),
               const SizedBox(height: 16),
-              CustomField(
+              TextFormField(
                 controller: _ageController,
-                hintText: "Edad",
-                keyboardType: TextInputType.number,
-                prefixIcon: Icon(Icons.cake, color: Colors.teal[600]),
-                validator: (v) =>
-                    v == null || v.isEmpty ? "Ingrese edad" : null,
+                readOnly: true,
+                decoration: InputDecoration(
+                  hintText: "Edad",
+                  prefixIcon: Icon(Icons.cake, color: Colors.teal[600]),
+                  filled: true,
+                  fillColor: Colors.teal.withOpacity(0.05),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
+
+              // 🔹 Dropdown dinámico desde DB
               DropdownButtonFormField<String>(
                 value: _selectedGenderId,
                 decoration: InputDecoration(
@@ -156,15 +187,18 @@ class _AddPatientCardState extends State<AddPatientCard> {
                   fillColor: Colors.teal.withOpacity(0.05),
                 ),
                 hint: const Text("Seleccione género"),
-                items: const [
-                  DropdownMenuItem(value: "1", child: Text("Masculino")),
-                  DropdownMenuItem(value: "2", child: Text("Femenino")),
-                ],
+                items: genderProvider.genders.map((g) {
+                  return DropdownMenuItem(
+                    value: g.genderId.toString(),
+                    child: Text(g.genderName ?? "Sin nombre"),
+                  );
+                }).toList(),
                 onChanged: (v) => setState(() => _selectedGenderId = v),
                 validator: (v) => v == null ? "Seleccione género" : null,
               ),
+
               const SizedBox(height: 28),
-              provider.isLoading
+              registerProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : CustomButton(
                       text: "Registrar Paciente",

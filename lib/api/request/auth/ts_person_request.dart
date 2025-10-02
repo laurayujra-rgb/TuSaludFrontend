@@ -1,7 +1,7 @@
 class TsPersonRequest {
   final String personName;
   final String personFatherSurname;
-  final String? personMotherSurname; // puede ser opcional
+  final String? personMotherSurname;
   final String personDni;
   final String personBirthdate;
   final int personAge;
@@ -30,5 +30,12 @@ class TsPersonRequest {
       "gender": { "genderId": genderId },
       "role": { "roleId": roleId },
     };
+  }
+
+  debugPrint() {
+    print(
+      'Nombre: $personName, Apellido: $personFatherSurname, DNI: $personDni, '
+      'Edad: $personAge, Genero: $genderId, Rol: $roleId'
+    );
   }
 }

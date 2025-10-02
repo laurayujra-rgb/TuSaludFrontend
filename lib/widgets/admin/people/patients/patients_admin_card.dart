@@ -22,13 +22,18 @@ class PatientAdminCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 🔹 Avatar + nombre
+                // 🔹 Avatar grande + nombre
                 Center(
                   child: Column(
                     children: [
-                      const CircleAvatar(
-                        radius: 40,
-                        child: Icon(Icons.local_hospital, size: 40),
+                      CircleAvatar(
+                        radius: 42,
+                        backgroundColor: Colors.teal.withOpacity(0.1),
+                        child: const Icon(
+                          Icons.person,
+                          size: 46,
+                          color: Colors.teal,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Text(
@@ -42,11 +47,11 @@ class PatientAdminCard extends StatelessWidget {
                           color: Colors.black87,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 6),
                       Text(
-                        person.role.roleName ?? '',
+                        person.role.roleName ?? 'Paciente',
                         style: const TextStyle(
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: Colors.teal,
                         ),
@@ -57,7 +62,7 @@ class PatientAdminCard extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                // 🔹 Datos con íconos
+                // 🔹 Datos detallados
                 _buildDetailRow(Icons.badge, "DNI", person.personDni ?? "-"),
                 _buildDetailRow(Icons.cake, "Nacimiento", person.personBirthdate ?? "-"),
                 _buildDetailRow(Icons.numbers, "Edad", "${person.personAge ?? '-'}"),
@@ -100,38 +105,60 @@ class PatientAdminCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      elevation: 2,
+      elevation: 3,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: const CircleAvatar(
-          radius: 24,
-          child: Icon(Icons.local_hospital, size: 28),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+
+        // 🔹 Icono de avatar de paciente
+        leading: CircleAvatar(
+          radius: 26,
+          backgroundColor: Colors.teal.withOpacity(0.15),
+          child: const Icon(Icons.person, size: 30, color: Colors.teal),
         ),
+
+        // 🔹 Nombre y apellidos
         title: Text(
           "${person.personName ?? ''} ${person.personFahterSurname ?? ''}",
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
+            color: Colors.black87,
           ),
         ),
-        subtitle: Text(person.personMotherSurname ?? ''),
-        trailing: Text(
-          person.role.roleName ?? '',
-          style: const TextStyle(
-            fontWeight: FontWeight.w500,
-            color: Colors.teal,
-          ),
+
+        // 🔹 Apellido materno debajo
+        subtitle: Text(
+          person.personMotherSurname ?? '',
+          style: const TextStyle(color: Colors.black54),
         ),
+
+        // 🔹 Rol a la derecha
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.local_hospital, color: Colors.teal, size: 20),
+            const SizedBox(height: 4),
+            Text(
+              person.role.roleName ?? '',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.teal,
+              ),
+            ),
+          ],
+        ),
+
         onTap: () => _showDetails(context),
       ),
     );
   }
 }
 
-/// 🔹 Helper para fila de detalle
+/// 🔹 Helper para fila de detalle en el modal
 Widget _buildDetailRow(IconData icon, String label, String value) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 6),

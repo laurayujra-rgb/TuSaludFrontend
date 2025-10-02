@@ -20,55 +20,72 @@ class PatientsAdminView extends StatelessWidget {
         backgroundColor: AppStyle.ligthGrey,
         body: Column(
           children: [
-            // Header
+            // 🔹 Header con botones arriba
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppStyle.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 8,
-                      spreadRadius: 2,
-                      offset: const Offset(2, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppStyle.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.all(12),
-                      child: const Icon(
-                        Icons.local_hospital,
-                        size: 36,
-                        color: Colors.teal,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Expanded(
-                      child: Text(
-                        "Gestión de Pacientes",
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+              padding: const EdgeInsets.fromLTRB(16, 40, 16, 12),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      // Botón atrás
+                      InkWell(
+                        onTap: () => Navigator.pop(context),
+                        borderRadius: BorderRadius.circular(30),
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppStyle.white,
+                          ),
+                          child: const Icon(
+                            Icons.arrow_back_ios_new,
+                            size: 20,
+                            color: AppStyle.primary,
+                          ),
                         ),
                       ),
+                      const Spacer(),
+                      // Botón agregar paciente
+                      InkWell(
+                        onTap: () async {
+                          final result = await context.push<bool>(AddPatientView.routerPath);
+                          if (result == true && context.mounted) {
+                            Provider.of<PeopleAdminProvider>(context, listen: false)
+                                .loadPeopleByRole(4);
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(30),
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.green,
+                          ),
+                          child: const Icon(
+                            Icons.add,
+                            size: 26,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  // Título centrado
+                  const Text(
+                    "Gestión de Pacientes",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
 
-            // Listado
+            // 🔹 Listado de pacientes
             Expanded(
               child: Consumer<PeopleAdminProvider>(
                 builder: (context, provider, child) {
@@ -94,16 +111,6 @@ class PatientsAdminView extends StatelessWidget {
               ),
             ),
           ],
-        ),
-
-        // 🔹 Botón para agregar paciente con go_router
-        floatingActionButton: FloatingActionButton.extended(
-          backgroundColor: AppStyle.primary,
-          icon: const Icon(Icons.add, color: Colors.white),
-          label: const Text("Nuevo Paciente"),
-          onPressed: () {
-            context.push(AddPatientView.routerPath);
-          },
         ),
       ),
     );
