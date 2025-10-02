@@ -30,28 +30,21 @@ class _RoomsAdminViewState extends State<RoomsAdminView> {
       backgroundColor: AppStyle.ligthGrey,
       body: Column(
         children: [
-          // HEADER con flecha atrás
+          // 🔹 Barra superior minimalista
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 40, 16, 8),
+            padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Flecha atrás
+                // Botón atrás
                 InkWell(
                   onTap: () => Navigator.pop(context),
                   borderRadius: BorderRadius.circular(30),
                   child: Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppStyle.white,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
                       shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 6,
-                          spreadRadius: 2,
-                          offset: const Offset(2, 4),
-                        ),
-                      ],
                     ),
                     child: const Icon(
                       Icons.arrow_back_ios_new,
@@ -60,68 +53,6 @@ class _RoomsAdminViewState extends State<RoomsAdminView> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-
-                // Card título
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: AppStyle.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 8,
-                          spreadRadius: 2,
-                          offset: const Offset(2, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: AppStyle.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.all(12),
-                          child: const Icon(
-                            Icons.meeting_room,
-                            size: 36,
-                            color: AppStyle.primary,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        const Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Administración de Salas",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                "Gestiona las salas disponibles en el hospital",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: 12),
 
                 // Botón agregar
                 InkWell(
@@ -136,20 +67,13 @@ class _RoomsAdminViewState extends State<RoomsAdminView> {
                   borderRadius: BorderRadius.circular(30),
                   child: Container(
                     padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade50,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
                       shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 6,
-                          spreadRadius: 2,
-                        ),
-                      ],
                     ),
                     child: const Icon(
                       Icons.add_circle,
-                      size: 30,
+                      size: 28,
                       color: Colors.green,
                     ),
                   ),
@@ -158,7 +82,70 @@ class _RoomsAdminViewState extends State<RoomsAdminView> {
             ),
           ),
 
-          // LISTADO DE SALAS
+          const SizedBox(height: 12),
+
+          // 🔹 Card Header ancho como título
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppStyle.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  spreadRadius: 2,
+                  offset: const Offset(2, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppStyle.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.all(12),
+                  child: const Icon(
+                    Icons.meeting_room,
+                    size: 36,
+                    color: AppStyle.primary,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Administración de Salas",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        "Gestiona las salas disponibles en el hospital",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // 🔹 Listado de salas
           Expanded(
             child: Consumer<RoomsAdminProvider>(
               builder: (context, provider, child) {

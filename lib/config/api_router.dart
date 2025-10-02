@@ -22,6 +22,7 @@ import 'package:tusalud/providers/nurse/reports_nurse_provider.dart';
 import 'package:tusalud/providers/admin/via_admin_provider.dart';
 import 'package:tusalud/providers/nurse/vital_signs_provider.dart';
 import 'package:tusalud/providers/nursing%20Lic/patients_nursing_lic_provider.dart';
+import 'package:tusalud/views/admin/hospital/bed/add_beds_admin_view.dart';
 import 'package:tusalud/views/admin/hospital/bed/beds_admin_view.dart';
 import 'package:tusalud/views/admin/hospital/hospital_admin_view.dart';
 import 'package:tusalud/views/admin/hospital/rooms/room_admin_view.dart';
@@ -175,6 +176,21 @@ class AppRouter {
             path: AddDietAdminView.routerPath,
             builder: (context, state) => const AddDietAdminView(),
           ),
+          GoRoute(
+            name: MedicineNurseView.routerName,
+            path: MedicineNurseView.routerPath,
+            builder: (context, state) => const MedicineNurseView(),
+          ),
+          GoRoute(
+            name: AddMedicineAdminView.routerName,
+            path: AddMedicineAdminView.routerPath,
+            builder: (context, state) => const AddMedicineAdminView(),
+          ),
+          GoRoute(
+            name: AddBedAdminView.routerName,
+            path: AddBedAdminView.routerPath,
+            builder: (context, state) => const AddBedAdminView(),
+          )
         ],
       ),
 
@@ -201,16 +217,7 @@ class AppRouter {
           //   path: SettingsView.routerPath,
           //   builder: (context, state) => const SettingsView(),
           // ),
-          GoRoute(
-            name: MedicineNurseView.routerName,
-            path: MedicineNurseView.routerPath,
-            builder: (context, state) => const MedicineNurseView(),
-          ),
-          GoRoute(
-            name: AddMedicineAdminView.routerName,
-            path: AddMedicineAdminView.routerPath,
-            builder: (context, state) => const AddMedicineAdminView(),
-          ),
+
 
           GoRoute(
             name: VitalSignsNurseView.routerName,

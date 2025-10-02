@@ -10,9 +10,12 @@ class TsBedsRequest {
   Map<String, dynamic> toJson() {
     return {
       'bedName': bedName,
-      'roomId': roomId,
+      'room': {
+        'roomId': roomId,
+      }
     };
   }
+
   debugPrint() {
     print('Bed Name: $bedName, Room ID: $roomId');
   }
