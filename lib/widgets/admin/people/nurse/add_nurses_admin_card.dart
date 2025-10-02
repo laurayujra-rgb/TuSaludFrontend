@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/api/request/auth/ts_register_user_admin_request.dart';
+import 'package:tusalud/providers/admin/gender_provider.dart';
 import 'package:tusalud/providers/admin/register_user_admin_provider.dart';
-import 'package:tusalud/views/admin/peoples/nurses/nurses_admin_view.dart';
 
 class AddNurseAdminCard extends StatefulWidget {
   const AddNurseAdminCard({super.key});
@@ -25,7 +25,7 @@ class _AddNurseAdminCardState extends State<AddNurseAdminCard> {
   final _passwordController = TextEditingController();
 
   DateTime? _selectedDate;
-  String? _selectedGenderId; // 👈 ahora seleccionable
+  String? _selectedGenderId;
   final int roleId = 2; // 👩‍⚕️ Enfermera
 
   int _calculateAge(DateTime birth) {
@@ -69,6 +69,7 @@ class _AddNurseAdminCardState extends State<AddNurseAdminCard> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<RegisterUserAdminProvider>(context);
+    final genderProvider = Provider.of<GenderAdminProvider>(context);
 
     return Card(
       elevation: 3,
@@ -96,15 +97,13 @@ class _AddNurseAdminCardState extends State<AddNurseAdminCard> {
 
               TextFormField(
                 controller: _fatherSurnameController,
-                decoration:
-                    _inputStyle("Apellido Paterno", icon: Icons.badge),
+                decoration: _inputStyle("Apellido Paterno", icon: Icons.badge),
               ),
               const SizedBox(height: 12),
 
               TextFormField(
                 controller: _motherSurnameController,
-                decoration:
-                    _inputStyle("Apellido Materno", icon: Icons.badge_outlined),
+                decoration: _inputStyle("Apellido Materno", icon: Icons.badge_outlined),
               ),
               const SizedBox(height: 12),
 
@@ -114,19 +113,18 @@ class _AddNurseAdminCardState extends State<AddNurseAdminCard> {
               ),
               const SizedBox(height: 12),
 
-              // Fecha de nacimiento (con DatePicker)
+              // Fecha de nacimiento
               TextFormField(
                 controller: _birthdateController,
                 readOnly: true,
-                decoration: _inputStyle("Fecha de nacimiento",
-                    icon: Icons.calendar_today),
+                decoration: _inputStyle("Fecha de nacimiento", icon: Icons.calendar_today),
                 onTap: () => _pickDate(context),
                 validator: (value) =>
                     value == null || value.isEmpty ? "Campo requerido" : null,
               ),
               const SizedBox(height: 12),
 
-              // Edad (calculada automáticamente)
+              // Edad automática
               TextFormField(
                 controller: _ageController,
                 readOnly: true,
@@ -134,7 +132,7 @@ class _AddNurseAdminCardState extends State<AddNurseAdminCard> {
               ),
               const SizedBox(height: 12),
 
-              // Género (dropdown)
+              // Género dinámico
               DropdownButtonFormField<String>(
                 value: _selectedGenderId,
                 decoration: InputDecoration(
@@ -146,10 +144,12 @@ class _AddNurseAdminCardState extends State<AddNurseAdminCard> {
                   fillColor: Colors.blue.withOpacity(0.05),
                 ),
                 hint: const Text("Seleccione género"),
-                items: const [
-                  DropdownMenuItem(value: "1", child: Text("Masculino")),
-                  DropdownMenuItem(value: "2", child: Text("Femenino")),
-                ],
+                items: genderProvider.genders.map((g) {
+                  return DropdownMenuItem(
+                    value: g.genderId.toString(),
+                    child: Text(g.genderName ?? ""),
+                  );
+                }).toList(),
                 onChanged: (v) => setState(() => _selectedGenderId = v),
                 validator: (v) => v == null ? "Seleccione género" : null,
               ),
@@ -167,9 +167,8 @@ class _AddNurseAdminCardState extends State<AddNurseAdminCard> {
                 controller: _passwordController,
                 obscureText: true,
                 decoration: _inputStyle("Contraseña", icon: Icons.lock),
-                validator: (value) => value == null || value.length < 6
-                    ? "Mínimo 6 caracteres"
-                    : null,
+                validator: (value) =>
+                    value == null || value.length < 6 ? "Mínimo 6 caracteres" : null,
               ),
               const SizedBox(height: 20),
 
@@ -191,106 +190,100 @@ class _AddNurseAdminCardState extends State<AddNurseAdminCard> {
                             final request = TsRegisterUserAdminRequest(
                               person: TsPersonPart(
                                 personName: _nameController.text.trim(),
-                                personFatherSurname:
-                                    _fatherSurnameController.text.trim(),
-                                personMotherSurname:
-                                    _motherSurnameController.text.trim(),
+                                personFatherSurname: _fatherSurnameController.text.trim(),
+                                personMotherSurname: _motherSurnameController.text.trim(),
                                 personDni: _dniController.text.trim(),
-                                personBirthdate:
-                                    _birthdateController.text.trim(),
+                                personBirthdate: _birthdateController.text.trim(),
                                 personAge: int.parse(_ageController.text),
                                 genderId: int.parse(_selectedGenderId!),
                                 roleId: roleId,
                               ),
                               account: TsAccountPart(
                                 accountEmail: _emailController.text.trim(),
-                                accountPassword:
-                                    _passwordController.text.trim(),
+                                accountPassword: _passwordController.text.trim(),
                               ),
                             );
 
-                            final result =
-                                await provider.registerUser(request);
+                            final result = await provider.registerUser(request);
 
-                            if (context.mounted) {
-                              if (result.data != null) {
-                                // ✅ Éxito → diálogo
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (_) => AlertDialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    title: Row(
-                                      children: const [
-                                        Icon(Icons.check_circle,
-                                            color: Colors.green, size: 28),
-                                        SizedBox(width: 8),
-                                        Text("Registro Exitoso"),
-                                      ],
-                                    ),
-                                    content: const Text(
-                                      "La enfermera ha sido registrada correctamente.",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                          Future.microtask(() {
-                                            Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (_) =>
-                                                    const NursesAdminView(),
-                                              ),
-                                            );
-                                          });
-                                        },
-                                        child: const Text(
-                                          "Aceptar",
+                            if (!context.mounted) return;
+
+                            if (result.data != null) {
+                              // ✅ Registro exitoso
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (_) => AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  title: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: const [
+                                      Icon(Icons.check_circle,
+                                          color: Colors.green, size: 50),
+                                      SizedBox(height: 12),
+                                      Text("Registro Exitoso",
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.blueAccent),
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold)),
+                                    ],
+                                  ),
+                                  content: const Text(
+                                    "La enfermera ha sido registrada correctamente.",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  actionsAlignment: MainAxisAlignment.center,
+                                  actions: [
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blueAccent,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10),
                                         ),
                                       ),
+                                    onPressed: () {
+                                      // Cierra el diálogo de éxito
+                                      Navigator.of(context, rootNavigator: true).pop();
+
+                                      // 🔹 Vuelve directamente a NursesAdminView y refresca lista
+                                      Navigator.of(context).pop(true);
+                                    },
+                                      child: const Text("Aceptar"),
+                                    ),
+
+                                  ],
+                                ),
+                              );
+                            } else {
+                              // ❌ Error
+                              showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  title: Row(
+                                    children: const [
+                                      Icon(Icons.error,
+                                          color: Colors.red, size: 28),
+                                      SizedBox(width: 8),
+                                      Text("Error"),
                                     ],
                                   ),
-                                );
-                              } else {
-                                // ❌ Error → diálogo
-                                showDialog(
-                                  context: context,
-                                  builder: (_) => AlertDialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    title: Row(
-                                      children: const [
-                                        Icon(Icons.error,
-                                            color: Colors.red, size: 28),
-                                        SizedBox(width: 8),
-                                        Text("Error"),
-                                      ],
-                                    ),
-                                    content: Text(
-                                      result.message ??
-                                          "No se pudo registrar la enfermera.",
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context),
-                                        child: const Text("Cerrar"),
-                                      ),
-                                    ],
+                                  content: Text(
+                                    result.message ??
+                                        "No se pudo registrar la enfermera.",
                                   ),
-                                );
-                              }
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      child: const Text("Cerrar"),
+                                    ),
+                                  ],
+                                ),
+                              );
                             }
                           }
                         },

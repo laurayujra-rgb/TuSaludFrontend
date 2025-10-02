@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:tusalud/providers/admin/people_admin_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/views/admin/peoples/nurses/add_nurse_admin_view.dart';
@@ -20,73 +20,78 @@ class NursesAdminView extends StatelessWidget {
         backgroundColor: AppStyle.ligthGrey,
         body: Column(
           children: [
-            // 🔹 Header
+            const SizedBox(height: 40),
+
+            // 🔹 Botón atrás + título + agregar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppStyle.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 8,
-                      spreadRadius: 2,
-                      offset: const Offset(2, 4),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  // Botón atrás
+                  InkWell(
+                    onTap: () => Navigator.pop(context),
+                    borderRadius: BorderRadius.circular(30),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.arrow_back_ios_new,
+                          size: 18, color: AppStyle.primary),
                     ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppStyle.primary.withOpacity(0.1),
+                  ),
+
+                  const Spacer(),
+
+                  // Botón agregar
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: const EdgeInsets.all(12),
-                      child: const Icon(
-                        Icons.local_hospital,
-                        size: 36,
-                        color: Colors.redAccent,
-                      ),
                     ),
-                    const SizedBox(width: 16),
-                    const Expanded(
-                      child: Text(
-                        "Gestión de Enfermeras",
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
+                    icon: const Icon(Icons.add, size: 20),
+                    label: const Text(
+                      "Agregar",
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    // 🔹 Botón Agregar Enfermera
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      icon: const Icon(Icons.add, size: 20),
-                      label: const Text(
-                        "Agregar",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      onPressed: () {
-                        context.push(AddNurseAdminView.routerPath);
-                      },
-                    ),
-                  ],
+                    onPressed: () async {
+                      final result =
+                          await context.push<bool>(AddNurseAdminView.routerPath);
+
+                      // ✅ Si vuelve con true → recargamos lista
+                      if (result == true && context.mounted) {
+                        Provider.of<PeopleAdminProvider>(context, listen: false)
+                            .loadPeopleByRole(2);
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // 🔹 Título centrado
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                "Gestión de Enfermeras",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
                 ),
               ),
             ),
+
+            const SizedBox(height: 16),
 
             // 🔹 Listado
             Expanded(

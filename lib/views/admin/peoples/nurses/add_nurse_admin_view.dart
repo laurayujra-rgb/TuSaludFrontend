@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tusalud/providers/admin/gender_provider.dart';
 import 'package:tusalud/providers/admin/register_user_admin_provider.dart';
 import 'package:tusalud/widgets/admin/people/nurse/add_nurses_admin_card.dart';
 
@@ -11,11 +12,15 @@ class AddNurseAdminView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => RegisterUserAdminProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => RegisterUserAdminProvider()),
+        ChangeNotifierProvider(create: (_) => GenderAdminProvider()..loadGenders()),
+      ],
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Agregar Enfermera"),
+          title: const Text("Nueva Enfermera"),
+          centerTitle: true,
         ),
         body: const SingleChildScrollView(
           child: AddNurseAdminCard(),
