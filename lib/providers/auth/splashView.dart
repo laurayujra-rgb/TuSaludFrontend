@@ -36,11 +36,11 @@ class _SplashViewState extends State<SplashView> {
       } else if (role == 'ROLE_LICENCIADA') {
         context.goNamed(HomeNursingLicView.routerName);
       } else {
-        context.goNamed(HomeAdminView.routerName);
+        context.goNamed(HomeNursingLicView.routerName);
       }
     } else {
       if (mounted) {
-        context.goNamed(HomeAdminView.routerName);
+        context.goNamed(HomeNursingLicView.routerName);
       }
     }
   }

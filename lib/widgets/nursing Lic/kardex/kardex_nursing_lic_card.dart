@@ -19,31 +19,32 @@ class KardexNursingLicCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      elevation: 4,
+      elevation: 5,
       shadowColor: Colors.black.withOpacity(0.1),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Número de Kardex + Diagnóstico
+            // 🔹 Header: Título + Botones de acción
             Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppStyle.primary.withOpacity(0.1),
+                    color: AppStyle.primary.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.assignment, color: AppStyle.primary, size: 28),
+                  child: const Text("📋",
+                      style: TextStyle(fontSize: 26)), // Emoji en vez de ícono
                 ),
                 const SizedBox(width: 12),
-                Expanded(
+                const Expanded(
                   child: Text(
-                    "Kardex #${kardex.kardexNumber ?? '-'}",
-                    style: const TextStyle(
+                    "Kardex",
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 20,
                       color: AppStyle.primary,
                     ),
                   ),
@@ -60,53 +61,81 @@ class KardexNursingLicCard extends StatelessWidget {
                   ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
 
-            // Diagnóstico
-            Text(
-              kardex.kardexDiagnosis ?? "Sin diagnóstico",
-              style: const TextStyle(
-                fontSize: 15,
-                color: Colors.black87,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // Dieta y fecha
+            // 🔹 Diagnóstico
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.restaurant_menu, size: 18, color: Colors.grey),
-                const SizedBox(width: 6),
-                Text(
-                  kardex.dietName ?? "Sin dieta",
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
-                ),
-                const Spacer(),
-                const Icon(Icons.calendar_today, size: 18, color: Colors.grey),
-                const SizedBox(width: 6),
-                Text(
-                  kardex.kardexDate ?? "",
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-
-            // Hora + Acciones de enfermería
-            Row(
-              children: [
-                const Icon(Icons.access_time, size: 18, color: Colors.grey),
-                const SizedBox(width: 6),
-                Text(
-                  kardex.kardexHour ?? "",
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
+                const Text("🩺 ",
+                    style: TextStyle(fontSize: 20)), // emoji diagnóstico
+                Expanded(
+                  child: Text(
+                    kardex.kardexDiagnosis ?? "Sin diagnóstico",
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 10),
 
-            if (kardex.nursingActions != null && kardex.nursingActions!.isNotEmpty)
+            // 🔹 Enfermera asignada
+            if (kardex.nurseName != null && kardex.nurseName!.isNotEmpty)
+              Row(
+                children: [
+                  const Text("👩‍⚕️ ",
+                      style: TextStyle(fontSize: 20)), // emoji enfermera
+                  Expanded(
+                    child: Text(
+                      kardex.nurseName!,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            if (kardex.nurseName != null && kardex.nurseName!.isNotEmpty)
+              const SizedBox(height: 10),
+
+            // 🔹 Dieta + Fecha
+            Row(
+              children: [
+                const Text("🍽️ ", style: TextStyle(fontSize: 20)),
+                Text(
+                  kardex.dietName ?? "Sin dieta",
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+                const Spacer(),
+                const Text("📅 ", style: TextStyle(fontSize: 20)),
+                Text(
+                  kardex.kardexDate ?? "",
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            // 🔹 Hora
+            Row(
+              children: [
+                const Text("⏰ ", style: TextStyle(fontSize: 20)),
+                Text(
+                  kardex.kardexHour ?? "",
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // 🔹 Acciones de enfermería
+            if (kardex.nursingActions != null &&
+                kardex.nursingActions!.isNotEmpty)
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
@@ -114,12 +143,20 @@ class KardexNursingLicCard extends StatelessWidget {
                   color: Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text(
-                  kardex.nursingActions!,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
-                  ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("✍️ ", style: TextStyle(fontSize: 20)),
+                    Expanded(
+                      child: Text(
+                        kardex.nursingActions!,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
           ],

@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:tusalud/api/response/ts_response.dart';
 
 class TsKardexResponse implements TsResponseService {
@@ -12,6 +13,10 @@ class TsKardexResponse implements TsResponseService {
   int? dietId;
   String? dietName;
 
+  // 🔹 Solo nombres (ignoro los IDs)
+  String? patientName;
+  String? nurseName;
+
   TsKardexResponse({
     required this.kardexId,
     required this.kardexNumber,
@@ -22,9 +27,10 @@ class TsKardexResponse implements TsResponseService {
     this.nursingActions,
     this.dietId,
     this.dietName,
+    this.patientName,
+    this.nurseName,
   });
 
-  /// Constructor vacío
   factory TsKardexResponse.createEmpty() => TsKardexResponse(
         kardexId: 0,
         kardexNumber: 0,
@@ -35,12 +41,13 @@ class TsKardexResponse implements TsResponseService {
         nursingActions: '',
         dietId: 0,
         dietName: '',
+        patientName: '',
+        nurseName: '',
       );
 
   @override
   String toJson() => json.encode(toMap());
 
-  /// fromJson directo desde un Map
   factory TsKardexResponse.fromJson(Map<String, dynamic> json) =>
       TsKardexResponse(
         kardexId: json['kardexId'] as int? ?? 0,
@@ -52,6 +59,9 @@ class TsKardexResponse implements TsResponseService {
         nursingActions: json['nursingActions'] as String? ?? '',
         dietId: json['dietId'] as int?,
         dietName: json['dietName'] as String?,
+        // 🔹 Aquí ignoro los IDs, solo uso nombres
+        patientName: json['patientName'] as String? ?? '',
+        nurseName: json['nurseName'] as String? ?? '',
       );
 
   @override
@@ -65,6 +75,8 @@ class TsKardexResponse implements TsResponseService {
         "nursingActions": nursingActions,
         "dietId": dietId,
         "dietName": dietName,
+        "patientName": patientName,
+        "nurseName": nurseName,
       };
 
   @override
@@ -83,5 +95,7 @@ class TsKardexResponse implements TsResponseService {
         nursingActions: json['nursingActions'] as String? ?? '',
         dietId: json['dietId'] as int?,
         dietName: json['dietName'] as String?,
+        patientName: json['patientName'] as String? ?? '',
+        nurseName: json['nurseName'] as String? ?? '',
       );
 }
