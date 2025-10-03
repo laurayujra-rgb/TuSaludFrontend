@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:tusalud/api/request/app/ts_kardex_request.dart';
 import 'package:tusalud/api/response/app/ts_kardex_response.dart';
 import 'package:tusalud/api/tu_salud_api.dart';
 
@@ -65,6 +66,29 @@ Future<void> loadKardexByPatientAndRole(int patientId, int roleId) async {
     notifyListeners();
   }
 }
+
+Future<bool> addKardex(TsKardexRequest request) async {
+  try {
+    final response = await TuSaludApi().createKardex(request);
+
+    if (response.isSuccess() && response.data != null) {
+      // Agregar el nuevo Kardex a la lista
+      _allKardex.add(response.data!);
+      _kardexList = List.from(_allKardex);
+      notifyListeners();
+      return true;
+    } else {
+      _errorMessage = response.message ?? 'Error al crear el kardex';
+      notifyListeners();
+      return false;
+    }
+  } catch (e) {
+    _errorMessage = 'Error de conexión: ${e.toString()}';
+    notifyListeners();
+    return false;
+  }
+}
+
 
 
 

@@ -332,11 +332,18 @@ class AppRouter {
             },
           ),
 
-          GoRoute(
-            name: AddKardexNursingLicView.routerName,
-            path: AddKardexNursingLicView.routerPath,
-            builder: (context, state) => const AddKardexNursingLicView(),
-          ),
+              GoRoute(
+                name: AddKardexNursingLicView.routerName,
+                path: AddKardexNursingLicView.routerPath,
+                builder: (context, state) {
+                  final patientId = int.tryParse(state.uri.queryParameters['patientId'] ?? '0') ?? 0;
+
+                  return AddKardexNursingLicView(
+                    patientId: patientId,
+                  );
+                },
+              ),
+
           // aquí también podrías meter más rutas de supervisor
         ],
       ),

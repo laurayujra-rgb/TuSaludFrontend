@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tusalud/providers/nursing%20Lic/kardex_nursing_lic_provider.dart';
 import 'package:tusalud/style/app_style.dart';
+
+// Models
 import 'package:tusalud/api/response/app/ts_diet_response.dart';
+import 'package:tusalud/api/response/app/ts_people_response.dart';
+import 'package:tusalud/api/request/app/ts_kardex_request.dart';
+
+// Providers
 import 'package:tusalud/providers/admin/diet_admin_provider.dart';
+import 'package:tusalud/providers/admin/people_admin_provider.dart';
 
 class AddKardexNursingLicCard extends StatefulWidget {
-  const AddKardexNursingLicCard({super.key});
+  final int patientId; // 👈 llega desde la vista
+
+  const AddKardexNursingLicCard({super.key, required this.patientId});
 
   @override
   State<AddKardexNursingLicCard> createState() => _AddKardexNursingLicCardState();
@@ -22,7 +32,9 @@ class _AddKardexNursingLicCardState extends State<AddKardexNursingLicCard> {
 
   String _currentDate = "";
   String _currentHour = "";
+
   TsDietResponse? _selectedDiet;
+  TsPeopleResponse? _selectedNurse;
 
   @override
   void initState() {
@@ -31,9 +43,13 @@ class _AddKardexNursingLicCardState extends State<AddKardexNursingLicCard> {
     _currentDate = DateFormat("yyyy-MM-dd").format(now);
     _currentHour = DateFormat("HH:mm:ss").format(now);
 
-    // 🔹 Cargar dietas desde el Provider
+    // Cargar dietas
     Future.microtask(() =>
         Provider.of<DietAdminProvider>(context, listen: false).loadDiets());
+
+    // Cargar enfermeras (roleId = 2)
+    Future.microtask(() =>
+        Provider.of<PeopleAdminProvider>(context, listen: false).loadPeopleByRole(2));
   }
 
   @override
@@ -44,26 +60,36 @@ class _AddKardexNursingLicCardState extends State<AddKardexNursingLicCard> {
     super.dispose();
   }
 
-  void _saveForm() {
-    if (_formKey.currentState!.validate()) {
-      final request = {
-        "kardexNumber": int.tryParse(_numberController.text) ?? 0,
-        "kardexDiagnosis": _diagnosisController.text,
-        "kardexDate": _currentDate,
-        "kardexHour": _currentHour,
-        "diets": {"dietId": _selectedDiet?.dietId ?? 0},
-        "nursingActions": _actionsController.text,
-      };
-
-      debugPrint("Nuevo Kardex: $request");
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("✅ Kardex preparado para enviar")),
+void _saveForm() async {
+  if (_formKey.currentState!.validate()) {
+      final kardexRequest = TsKardexRequest(
+        kardexNumber: int.tryParse(_numberController.text) ?? 0,
+        kardexDiagnosis: _diagnosisController.text,
+        kardexDate: _currentDate,
+        kardexHour: _currentHour,
+        nursingActions: _actionsController.text,
+        patientId: widget.patientId, // ✅ viene del paciente
+        nurseId: _selectedNurse?.personId ?? 0,
+        dietId: _selectedDiet?.dietId ?? 0,
       );
 
+
+    final provider = Provider.of<KardexNursingLicProvider>(context, listen: false);
+    final success = await provider.addKardex(kardexRequest);
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("✅ Kardex creado con éxito")),
+      );
       Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("❌ Error: ${provider.errorMessage ?? 'No se pudo crear el kardex'}")),
+      );
     }
   }
+}
+
 
   InputDecoration _inputDecoration(String label, IconData icon) {
     return InputDecoration(
@@ -84,121 +110,153 @@ class _AddKardexNursingLicCardState extends State<AddKardexNursingLicCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DietAdminProvider>(
-      builder: (context, dietProvider, _) {
-        return Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          elevation: 6,
-          shadowColor: Colors.black.withOpacity(0.1),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 6,
+      shadowColor: Colors.black.withOpacity(0.1),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Número de Kardex
+              TextFormField(
+                controller: _numberController,
+                keyboardType: TextInputType.number,
+                decoration: _inputDecoration("Número de Kardex", Icons.confirmation_number),
+                validator: (value) => value!.isEmpty ? "Campo requerido" : null,
+              ),
+              const SizedBox(height: 16),
+
+              // Diagnóstico
+              TextFormField(
+                controller: _diagnosisController,
+                decoration: _inputDecoration("Diagnóstico", Icons.medical_information),
+                validator: (value) => value!.isEmpty ? "Campo requerido" : null,
+              ),
+              const SizedBox(height: 16),
+
+              // Fecha y Hora automáticas
+              Row(
                 children: [
-                  // Número de Kardex
-                  TextFormField(
-                    controller: _numberController,
-                    keyboardType: TextInputType.number,
-                    decoration: _inputDecoration("Número de Kardex", Icons.confirmation_number),
-                    validator: (value) => value!.isEmpty ? "Campo requerido" : null,
-                  ),
-                  const SizedBox(height: 16),
+                  Expanded(child: _buildInfoBox(Icons.calendar_today, _currentDate)),
+                  const SizedBox(width: 12),
+                  Expanded(child: _buildInfoBox(Icons.access_time, _currentHour)),
+                ],
+              ),
+              const SizedBox(height: 16),
 
-                  // Diagnóstico
-                  TextFormField(
-                    controller: _diagnosisController,
-                    decoration: _inputDecoration("Diagnóstico", Icons.medical_information),
-                    validator: (value) => value!.isEmpty ? "Campo requerido" : null,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Fecha y Hora (auto)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildInfoBox(Icons.calendar_today, _currentDate),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildInfoBox(Icons.access_time, _currentHour),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Dropdown Dieta con Provider
-                  if (dietProvider.isLoading)
-                    const Center(child: CircularProgressIndicator())
-                  else if (dietProvider.errorMessage != null)
-                    Text(
+              // Dropdown Dieta
+              Consumer<DietAdminProvider>(
+                builder: (context, dietProvider, _) {
+                  if (dietProvider.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (dietProvider.errorMessage != null) {
+                    return Text(
                       dietProvider.errorMessage!,
                       style: const TextStyle(color: Colors.red),
-                    )
-                  else
-                    DropdownButtonFormField<TsDietResponse>(
-                      value: _selectedDiet,
-                      items: dietProvider.diets.map((diet) {
-                        return DropdownMenuItem<TsDietResponse>(
-                          value: diet,
-                          child: Text(diet.dietName ?? "Sin nombre"),
-                        );
-                      }).toList(),
-                      decoration: _inputDecoration("Seleccione una Dieta", Icons.restaurant_menu),
-                      onChanged: (value) => setState(() => _selectedDiet = value),
-                      validator: (value) => value == null ? "Seleccione una dieta" : null,
+                    );
+                  }
+                  if (dietProvider.diets.isEmpty) {
+                    return const Text("No hay dietas registradas");
+                  }
+                  return DropdownButtonFormField<TsDietResponse>(
+                    value: _selectedDiet,
+                    items: dietProvider.diets.map((diet) {
+                      return DropdownMenuItem<TsDietResponse>(
+                        value: diet,
+                        child: Text(diet.dietName ?? "Sin nombre"),
+                      );
+                    }).toList(),
+                    decoration: _inputDecoration("Seleccione una Dieta", Icons.restaurant_menu),
+                    onChanged: (value) => setState(() => _selectedDiet = value),
+                    validator: (value) => value == null ? "Seleccione una dieta" : null,
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Dropdown Enfermera
+              Consumer<PeopleAdminProvider>(
+                builder: (context, nurseProvider, _) {
+                  if (nurseProvider.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (nurseProvider.errorMessage != null) {
+                    return Text(
+                      nurseProvider.errorMessage!,
+                      style: const TextStyle(color: Colors.red),
+                    );
+                  }
+                  if (nurseProvider.people.isEmpty) {
+                    return const Text("No hay enfermeras registradas");
+                  }
+                  return DropdownButtonFormField<TsPeopleResponse>(
+                    value: _selectedNurse,
+                    items: nurseProvider.people.map((nurse) {
+                      final fullName =
+                          "${nurse.personName ?? ''} ${nurse.personFahterSurname ?? ''} ${nurse.personMotherSurname ?? ''}";
+                      return DropdownMenuItem<TsPeopleResponse>(
+                        value: nurse,
+                        child: Text(fullName.trim()),
+                      );
+                    }).toList(),
+                    decoration: _inputDecoration("Seleccione Enfermera", Icons.person),
+                    onChanged: (value) => setState(() => _selectedNurse = value),
+                    validator: (value) => value == null ? "Seleccione una enfermera" : null,
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Acciones de Enfermería
+              TextFormField(
+                controller: _actionsController,
+                maxLines: 3,
+                decoration: _inputDecoration("Acciones de Enfermería", Icons.notes),
+                validator: (value) => value!.isEmpty ? "Campo requerido" : null,
+              ),
+              const SizedBox(height: 24),
+
+              // Botones
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        side: const BorderSide(color: Colors.red, width: 1.5),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      ),
+                      icon: const Icon(Icons.cancel, size: 22),
+                      label: const Text("Cancelar", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      onPressed: () => Navigator.pop(context),
                     ),
-
-                  const SizedBox(height: 16),
-
-                  // Acciones de Enfermería
-                  TextFormField(
-                    controller: _actionsController,
-                    maxLines: 3,
-                    decoration: _inputDecoration("Acciones de Enfermería", Icons.notes),
-                    validator: (value) => value!.isEmpty ? "Campo requerido" : null,
                   ),
-                  const SizedBox(height: 24),
-
-                  // Botones
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.red,
-                            side: const BorderSide(color: Colors.red, width: 1.5),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                          ),
-                          icon: const Icon(Icons.cancel, size: 22),
-                          label: const Text("Cancelar", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                          onPressed: () => Navigator.pop(context),
-                        ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                          ),
-                          icon: const Icon(Icons.save, size: 22),
-                          label: const Text("Guardar", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                          onPressed: _saveForm,
-                        ),
-                      ),
-                    ],
+                      icon: const Icon(Icons.save, size: 22),
+                      label: const Text("Guardar", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      onPressed: _saveForm,
+                    ),
                   ),
                 ],
               ),
-            ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
