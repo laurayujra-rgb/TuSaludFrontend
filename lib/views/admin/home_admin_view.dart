@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:tusalud/providers/auth/user_provider.dart';
-import 'package:tusalud/widgets/admin/home_admin_dashboard.dart';
+import 'package:tusalud/widgets/admin/home/home_admin_dashboard.dart';
 import 'package:tusalud/widgets/app/drawer.dart';
 import '../../style/app_style.dart';
 class HomeAdminView extends StatelessWidget{

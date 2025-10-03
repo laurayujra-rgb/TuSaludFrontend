@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tusalud/providers/admin/medicine_nurse_provider.dart';
 import 'package:tusalud/providers/admin/via_admin_provider.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/widgets/admin/settings/medicine/add_medicine_admin_card.dart';
+import 'package:tusalud/widgets/admin/Hospital/medicine/add_medicine_admin_card.dart';
 import 'package:tusalud/api/request/app/ts_medication_request.dart';
 import 'package:tusalud/api/response/app/ts_via_response.dart';
 

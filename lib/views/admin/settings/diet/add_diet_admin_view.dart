@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/widgets/admin/settings/diet/add_diet_Admin_card.dart';
+import 'package:tusalud/widgets/admin/Hospital/diet/add_diet_Admin_card.dart';
 
 class AddDietAdminView extends StatelessWidget {
   static const String routerName = 'addDietAdmin';

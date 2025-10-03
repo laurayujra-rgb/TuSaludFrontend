@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:tusalud/style/app_style.dart';
+import 'package:tusalud/views/admin/hospital/bed/beds_admin_view.dart';
+import 'package:tusalud/views/admin/hospital/rooms/room_admin_view.dart';
 import 'package:tusalud/views/admin/settings/diet/diet_admin_view.dart';
 import 'package:tusalud/views/admin/settings/gender/gender_admin_view.dart';
 import 'package:tusalud/views/admin/settings/role/role_admin_view.dart';
 import 'package:tusalud/views/admin/settings/via%20Medicine/via_admin_view.dart';
 import 'package:tusalud/views/admin/settings/medicine/medicine_nursing_lic_view.dart';
-import 'package:tusalud/widgets/admin/settings/settings_admin_card.dart';
+import 'package:tusalud/widgets/admin/Hospital/settings_admin_card.dart';
 
 class SettingsAdminView extends StatelessWidget {
   static const String routerName = 'settings_admin';
@@ -52,15 +54,15 @@ class SettingsAdminView extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.all(12),
                       child: const Icon(
-                        Icons.settings,
+                        Icons.local_hospital,
                         size: 36,
-                        color: Colors.blueGrey,
+                        color: Colors.redAccent,
                       ),
                     ),
                     const SizedBox(width: 16),
                     const Expanded(
                       child: Text(
-                        "Configuraciones de Sistema",
+                        "Gestión del Hospital",
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -149,6 +151,36 @@ class SettingsAdminView extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (_) => const ViasView(),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    SettingsAdminCard(
+                      title: "Administración de Salas",
+                      subtitle: "Gestiona las diferentes salas hospitalarias",
+                      icon: Icons.local_hotel,
+                      color: Colors.blue.shade50,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const RoomsAdminView(),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    SettingsAdminCard(
+                      title: "Administración de Camas",
+                      subtitle: "Controla el estado y asignación de camas",
+                      icon: Icons.airline_seat_individual_suite_rounded,
+                      color: Colors.green.shade50,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const BedsAdminView(),
                           ),
                         );
                       },

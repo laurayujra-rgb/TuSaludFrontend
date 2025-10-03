@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/providers/admin/role_provider.dart'; // Asegúrate de tener este provider
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/widgets/admin/settings/role/role_admin_card.dart';
+import 'package:tusalud/widgets/admin/Hospital/role/role_admin_card.dart';
 
 class RoleAdminView extends StatefulWidget {
   static const String routerName = 'role_admin';

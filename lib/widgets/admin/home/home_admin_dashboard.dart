@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/providers/admin/beds_admin_provider.dart';
 import 'package:tusalud/providers/admin/rooms_admin_provider.dart';
-import '../../generated/l10.dart';
-import '../../style/app_style.dart';
+import '../../../generated/l10.dart';
+import '../../../style/app_style.dart';
 
 class HomeAdminDashBoard extends StatelessWidget {
   const HomeAdminDashBoard({super.key});

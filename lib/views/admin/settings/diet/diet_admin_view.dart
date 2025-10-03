@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tusalud/providers/admin/diet_admin_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/views/admin/settings/diet/add_diet_admin_view.dart';
-import 'package:tusalud/widgets/admin/settings/diet/diet_admin_card.dart';
+import 'package:tusalud/widgets/admin/Hospital/diet/diet_admin_card.dart';
 
 class DietAdminView extends StatefulWidget {
   static const String routerName = 'dietsAdmin';

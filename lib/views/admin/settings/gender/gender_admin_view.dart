@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/providers/admin/gender_provider.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/widgets/admin/settings/gender/gender_admin_card.dart';
+import 'package:tusalud/widgets/admin/Hospital/gender/gender_admin_card.dart';
 
 class GenderAdminView extends StatefulWidget {
   static const String routerName = 'gender_admin';

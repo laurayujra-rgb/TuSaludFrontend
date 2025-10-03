@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/providers/admin/medicine_nurse_provider.dart';
 import 'package:tusalud/style/app_style.dart';
-import 'package:tusalud/widgets/admin/settings/medicine/medicine_nurse_card.dart';
+import 'package:tusalud/widgets/admin/Hospital/medicine/medicine_nurse_card.dart';
 import 'package:tusalud/views/admin/settings/medicine/add_medicine_admin_view.dart'; // 👈 importa la vista de agregar
 
 class MedicineNurseView extends StatefulWidget {

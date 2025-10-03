@@ -47,12 +47,12 @@ class NavBarAdminView extends StatelessWidget {
               index: 1,
               label: 'Perfil',
             ),
-            CustomIcon(
-              icon: Icon(Icons.local_hospital_rounded, color: Color(0xFF26A69A)), // teal más suave
-              index: 2,
-              label: 'Hospital',
-              route: HospitalAdminView.routerName,
-            ),
+            // CustomIcon(
+            //   icon: Icon(Icons.local_hospital_rounded, color: Color(0xFF26A69A)), // teal más suave
+            //   index: 2,
+            //   label: 'Hospital',
+            //   route: HospitalAdminView.routerName,
+            // ),
             CustomIcon(
               icon: Icon(Icons.person_add_alt_1_rounded, color: Color(0xFF43A047)), // verde oscuro
               index: 3,
@@ -64,17 +64,18 @@ class NavBarAdminView extends StatelessWidget {
               index: 4,
               label: 'Asignar',
             ),
-            // CustomIcon(
-            //   icon: Icon(Icons.logout, color: Colors.redAccent), // logout en rojo
-            //   index: 5,
-            //   label: 'Salir',
-            // ),
             CustomIcon(
-              icon: Icon(Icons.settings, color: Color(0xFF388E3C)), // verde medio
+              icon: Icon(Icons.local_hospital, color: Color(0xFF388E3C)), // verde medio
               index: 6,
-              label: 'Ajustes',
+              label: 'Hospital',
               route: SettingsAdminView.routerName,
             ),
+            CustomIcon(
+              icon: Icon(Icons.logout, color: Colors.redAccent), // logout en rojo
+              index: 5,
+              label: 'Salir',
+            ),
+
           ],
         ),
       ),

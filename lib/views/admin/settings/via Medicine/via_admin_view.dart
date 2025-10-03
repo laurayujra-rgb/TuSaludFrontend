@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tusalud/providers/admin/via_admin_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/views/admin/settings/via%20Medicine/add_via_admin_view.dart';
-import 'package:tusalud/widgets/admin/settings/via%20Medicine/via_admin_card.dart';
+import 'package:tusalud/widgets/admin/Hospital/via%20Medicine/via_admin_card.dart';
 
 class ViasView extends StatefulWidget {
   static const String routerName = 'viasAdmin';
