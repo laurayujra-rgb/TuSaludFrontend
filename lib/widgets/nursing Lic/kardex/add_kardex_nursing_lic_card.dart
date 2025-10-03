@@ -13,14 +13,17 @@ import 'package:tusalud/api/request/app/ts_kardex_request.dart';
 import 'package:tusalud/providers/admin/diet_admin_provider.dart';
 import 'package:tusalud/providers/admin/people_admin_provider.dart';
 
+import '../../../api/tu_salud_api.dart';
+
 class AddKardexNursingLicCard extends StatefulWidget {
-  final int patientId; // 👈 llega desde la vista
+  final int patientId; // 👈 nuevo
 
   const AddKardexNursingLicCard({super.key, required this.patientId});
 
   @override
   State<AddKardexNursingLicCard> createState() => _AddKardexNursingLicCardState();
 }
+
 
 class _AddKardexNursingLicCardState extends State<AddKardexNursingLicCard> {
   final _formKey = GlobalKey<FormState>();
@@ -62,33 +65,39 @@ class _AddKardexNursingLicCardState extends State<AddKardexNursingLicCard> {
 
 void _saveForm() async {
   if (_formKey.currentState!.validate()) {
-      final kardexRequest = TsKardexRequest(
-        kardexNumber: int.tryParse(_numberController.text) ?? 0,
-        kardexDiagnosis: _diagnosisController.text,
-        kardexDate: _currentDate,
-        kardexHour: _currentHour,
-        nursingActions: _actionsController.text,
-        patientId: widget.patientId, // ✅ viene del paciente
-        nurseId: _selectedNurse?.personId ?? 0,
-        dietId: _selectedDiet?.dietId ?? 0,
-      );
+    final kardexRequest = TsKardexRequest(
+      kardexNumber: int.tryParse(_numberController.text) ?? 0,
+      kardexDiagnosis: _diagnosisController.text,
+      kardexDate: _currentDate,
+      kardexHour: _currentHour,
+      nursingActions: _actionsController.text,
+      patientId: widget.patientId, // 👈 viene de la vista
+      nurseId: _selectedNurse?.personId ?? 0, // 👈 enfermera seleccionada
+      dietId: _selectedDiet?.dietId ?? 0,
+    );
 
+    // 🔹 Provider para llamar a la API
+    final kardexProvider = Provider.of<KardexNursingLicProvider>(context, listen: false);
 
-    final provider = Provider.of<KardexNursingLicProvider>(context, listen: false);
-    final success = await provider.addKardex(kardexRequest);
+    final response = await TuSaludApi().createKardex(kardexRequest);
 
-    if (success) {
+    if (response.isSuccess() && response.data != null) {
+      // 👌 Refrescar lista de Kardex
+      await kardexProvider.loadKardexByPatientAndRole(widget.patientId, 4);
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("✅ Kardex creado con éxito")),
       );
-      Navigator.pop(context);
+
+      Navigator.pop(context); // 👈 ahora vuelve con lista actualizada
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("❌ Error: ${provider.errorMessage ?? 'No se pudo crear el kardex'}")),
+        SnackBar(content: Text("❌ Error: ${response.message ?? 'No se pudo crear'}")),
       );
     }
   }
 }
+
 
 
   InputDecoration _inputDecoration(String label, IconData icon) {
