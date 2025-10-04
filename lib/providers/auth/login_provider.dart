@@ -12,6 +12,7 @@ import 'package:tusalud/utils/utils.dart';
 import 'package:tusalud/views/app/select_mode_view.dart';
 import 'package:tusalud/widgets/app/loading.dart';
 
+import '../../config/api_router.dart';
 import '../../views/supervisor/home_supervisor_view.dart';
 import '../../views/views.dart';
 
@@ -30,8 +31,8 @@ class LoginProvider extends ChangeNotifier{
     }
   }
 
-void goHome(BuildContext context) async{
-      if(validateForm()){
+void goHome(BuildContext context) async {
+  if (validateForm()) {
     OverlayLoadingProgress.start(
       context,
       widget: const Loading(
@@ -39,91 +40,79 @@ void goHome(BuildContext context) async{
         message: "Por favor espere...",
       ),
     );
-    
+
     try {
       final response = await TuSaludApi().autenticateUser(request);
       OverlayLoadingProgress.stop();
-      
-      if(response.isSuccess() && response.data != null){
-        final token = response.data!; // Ya es del tipo StTokenRequest
+
+      if (response.isSuccess() && response.data != null) {
+        final token = response.data!;
         final data = TuSaludApi().parseJwt(token.accessToken ?? '');
-        
-        // Guardar tokens y datos de usuario
-        Preferences().setAccessToken(token.accessToken ?? '');
-        Preferences().setRefreshToken(token.refreshToken ?? '');
-        Preferences().setEmail(data['email'] ?? '');
-        Preferences().setLastName(data['lastName'] ?? '');
-        Preferences().setName(data['name'] ?? '');
-        Preferences().setRole(data['roles']?[0] ?? ''); // Ajuste para el campo roles
-        Preferences().setPersonId(data['personId'] ?? 0); // Si es null, guarda 0
-        // En tu LoginProvider
-        final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+        // Guardar tokens y datos
+        await Preferences().setAccessToken(token.accessToken ?? '');
+        await Preferences().setRefreshToken(token.refreshToken ?? '');
+        await Preferences().setEmail(data['email'] ?? '');
+        await Preferences().setLastName(data['lastName'] ?? '');
+        await Preferences().setName(data['name'] ?? '');
+        await Preferences().setRole(data['roles']?[0] ?? '');
+        await Preferences().setPersonId(data['personId'] ?? 0);
+
         final role = data['roles']?[0] ?? '';
+
+        // 🔹 Usa el contexto raíz del GoRouter
+        final rootContext = rootNavigatorKey.currentContext!;
+        final userProvider = Provider.of<UserProvider>(rootContext, listen: false);
+
         userProvider.setUserData(
           data['name'] ?? '',
           data['lastName'] ?? '',
           role,
           data['email'] ?? '',
-          data['personId'] ?? 0 
-
+          data['personId'] ?? 0,
         );
-        // Redirección basada en el rol
-          if (context.mounted) {
-            final isTablet = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
-            final isMobile = ResponsiveBreakpoints.of(context).smallerThan(TABLET);
 
-            if (role == 'ROLE_ADMINISTRADOR') {
-              if (isMobile) {
-                _showErrorDialog(
-                  context,
-                  'Acceso denegado',
-                  'Los administradores solo pueden iniciar sesión desde una tablet o PC.'
-                );
-                return;
-              }
-              await OrientationUtil.setAllowAll();
-              context.goNamed(HomeAdminView.routerName);
+        if (!rootContext.mounted) return;
 
-            } else if (role == 'ROLE_CLIENTE') {
-              if (isTablet) {
-                _showErrorDialog(
-                  context,
-                  'Acceso denegado',
-                  'Los clientes solo pueden iniciar sesión desde un dispositivo móvil.'
-                );
-                return;
-              }
-              await OrientationUtil.setPortraitOnly();
-              context.goNamed(HomeNurseView.routerName);
+        // 🔹 Verifica el tipo de dispositivo
+        final isMobile = ResponsiveBreakpoints.of(rootContext).smallerThan(TABLET);
+        if (!isMobile) {
+          _showErrorDialog(
+            rootContext,
+            'Acceso bloqueado',
+            'Esta aplicación solo puede ser utilizada desde un teléfono móvil.',
+          );
+          return;
+        }
 
-            } else if (role == 'ROLE_OPERADOR') {
-              if (isMobile) {
-                _showErrorDialog(
-                  context,
-                  'Acceso denegado',
-                  'Los operadores solo pueden iniciar sesión desde una tablet o PC.'
-                );
-                return;
-              }
-              await OrientationUtil.setAllowAll();
-              context.goNamed(HomeSupervisorView.routerName);
-            }
-          }
+        // 🔹 Todos los roles acceden desde móvil
+        await OrientationUtil.setPortraitOnly();
 
-      } else if(response.isUnauthorized()){
-        _showErrorDialog(context, 'Credenciales incorrectas', 
-          'Por favor verifica tus credenciales e intenta nuevamente');
+        if (role == 'ROLE_SUPERVISORA') {
+          rootContext.goNamed(HomeAdminView.routerName);
+        } else if (role == 'ROLE_ENFERMERA') {
+          rootContext.goNamed(HomeNurseView.routerName);
+        } else if (role == 'ROLE_LICENCIADA') {
+          rootContext.goNamed(HomeNursingLicView.routerName);
+        } else {
+          rootContext.goNamed(LoginView.routerName);
+        }
+
+      } else if (response.isUnauthorized()) {
+        _showErrorDialog(context, 'Credenciales incorrectas',
+            'Por favor verifica tus credenciales e intenta nuevamente');
       } else {
-        _showErrorDialog(context, 'Error', 
-          response.message ?? 'Ha ocurrido un error inesperado');
+        _showErrorDialog(context, 'Error',
+            response.message ?? 'Ha ocurrido un error inesperado');
       }
     } catch (e) {
       OverlayLoadingProgress.stop();
-      _showErrorDialog(context, 'Error', 
-        'Excepción durante el login: ${e.toString()}');
+      _showErrorDialog(context, 'Error',
+          'Excepción durante el login: ${e.toString()}');
     }
   }
 }
+
 
     void goToSelectMode(BuildContext context){
     context.goNamed(SelectModeView.routerName);
