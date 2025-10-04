@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tusalud/providers/nursing%20Lic/medication_kardex_nursing_lic_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/widgets/nursing%20Lic/medication/medication_card.dart';
+import 'package:tusalud/views/nursing%20Lic/medication/add_medication_kardex_view.dart';
 
 class MedicationListNursingLicView extends StatefulWidget {
   static const String routerName = 'medicationListNursingLic';
@@ -136,6 +137,27 @@ class _MedicationListNursingLicViewState
             ),
           ),
         ],
+      ),
+
+      // 🔹 Botón flotante para agregar medicamentos
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: AppStyle.primary,
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: const Text("Agregar"),
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AddMedicationKardexView(kardexId: widget.kardexId),
+            ),
+          );
+
+          // ✅ Si guardó correctamente, recargar la lista
+          if (result == true) {
+            Provider.of<MedicationKardexNursingLicProvider>(context, listen: false)
+                .loadMedicationsByKardex(widget.kardexId);
+          }
+        },
       ),
     );
   }
