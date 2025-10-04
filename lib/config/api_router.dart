@@ -48,7 +48,6 @@ import 'package:tusalud/views/nursing%20Lic/kardex/kardex_nursing_lic_view.dart'
 import 'package:tusalud/views/admin/settings/medicine/medicine_nursing_lic_view.dart';
 import 'package:tusalud/views/nurse/patients/patientes_nurse_view.dart';
 import 'package:tusalud/views/nurse/Reports/reports_nurse_view.dart';
-import 'package:tusalud/views/nurse/settings_nurse_view.dart';
 import 'package:tusalud/views/nursing%20Lic/medication/medication_kardex_nursing_lic_view.dart';
 import 'package:tusalud/views/nursing%20Lic/patient/patients_nursing_lic_view.dart';
 import 'package:tusalud/views/admin/settings/via%20Medicine/via_admin_view.dart';
@@ -93,6 +92,7 @@ class AppRouter {
           return NavBarAdminView(child: child);
         },
         routes: [
+          
           GoRoute(
             name: HomeAdminView.routerName,
             path: HomeAdminView.routerPath,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tusalud/views/nurse/patients/patientes_nurse_view.dart';
-import 'package:tusalud/views/nurse/settings_nurse_view.dart';
 import 'package:tusalud/views/views.dart';
 import 'package:tusalud/widgets/app/custom_icon.dart';
 
@@ -52,11 +51,17 @@ class NavBarNurseView extends StatelessWidget {
               label: 'Pacientes',
               route: PatientsNurseView.routerName,
             ),
+            // CustomIcon(
+            //   icon: Icon(Icons.settings, color: Color(0xFF00796B)), // verde azulado oscuro
+            //   index: 3,
+            //   label: 'Ajustes',
+            //   route: SettingsView.routerName,
+            // ),
             CustomIcon(
-              icon: Icon(Icons.settings, color: Color(0xFF00796B)), // verde azulado oscuro
+              icon: Icon(Icons.logout, color: Colors.redAccent), // logout en rojo
               index: 3,
-              label: 'Ajustes',
-              route: SettingsView.routerName,
+              label: 'Salir',
+              route: LoginView.routerName,
             ),
 
           ],

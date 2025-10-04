@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:tusalud/style/app_style.dart';
+import 'package:tusalud/views/auth/login_view.dart';
 import 'package:tusalud/views/nursing%20Lic/home/home_nursing_lic_view.dart';
 import 'package:tusalud/views/nursing%20Lic/patient/patients_nursing_lic_view.dart';
 import 'package:tusalud/widgets/app/custom_icon.dart';
@@ -72,8 +73,9 @@ class NavBarNursingLicView extends StatelessWidget {
             // ),
             CustomIcon(
               icon: Icon(Icons.logout, color: Colors.redAccent), // logout en rojo
-              index: 6,
+              index: 3,
               label: 'Salir',
+              route: LoginView.routerName,
             ),
           ],
         ),
