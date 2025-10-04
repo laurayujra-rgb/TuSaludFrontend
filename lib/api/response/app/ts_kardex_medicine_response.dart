@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:tusalud/api/response/ts_response.dart';
 
-class TsKardexMedicineResponse implements TsResponseService {
+class TsMedicationKardexResponse implements TsResponseService {
   int id;
   int kardexId;
   int medicineId;
@@ -10,9 +10,9 @@ class TsKardexMedicineResponse implements TsResponseService {
   String? frequency;
   String? routeNote;
   String? notes;
-  int? status;
+  int status;
 
-  TsKardexMedicineResponse({
+  TsMedicationKardexResponse({
     required this.id,
     required this.kardexId,
     required this.medicineId,
@@ -21,10 +21,11 @@ class TsKardexMedicineResponse implements TsResponseService {
     this.frequency,
     this.routeNote,
     this.notes,
-    this.status,
+    required this.status,
   });
 
-  factory TsKardexMedicineResponse.createEmpty() => TsKardexMedicineResponse(
+  /// 🔹 Crear objeto vacío
+  factory TsMedicationKardexResponse.createEmpty() => TsMedicationKardexResponse(
         id: 0,
         kardexId: 0,
         medicineId: 0,
@@ -39,17 +40,18 @@ class TsKardexMedicineResponse implements TsResponseService {
   @override
   String toJson() => json.encode(toMap());
 
-  factory TsKardexMedicineResponse.fromJson(Map<String, dynamic> json) =>
-      TsKardexMedicineResponse(
-        id: json["id"] as int? ?? 0,
-        kardexId: json["kardexId"] as int? ?? 0,
-        medicineId: json["medicineId"] as int? ?? 0,
-        medicineName: json["medicineName"] as String? ?? '',
-        dose: json["dose"] as String? ?? '',
-        frequency: json["frequency"] as String? ?? '',
-        routeNote: json["routeNote"] as String? ?? '',
-        notes: json["notes"] as String? ?? '',
-        status: json["status"] as int? ?? 0,
+  /// 🔹 Convertir JSON → Response
+  factory TsMedicationKardexResponse.fromJson(Map<String, dynamic> json) =>
+      TsMedicationKardexResponse(
+        id: json['id'] as int? ?? 0,
+        kardexId: json['kardexId'] as int? ?? 0,
+        medicineId: json['medicineId'] as int? ?? 0,
+        medicineName: json['medicineName'] as String? ?? '',
+        dose: json['dose'] as String? ?? '',
+        frequency: json['frequency'] as String? ?? '',
+        routeNote: json['routeNote'] as String? ?? '',
+        notes: json['notes'] as String? ?? '',
+        status: json['status'] as int? ?? 0,
       );
 
   @override
@@ -66,21 +68,21 @@ class TsKardexMedicineResponse implements TsResponseService {
       };
 
   @override
-  TsKardexMedicineResponse fromJson(String jsonStr) {
+  TsMedicationKardexResponse fromJson(String jsonStr) {
     return fromMap(jsonDecode(jsonStr));
   }
 
   @override
-  TsKardexMedicineResponse fromMap(Map<String, dynamic> json) =>
-      TsKardexMedicineResponse(
-        id: json["id"] as int? ?? 0,
-        kardexId: json["kardexId"] as int? ?? 0,
-        medicineId: json["medicineId"] as int? ?? 0,
-        medicineName: json["medicineName"] as String? ?? '',
-        dose: json["dose"] as String? ?? '',
-        frequency: json["frequency"] as String? ?? '',
-        routeNote: json["routeNote"] as String? ?? '',
-        notes: json["notes"] as String? ?? '',
-        status: json["status"] as int? ?? 0,
+  TsMedicationKardexResponse fromMap(Map<String, dynamic> json) =>
+      TsMedicationKardexResponse(
+        id: json['id'] as int? ?? 0,
+        kardexId: json['kardexId'] as int? ?? 0,
+        medicineId: json['medicineId'] as int? ?? 0,
+        medicineName: json['medicineName'] as String? ?? '',
+        dose: json['dose'] as String? ?? '',
+        frequency: json['frequency'] as String? ?? '',
+        routeNote: json['routeNote'] as String? ?? '',
+        notes: json['notes'] as String? ?? '',
+        status: json['status'] as int? ?? 0,
       );
 }

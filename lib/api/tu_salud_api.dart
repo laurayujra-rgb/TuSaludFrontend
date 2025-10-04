@@ -5,6 +5,7 @@ import 'package:tusalud/api/request/app/ts_bed_request.dart';
 import 'package:tusalud/api/request/app/ts_diet_request.dart';
 import 'package:tusalud/api/request/app/ts_gender_request.dart';
 import 'package:tusalud/api/request/app/ts_kardex_request.dart';
+import 'package:tusalud/api/request/app/ts_medication_kardex_request.dart';
 import 'package:tusalud/api/request/app/ts_medication_request.dart';
 import 'package:tusalud/api/request/app/ts_reports_request.dart';
 import 'package:tusalud/api/request/app/ts_role_request.dart';
@@ -16,6 +17,7 @@ import 'package:tusalud/api/request/auth/ts_auth_request.dart';
 import 'package:tusalud/api/response/app/ts_bed_response.dart';
 import 'package:tusalud/api/response/app/ts_diet_response.dart';
 import 'package:tusalud/api/response/app/ts_gender_response.dart';
+import 'package:tusalud/api/response/app/ts_kardex_medicine_response.dart';
 import 'package:tusalud/api/response/app/ts_kardex_response.dart';
 import 'package:tusalud/api/response/app/ts_medication_response.dart';
 import 'package:tusalud/api/response/app/ts_register_user_admin_response.dart';
@@ -1729,6 +1731,176 @@ Future<TsResponse<TsPeopleResponse>> getAllPatientsByRole() async {
       );
     }
   }
+
+  /// --------------------------------------------------------------------------------------------
+/// MEDICATION SECTION (KardexMedicines)
+/// --------------------------------------------------------------------------------------------
+
+/// GET ALL MEDICATIONS
+Future<TsResponse<TsMedicationKardexResponse>> getAllMedications() async {
+  try {
+    final response = await httpGet('$_baseUrl/kardex-medicines/all', getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse.createEmpty();
+    }
+
+    return TsResponse.fromJsonList(
+      utf8.decode(response.bodyBytes),
+      TsMedicationKardexResponse.createEmpty(),
+    );
+  } catch (_) {
+    return TsResponse.createEmpty();
+  }
+}
+
+/// GET MEDICATION BY ID
+Future<TsResponse<TsMedicationKardexResponse>> getMedication(int id) async {
+  try {
+    final response = await httpGet('$_baseUrl/kardex-medicines/$id', getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse.createEmpty();
+    }
+
+    return TsResponse.fromJson(
+      utf8.decode(response.bodyBytes),
+    );
+  } catch (_) {
+    return TsResponse.createEmpty();
+  }
+}
+
+/// GET MEDICATIONS BY KARDEX ID
+Future<TsResponse<TsMedicationKardexResponse>> getMedicationsByKardex(int kardexId) async {
+  try {
+    final response = await httpGet('$_baseUrl/kardex-medicines/by-kardex/$kardexId', getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse.createEmpty();
+    }
+
+    return TsResponse.fromJsonList(
+      utf8.decode(response.bodyBytes),
+      TsMedicationKardexResponse.createEmpty(),
+    );
+  } catch (_) {
+    return TsResponse.createEmpty();
+  }
+}
+
+/// CREATE MEDICATION
+Future<TsResponse<TsMedicationKardexResponse>> createMedication(
+    TsMedicationKardexRequest request) async {
+  try {
+    final response = await httpPost(
+      '$_baseUrl/kardex-medicines/create',
+      getHeaders(),
+      jsonEncode(request.toJson()),
+    );
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      try {
+        final errorJson = json.decode(response.body);
+        return TsResponse<TsMedicationKardexResponse>(
+          status: response.statusCode,
+          message: errorJson['message'] ?? 'Error al crear la medicación',
+          error: errorJson['error'] ?? '',
+        );
+      } catch (_) {
+        return TsResponse<TsMedicationKardexResponse>.createEmpty();
+      }
+    }
+
+    final responseJson = json.decode(response.body);
+    final medData = TsMedicationKardexResponse.createEmpty().fromMap(responseJson['data']);
+    return TsResponse<TsMedicationKardexResponse>(
+      data: medData,
+      status: response.statusCode,
+      message: responseJson['message'],
+    );
+  } catch (e) {
+    return TsResponse<TsMedicationKardexResponse>(
+      status: HttpStatus.internalServerError,
+      message: 'Error durante la creación de la medicación',
+      error: e.toString(),
+    );
+  }
+}
+
+/// UPDATE MEDICATION
+Future<TsResponse<TsMedicationKardexResponse>> updateMedication(
+    int id, TsMedicationKardexRequest request) async {
+  try {
+    final response = await httpPut(
+      '$_baseUrl/kardex-medicines/update/$id',
+      getHeaders(),
+      jsonEncode(request.toJson()),
+    );
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      try {
+        final errorJson = json.decode(response.body);
+        return TsResponse<TsMedicationKardexResponse>(
+          status: response.statusCode,
+          message: errorJson['message'] ?? 'Error al actualizar la medicación',
+          error: errorJson['error'] ?? '',
+        );
+      } catch (_) {
+        return TsResponse<TsMedicationKardexResponse>.createEmpty();
+      }
+    }
+
+    final responseJson = json.decode(response.body);
+    final medData = TsMedicationKardexResponse.createEmpty().fromMap(responseJson['data']);
+    return TsResponse<TsMedicationKardexResponse>(
+      data: medData,
+      status: response.statusCode,
+      message: responseJson['message'],
+    );
+  } catch (e) {
+    return TsResponse<TsMedicationKardexResponse>(
+      status: HttpStatus.internalServerError,
+      message: 'Error durante la actualización de la medicación',
+      error: e.toString(),
+    );
+  }
+}
+
+/// DELETE MEDICATION
+Future<TsResponse<TsMedicationKardexResponse>> deleteMedication(int id) async {
+  try {
+    final response = await httpDelete('$_baseUrl/kardex-medicines/delete/$id', getHeaders());
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      try {
+        final errorJson = json.decode(response.body);
+        return TsResponse<TsMedicationKardexResponse>(
+          status: response.statusCode,
+          message: errorJson['message'] ?? 'Error al eliminar la medicación',
+          error: errorJson['error'] ?? '',
+        );
+      } catch (_) {
+        return TsResponse<TsMedicationKardexResponse>.createEmpty();
+      }
+    }
+
+    final responseJson = json.decode(response.body);
+    final medData = TsMedicationKardexResponse.createEmpty().fromMap(responseJson['data']);
+    return TsResponse<TsMedicationKardexResponse>(
+      data: medData,
+      status: response.statusCode,
+      message: responseJson['message'],
+    );
+  } catch (e) {
+    return TsResponse<TsMedicationKardexResponse>(
+      status: HttpStatus.internalServerError,
+      message: 'Error durante la eliminación de la medicación',
+      error: e.toString(),
+    );
+  }
+}
+
   /// ----------------------------------------------------------------------------------------------------
 /// CREATE VITAL SIGN
 /// ----------------------------------------------------------------------------------------------------

@@ -9,7 +9,7 @@ class TsMedicineResponse implements TsResponseService {
   String? medicineLaboratory;
   int? medicineStatus;
   TsViaResponse via;
-  List<TsKardexMedicineResponse> kardexMedicines;
+  List<TsMedicationKardexResponse> kardexMedicines;
 
   TsMedicineResponse({
     required this.medicineId,
@@ -39,9 +39,9 @@ class TsMedicineResponse implements TsResponseService {
         medicineLaboratory: json["medicineLaboratory"] as String?,
         via: TsViaResponse.fromJson(json["via"]),
         kardexMedicines: json["kardexMedicines"] != null
-            ? List<TsKardexMedicineResponse>.from(
+            ? List<TsMedicationKardexResponse>.from(
                 (json["kardexMedicines"] as List)
-                    .map((x) => TsKardexMedicineResponse.fromJson(x)))
+                    .map((x) => TsMedicationKardexResponse.fromJson(x)))
             : [],
       );
 
@@ -70,9 +70,9 @@ class TsMedicineResponse implements TsResponseService {
         medicineStatus: json["medicineStatus"] as int?,
         via: TsViaResponse.fromJson(json["via"]),
         kardexMedicines: json["kardexMedicines"] != null
-            ? List<TsKardexMedicineResponse>.from(
+            ? List<TsMedicationKardexResponse>.from(
                 (json["kardexMedicines"] as List)
-                    .map((x) => TsKardexMedicineResponse.fromJson(x)))
+                    .map((x) => TsMedicationKardexResponse.fromJson(x)))
             : [],
       );
 }

@@ -4,9 +4,7 @@ import 'package:tusalud/providers/nursing%20Lic/kardex_nursing_lic_provider.dart
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/views/nursing%20Lic/kardex/add_kardex_nursing_lic_view.dart';
 import 'package:tusalud/widgets/nursing%20Lic/kardex/kardex_nursing_lic_card.dart';
-import 'package:provider/provider.dart';
-import 'package:tusalud/providers/admin/diet_admin_provider.dart';
-import 'package:tusalud/providers/admin/people_admin_provider.dart';
+
 
 class KardexNursingLicView extends StatefulWidget {
   static const String routerName = 'kardexNursingLic';

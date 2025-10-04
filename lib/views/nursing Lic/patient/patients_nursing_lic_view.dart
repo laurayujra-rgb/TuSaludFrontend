@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/providers/nursing%20Lic/patients_nursing_lic_provider.dart';
 import 'package:tusalud/style/app_style.dart';
+import 'package:tusalud/views/nursing%20Lic/medication/medication_kardex_nursing_lic_view.dart';
 import 'package:tusalud/widgets/nursing%20Lic/patients/patients_nursing_lic_card.dart';
 import 'package:go_router/go_router.dart';
 
@@ -92,16 +93,17 @@ class _PatientsNursingLicViewState extends State<PatientsNursingLicView> {
                     },
                   );
                 },
-                onMedication: () {
-                  // context.pushNamed(
-                  //   MedicationNursingLicView.routerName,
-                  //   queryParameters: {
-                  //     'patientId': patient.personId.toString(),
-                  //     'headerSubtitle':
-                  //         "Paciente: ${patient.personName} ${patient.personFahterSurname ?? ''}",
-                  //   },
-                  // );
-                },
+onMedication: () {
+  context.pushNamed(
+    MedicationKardexNursingLicView.routerName, // ✅ usar la vista de medicación
+    queryParameters: {
+      'patientId': patient.personId.toString(),
+      'headerSubtitle':
+          "Paciente: ${patient.personName} ${patient.personFahterSurname ?? ''}",
+    },
+  );
+},
+
               );
             },
           );

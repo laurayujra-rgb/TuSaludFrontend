@@ -21,6 +21,7 @@ import 'package:tusalud/providers/nurse/patients_nurse_provider.dart';
 import 'package:tusalud/providers/nurse/reports_nurse_provider.dart';
 import 'package:tusalud/providers/admin/via_admin_provider.dart';
 import 'package:tusalud/providers/nurse/vital_signs_provider.dart';
+import 'package:tusalud/providers/nursing%20Lic/medication_kardex_nursing_lic_provider.dart';
 import 'package:tusalud/providers/nursing%20Lic/patients_nursing_lic_provider.dart';
 import 'package:tusalud/views/admin/hospital/bed/add_beds_admin_view.dart';
 import 'package:tusalud/views/admin/hospital/bed/beds_admin_view.dart';
@@ -48,6 +49,7 @@ import 'package:tusalud/views/admin/settings/medicine/medicine_nursing_lic_view.
 import 'package:tusalud/views/nurse/patients/patientes_nurse_view.dart';
 import 'package:tusalud/views/nurse/Reports/reports_nurse_view.dart';
 import 'package:tusalud/views/nurse/settings_nurse_view.dart';
+import 'package:tusalud/views/nursing%20Lic/medication/medication_kardex_nursing_lic_view.dart';
 import 'package:tusalud/views/nursing%20Lic/patient/patients_nursing_lic_view.dart';
 import 'package:tusalud/views/admin/settings/via%20Medicine/via_admin_view.dart';
 import 'package:tusalud/views/nurse/Vital%20Signs/vital_signs_nurse_view.dart';
@@ -331,18 +333,36 @@ class AppRouter {
               );
             },
           ),
+          GoRoute(
+            name: AddKardexNursingLicView.routerName,
+            path: AddKardexNursingLicView.routerPath,
+            builder: (context, state) {
+              final patientId = int.tryParse(state.uri.queryParameters['patientId'] ?? '0') ?? 0;
+                return AddKardexNursingLicView(
+                patientId: patientId,
+              );
+            },
+          ),
 
-              GoRoute(
-                name: AddKardexNursingLicView.routerName,
-                path: AddKardexNursingLicView.routerPath,
-                builder: (context, state) {
-                  final patientId = int.tryParse(state.uri.queryParameters['patientId'] ?? '0') ?? 0;
+          GoRoute(
+            name: MedicationKardexNursingLicView.routerName,
+            path: MedicationKardexNursingLicView.routerPath,
+            builder: (context, state) {
+              final patientId = int.tryParse(state.uri.queryParameters['patientId'] ?? '');
+              final headerSubtitle = state.uri.queryParameters['headerSubtitle'];
 
-                  return AddKardexNursingLicView(
-                    patientId: patientId,
-                  );
-                },
-              ),
+              if (patientId == null) {
+                return const Scaffold(
+                  body: Center(child: Text('Error: patientId es requerido')),
+                );
+              }
+
+              return MedicationKardexNursingLicView(
+                patientId: patientId,
+                headerSubtitle: headerSubtitle,
+              );
+            },
+          ),
 
           // aquí también podrías meter más rutas de supervisor
         ],
@@ -370,6 +390,7 @@ class AppRouter {
     ChangeNotifierProvider(create: (_) => KardexNursingLicProvider()),
     ChangeNotifierProvider(create: (_) => VitalSignsNurseProvider()),
     ChangeNotifierProvider(create: (_) => ReportsNurseProvider()),
-    ChangeNotifierProvider(create: (_) => PatientsNursingLicProvider())
+    ChangeNotifierProvider(create: (_) => PatientsNursingLicProvider()),
+    ChangeNotifierProvider(create: (_) => MedicationKardexNursingLicProvider()),
   ];
 }
