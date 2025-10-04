@@ -11,7 +11,8 @@ class AddMedicationKardexCard extends StatefulWidget {
   const AddMedicationKardexCard({super.key, required this.kardexId});
 
   @override
-  State<AddMedicationKardexCard> createState() => _AddMedicationKardexCardState();
+  State<AddMedicationKardexCard> createState() =>
+      _AddMedicationKardexCardState();
 }
 
 class _AddMedicationKardexCardState extends State<AddMedicationKardexCard> {
@@ -26,7 +27,10 @@ class _AddMedicationKardexCardState extends State<AddMedicationKardexCard> {
   @override
   Widget build(BuildContext context) {
     final medicineProvider = Provider.of<MedicineNurseProvider>(context);
-    final medicationProvider = Provider.of<MedicationKardexNursingLicProvider>(context, listen: false);
+    final medicationProvider = Provider.of<MedicationKardexNursingLicProvider>(
+      context,
+      listen: false,
+    );
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -67,6 +71,14 @@ class _AddMedicationKardexCardState extends State<AddMedicationKardexCard> {
                 onChanged: (value) {
                   setState(() {
                     _selectedMedicineId = value;
+
+                    // 👇 Autocompletar la vía automáticamente
+                    final selectedMed = medicineProvider.medicines.firstWhere(
+                      (m) => m.medicineId == value,
+                      orElse: () => medicineProvider.medicines.first,
+                    );
+                    _routeNoteController.text =
+                        selectedMed.via.viaName ?? "Sin vía definida";
                   });
                 },
                 validator: (value) =>
@@ -81,8 +93,9 @@ class _AddMedicationKardexCardState extends State<AddMedicationKardexCard> {
                   labelText: "Dosis (ej: 500 mg)",
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Campo obligatorio" : null,
+                validator: (value) => value == null || value.isEmpty
+                    ? "Campo obligatorio"
+                    : null,
               ),
               const SizedBox(height: 16),
 
@@ -93,17 +106,20 @@ class _AddMedicationKardexCardState extends State<AddMedicationKardexCard> {
                   labelText: "Frecuencia (ej: Cada 8 horas)",
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Campo obligatorio" : null,
+                validator: (value) => value == null || value.isEmpty
+                    ? "Campo obligatorio"
+                    : null,
               ),
               const SizedBox(height: 16),
 
-              // 🔹 Vía
+              // 🔹 Vía (autocompletada)
               TextFormField(
                 controller: _routeNoteController,
+                readOnly: true, // 👈 bloqueado (solo lectura)
                 decoration: const InputDecoration(
-                  labelText: "Vía de administración (ej: Vía oral)",
+                  labelText: "Vía de administración",
                   border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.local_hospital, color: AppStyle.primary),
                 ),
               ),
               const SizedBox(height: 16),
@@ -126,7 +142,8 @@ class _AddMedicationKardexCardState extends State<AddMedicationKardexCard> {
                   icon: const Icon(Icons.save, color: Colors.white),
                   label: const Text(
                     "Guardar Medicamento",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppStyle.primary,
@@ -146,11 +163,13 @@ class _AddMedicationKardexCardState extends State<AddMedicationKardexCard> {
                         notes: _notesController.text,
                       );
 
-                      final success = await medicationProvider.addMedication(request);
+                      final success =
+                          await medicationProvider.addMedication(request);
                       if (success && mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text("Medicamento agregado correctamente"),
+                            content:
+                                Text("Medicamento agregado correctamente"),
                             backgroundColor: Colors.green,
                           ),
                         );
@@ -159,7 +178,8 @@ class _AddMedicationKardexCardState extends State<AddMedicationKardexCard> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                                "Error: ${medicationProvider.errorMessage ?? 'No se pudo guardar'}"),
+                              "Error: ${medicationProvider.errorMessage ?? 'No se pudo guardar'}",
+                            ),
                             backgroundColor: Colors.redAccent,
                           ),
                         );
