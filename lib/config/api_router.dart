@@ -11,6 +11,7 @@ import 'package:tusalud/providers/admin/register_user_admin_provider.dart';
 import 'package:tusalud/providers/admin/role_provider.dart';
 import 'package:tusalud/providers/admin/rooms_admin_provider.dart';
 import 'package:tusalud/providers/app/home_provider.dart';
+import 'package:tusalud/providers/app/profile_provider.dart';
 import 'package:tusalud/providers/app/select_mdoe_provider.dart';
 import 'package:tusalud/providers/auth/login_provider.dart';
 import 'package:tusalud/providers/auth/registe_user_provider.dart';
@@ -40,6 +41,8 @@ import 'package:tusalud/views/admin/settings/via%20Medicine/add_via_admin_view.d
 import 'package:tusalud/views/app/nav_bar_admin_view.dart';
 import 'package:tusalud/views/app/nav_bar_nurse_view.dart';
 import 'package:tusalud/views/app/nav_bar_nursing_lic_view.dart';
+import 'package:tusalud/views/admin/profile/prifle_admin_view.dart';
+import 'package:tusalud/views/nurse/profile/profile_nurse_view.dart';
 import 'package:tusalud/views/nursing%20Lic/kardex/add_kardex_nursing_lic_view.dart';
 import 'package:tusalud/views/nurse/Reports/add_reports_nurse_view.dart';
 import 'package:tusalud/views/nurse/Vital%20Signs/add_vital_signs_nurse_view.dart';
@@ -52,6 +55,7 @@ import 'package:tusalud/views/nursing%20Lic/medication/medication_kardex_nursing
 import 'package:tusalud/views/nursing%20Lic/patient/patients_nursing_lic_view.dart';
 import 'package:tusalud/views/admin/settings/via%20Medicine/via_admin_view.dart';
 import 'package:tusalud/views/nurse/Vital%20Signs/vital_signs_nurse_view.dart';
+import 'package:tusalud/views/nursing%20Lic/profile/profile_nurse_lic_view.dart';
 
 import '../providers/auth/user_provider.dart';
 import '../providers/nursing Lic/kardex_nursing_lic_provider.dart';
@@ -83,6 +87,7 @@ class AppRouter {
         path: SplashView.routerPath,
         builder: (context, state) => const SplashView(),
       ),
+
 
       //-------------------------------------------------------------------
       // ADMIN SECTION   - SUPERVISOR
@@ -192,7 +197,12 @@ class AppRouter {
             name: AddBedAdminView.routerName,
             path: AddBedAdminView.routerPath,
             builder: (context, state) => const AddBedAdminView(),
-          )
+          ),
+          GoRoute(
+            name: ProfileAdminView.routerName,
+            path: ProfileAdminView.routerPath,
+            builder: (context, state) => const ProfileAdminView(),
+          ),
         ],
       ),
 
@@ -289,6 +299,11 @@ class AppRouter {
                 return AddReportsNurseView(kardexId: kardexId);
               },
             ),
+          GoRoute(
+            name: ProfileNurseView.routerName,
+            path: ProfileNurseView.routerPath,
+            builder: (context, state) => const ProfileNurseView(),
+          ),
 
 
 
@@ -363,6 +378,11 @@ class AppRouter {
               );
             },
           ),
+          GoRoute(
+            name: ProfileNurseLicView.routerName,
+            path: ProfileNurseLicView.routerPath,
+            builder: (context, state) => const ProfileNurseLicView(),
+          ),
 
           // aquí también podrías meter más rutas de supervisor
         ],
@@ -392,5 +412,6 @@ class AppRouter {
     ChangeNotifierProvider(create: (_) => ReportsNurseProvider()),
     ChangeNotifierProvider(create: (_) => PatientsNursingLicProvider()),
     ChangeNotifierProvider(create: (_) => MedicationKardexNursingLicProvider()),
+    ChangeNotifierProvider(create: (_) => ProfileProvider()),
   ];
 }

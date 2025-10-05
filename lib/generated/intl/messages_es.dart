@@ -61,6 +61,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "bedsCounts": MessageLookupByLibrary.simpleMessage("Cantidad de camas"),
     "HospitalManagment": MessageLookupByLibrary.simpleMessage("Gestión del Hospital"),
     "roomsCounts": MessageLookupByLibrary.simpleMessage("Cantidad de habitaciones"),
+    "retry": MessageLookupByLibrary.simpleMessage("Reintentar"),
+    "noUserData": MessageLookupByLibrary.simpleMessage("No hay datos de usuario disponibles"),
+    "personalInfo": MessageLookupByLibrary.simpleMessage("Información personal"),
+    "bornDate": MessageLookupByLibrary.simpleMessage("Fecha de nacimiento"),
+    "profile": MessageLookupByLibrary.simpleMessage("Perfil"),
+    "home": MessageLookupByLibrary.simpleMessage("Inicio"),
   };
   
   

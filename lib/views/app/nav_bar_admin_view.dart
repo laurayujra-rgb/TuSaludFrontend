@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tusalud/views/admin/hospital/hospital_admin_view.dart';
 import 'package:tusalud/views/admin/peoples/people_admin.view.dart';
 import 'package:tusalud/views/admin/settings/settings_admin_view.dart';
+import 'package:tusalud/views/admin/profile/prifle_admin_view.dart';
 import 'package:tusalud/views/views.dart';
 import 'package:tusalud/widgets/app/custom_icon.dart';
 
@@ -43,9 +44,10 @@ class NavBarAdminView extends StatelessWidget {
               route: HomeAdminView.routerName,
             ),
             CustomIcon(
-              icon: Icon(Icons.person_3_rounded, color: Color(0xFF009688)), // turquesa
+              icon: Icon(Icons.person_3_rounded, color: Colors.redAccent), // logout en rojo
               index: 1,
               label: 'Perfil',
+              route: ProfileAdminView.routerName,
             ),
             // CustomIcon(
             //   icon: Icon(Icons.local_hospital_rounded, color: Color(0xFF26A69A)), // teal más suave

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tusalud/api/request/app/ts_bed_request.dart';
 import 'package:tusalud/api/request/app/ts_diet_request.dart';
@@ -28,6 +29,7 @@ import 'package:tusalud/api/response/app/ts_via_response.dart';
 import 'package:tusalud/api/response/app/ts_vital_signs_response.dart';
 import 'package:tusalud/api/response/ts_response.dart';
 import 'package:tusalud/config/enviroment.dart';
+import '../config/preferences.dart';
 import 'request/app/ts_via_request.dart';
 import 'request/auth/ts_register_user_admin_request.dart';
 import 'request/auth/ts_token_request.dart';
@@ -2278,6 +2280,75 @@ Future<TsResponse<TsReportsResponse>> deleteReport(int reportId) async {
     return TsResponse.createEmpty();
   }
 }
-
-
+Future<TsResponse<TsPeopleResponse>> getCurrentUserData() async {
+  try {
+    // Obtener el personId del almacenamiento seguro
+    final personId = await Preferences().personId();
+    
+    if (personId == 0) {
+      return TsResponse(
+        status: 401,
+        message: 'No se pudo obtener el ID del usuario',
+      );
+    }
+    
+    // Usar el método existente getPersonById con el personId del token
+    return await getPersonById(personId);
+  } catch (e, stackTrace) {
+    debugPrint('Error en getCurrentUserData: $e');
+    debugPrint('Stack trace: $stackTrace');
+    return TsResponse(
+      status: 500,
+      message: 'Error al obtener datos del usuario: ${e.toString()}',
+    );
+  }
+}
+// get person by id (profile)
+Future<TsResponse<TsPeopleResponse>> getPersonById(int personId) async {
+  try {
+    final response = await httpGet('$_baseUrl/persons/$personId', getHeaders());
+    
+    if (response.statusCode >= HttpStatus.badRequest) {
+      return TsResponse(
+        status: response.statusCode,
+        message: 'Error del servidor: ${response.statusCode}',
+      );
+    }
+    
+    final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+    
+    // Verifica si hay datos y si tienen la estructura esperada
+    if (responseData['data'] == null || responseData['data'] is! Map) {
+      return TsResponse(
+        status: responseData['status'] ?? 404,
+        message: responseData['message'] ?? 'Datos de persona no encontrados',
+      );
+    }
+    
+    try {
+      final person = TsPeopleResponse.fromJson(responseData['data']);
+      return TsResponse(
+        status: responseData['status'] ?? 200,
+        message: responseData['message'] ?? 'OK',
+        data: person,
+        dataList: [person],
+      );
+    } catch (e, stackTrace) {
+      debugPrint('Error parsing person data: $e');
+      debugPrint('Stack trace: $stackTrace');
+      return TsResponse(
+        status: 500,
+        message: 'Error al procesar los datos de la persona',
+      );
+    }
+    
+  } catch (e, stackTrace) {
+    debugPrint('Error en getPersonById: $e');
+    debugPrint('Stack trace: $stackTrace');
+    return TsResponse(
+      status: 500,
+      message: 'Error de conexión: ${e.toString()}',
+    );
+  }
+}
 }

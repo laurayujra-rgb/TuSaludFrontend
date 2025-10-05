@@ -72,7 +72,7 @@ class _HomeSupervisorDashBoardState extends State<HomeSupervisorDashBoard> {
                   const SizedBox(width: 16),
                   const Expanded(
                     child: Text(
-                      "Bienvenida, Licenciada 👩‍⚕️ Camila Vallejos",
+                      "Bienvenida al Panel Lic. Enfermería",
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,

@@ -516,6 +516,51 @@ class S {
       args: [],
     );
   } 
+/// `Retry`
+  String get retry {
+    return Intl.message(
+      'Retry',
+      name: 'retry',
+      desc: '',
+      args: [],
+    );
+  }
+/// `No user data available`
+  String get noUserData {
+    return Intl.message(
+      'No user data available',
+      name: 'noUserData',
+      desc: '',
+      args: [],
+    );
+  }
+/// `Personal Info`
+  String get personalInfo {
+    return Intl.message(
+      'Personal Info',
+      name: 'personalInfo',
+      desc: '',
+      args: [],
+    );
+  }
+/// `Born Date`
+  String get bornDate {
+    return Intl.message(
+      'Born Date',
+      name: 'bornDate',
+      desc: '',
+      args: [],
+    );
+  }
+/// `Profile`
+  String get profile {
+    return Intl.message(
+      'Profile',
+      name: 'profile',
+      desc: '',
+      args: [],
+    );
+  }
 }
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   const AppLocalizationDelegate();

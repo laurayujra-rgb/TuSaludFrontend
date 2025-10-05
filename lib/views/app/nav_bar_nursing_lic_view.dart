@@ -1,10 +1,10 @@
 
-
 import 'package:flutter/material.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/views/auth/login_view.dart';
 import 'package:tusalud/views/nursing%20Lic/home/home_nursing_lic_view.dart';
 import 'package:tusalud/views/nursing%20Lic/patient/patients_nursing_lic_view.dart';
+import 'package:tusalud/views/nursing%20Lic/profile/profile_nurse_lic_view.dart';
 import 'package:tusalud/widgets/app/custom_icon.dart';
 
 class NavBarNursingLicView extends StatelessWidget {
@@ -43,9 +43,10 @@ class NavBarNursingLicView extends StatelessWidget {
               route: HomeNursingLicView.routerName,
             ),
             CustomIcon(
-              icon: Icon(Icons.person_3_rounded, color: Color(0xFF009688)), // turquesa
+              icon: Icon(Icons.person_3_rounded, color: Colors.redAccent), // logout en rojo
               index: 1,
               label: 'Perfil',
+              route: ProfileNurseLicView.routerName,
             ),
             CustomIcon(
               icon: Icon(Icons.local_hospital_rounded, color: Color(0xFF26A69A)), // teal más suave
@@ -77,6 +78,7 @@ class NavBarNursingLicView extends StatelessWidget {
               label: 'Salir',
               route: LoginView.routerName,
             ),
+
           ],
         ),
       ),
