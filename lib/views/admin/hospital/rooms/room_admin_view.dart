@@ -6,37 +6,41 @@ import 'package:tusalud/views/admin/hospital/rooms/add_room_admin_vew.dart';
 import 'package:tusalud/views/admin/hospital/rooms/edit_room_admin_card.dart';
 import 'package:tusalud/widgets/admin/rooms/room_admin_card.dart';
 
-class RoomsAdminView extends StatefulWidget {
+class RoomsAdminView extends StatelessWidget {
   static const String routerName = 'rooms_admin';
   static const String routerPath = '/rooms_admin';
 
   const RoomsAdminView({super.key});
 
   @override
-  State<RoomsAdminView> createState() => _RoomsAdminViewState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => RoomsAdminProvider()..loadRooms(),
+      child: const _RoomsAdminBody(),
+    );
+  }
 }
 
-class _RoomsAdminViewState extends State<RoomsAdminView> {
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() =>
-        Provider.of<RoomsAdminProvider>(context, listen: false).loadRooms());
-  }
+class _RoomsAdminBody extends StatefulWidget {
+  const _RoomsAdminBody();
 
+  @override
+  State<_RoomsAdminBody> createState() => _RoomsAdminBodyState();
+}
+
+class _RoomsAdminBodyState extends State<_RoomsAdminBody> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppStyle.ligthGrey,
       body: Column(
         children: [
-          // 🔹 Barra superior minimalista
+          // 🔹 Barra superior
           Padding(
             padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Botón atrás
                 InkWell(
                   onTap: () => Navigator.pop(context),
                   borderRadius: BorderRadius.circular(30),
@@ -53,8 +57,6 @@ class _RoomsAdminViewState extends State<RoomsAdminView> {
                     ),
                   ),
                 ),
-
-                // Botón agregar
                 InkWell(
                   onTap: () {
                     Navigator.push(
@@ -62,7 +64,10 @@ class _RoomsAdminViewState extends State<RoomsAdminView> {
                       MaterialPageRoute(
                         builder: (_) => const AddRoomAdminView(),
                       ),
-                    );
+                    ).then((_) {
+                      Provider.of<RoomsAdminProvider>(context, listen: false)
+                          .loadRooms();
+                    });
                   },
                   borderRadius: BorderRadius.circular(30),
                   child: Container(
@@ -84,7 +89,7 @@ class _RoomsAdminViewState extends State<RoomsAdminView> {
 
           const SizedBox(height: 12),
 
-          // 🔹 Card Header ancho como título
+          // Header card
           Container(
             width: double.infinity,
             margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -145,14 +150,13 @@ class _RoomsAdminViewState extends State<RoomsAdminView> {
 
           const SizedBox(height: 16),
 
-          // 🔹 Listado de salas
+          // 🔹 Listado
           Expanded(
             child: Consumer<RoomsAdminProvider>(
-              builder: (context, provider, child) {
+              builder: (context, provider, _) {
                 if (provider.isLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
-
                 if (provider.rooms.isEmpty) {
                   return const Center(child: Text("No hay salas registradas"));
                 }
@@ -164,20 +168,17 @@ class _RoomsAdminViewState extends State<RoomsAdminView> {
                     final room = provider.rooms[index];
                     return RoomAdminCard(
                       room: room,
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Seleccionaste ${room.roomName}"),
-                          ),
-                        );
-                      },
                       onEdit: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) => EditRoomAdminView(room: room),
                           ),
-                        );
+                        ).then((_) {
+                          Provider.of<RoomsAdminProvider>(context,
+                                  listen: false)
+                              .loadRooms();
+                        });
                       },
                       onDelete: () async {
                         final confirm = await showDialog<bool>(
@@ -185,8 +186,7 @@ class _RoomsAdminViewState extends State<RoomsAdminView> {
                           builder: (ctx) => AlertDialog(
                             title: const Text("Confirmar eliminación"),
                             content: Text(
-                              "¿Deseas eliminar la sala '${room.roomName}'?",
-                            ),
+                                "¿Deseas eliminar la sala '${room.roomName}'?"),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(ctx, false),
@@ -202,12 +202,14 @@ class _RoomsAdminViewState extends State<RoomsAdminView> {
                             ],
                           ),
                         );
-
                         if (confirm == true) {
                           await Provider.of<RoomsAdminProvider>(
                             context,
                             listen: false,
                           ).deleteRoom(room.roomId);
+                          Provider.of<RoomsAdminProvider>(context,
+                                  listen: false)
+                              .loadRooms();
                         }
                       },
                     );

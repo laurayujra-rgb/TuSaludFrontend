@@ -198,6 +198,7 @@ class AppRouter {
             path: AddBedAdminView.routerPath,
             builder: (context, state) => const AddBedAdminView(),
           ),
+          
           GoRoute(
             name: ProfileAdminView.routerName,
             path: ProfileAdminView.routerPath,

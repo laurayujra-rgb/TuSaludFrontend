@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tusalud/providers/admin/diet_admin_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/views/admin/settings/diet/add_diet_admin_view.dart';
+import 'package:tusalud/views/admin/settings/diet/edit_diet_admin_view.dart';
 import 'package:tusalud/widgets/admin/Hospital/diet/diet_admin_card.dart';
 
 class DietAdminView extends StatefulWidget {
@@ -100,7 +101,7 @@ class _DietAdminViewState extends State<DietAdminView> {
               ),
             ),
 
-            // 🔹 Listado
+            // 🔹 Listado de dietas
             Expanded(
               child: Consumer<DietAdminProvider>(
                 builder: (context, provider, child) {
@@ -113,22 +114,114 @@ class _DietAdminViewState extends State<DietAdminView> {
                   if (provider.diets.isEmpty) {
                     return const Center(child: Text("No hay dietas registradas"));
                   }
+
                   return ListView.builder(
                     padding: const EdgeInsets.only(bottom: 16),
                     itemCount: provider.diets.length,
                     itemBuilder: (context, index) {
                       final diet = provider.diets[index];
+
                       return DietNurseCard(
                         diet: diet,
                         onEdit: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Editar dieta: ${diet.dietName}")),
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => EditDietAdminView(diet: diet),
+                            ),
                           );
                         },
-                        onDelete: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Eliminar dieta: ${diet.dietName}")),
-                          );
+                        onDelete: () async {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          barrierDismissible: false, // obliga a decidir cancelar o eliminar
+                          builder: (ctx) => AlertDialog(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                            title: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(Icons.warning_amber_rounded, color: Colors.red, size: 48),
+                                SizedBox(height: 10),
+                                Text(
+                                  "¿Eliminar dieta?",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            content: Text(
+                              "Esta acción desactivará la dieta seleccionada.\n¿Deseas continuar?",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 16, color: Colors.black54, height: 1.4),
+                            ),
+                            actionsAlignment: MainAxisAlignment.center,
+                            actionsPadding: const EdgeInsets.only(bottom: 10, top: 5),
+                            actions: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                child: SizedBox(
+                                  width: 110,
+                                  height: 42,
+                                  child: OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      side: const BorderSide(color: Colors.grey),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                    onPressed: () => Navigator.pop(ctx, false),
+                                    child: const Text(
+                                      "Cancelar",
+                                      style: TextStyle(
+                                          color: Colors.black87, fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                child: SizedBox(
+                                  width: 110,
+                                  height: 42,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.redAccent,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                    onPressed: () => Navigator.pop(ctx, true),
+                                    child: const Text(
+                                      "Eliminar",
+                                      style:
+                                          TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+
+
+                          if (confirm == true) {
+                            await Provider.of<DietAdminProvider>(
+                              context,
+                              listen: false,
+                            ).deleteDiet(diet.dietId!);
+
+                            if (!context.mounted) return;
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    "✅ Dieta eliminada correctamente"),
+                              ),
+                            );
+                          }
                         },
                       );
                     },

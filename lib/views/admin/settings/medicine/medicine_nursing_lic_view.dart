@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/providers/admin/medicine_nurse_provider.dart';
 import 'package:tusalud/style/app_style.dart';
+import 'package:tusalud/views/admin/settings/medicine/edit_medicine_view.dart';
 import 'package:tusalud/widgets/admin/Hospital/medicine/medicine_nurse_card.dart';
 import 'package:tusalud/views/admin/settings/medicine/add_medicine_admin_view.dart'; // 👈 importa la vista de agregar
 
@@ -116,25 +117,113 @@ class _MedicineNurseViewState extends State<MedicineNurseView> {
                     return const Center(child: Text("No hay medicamentos registrados"));
                   }
                   return ListView.builder(
-                    padding: const EdgeInsets.all(12),
-                    itemCount: provider.medicines.length,
-                    itemBuilder: (context, index) {
-                      final medicine = provider.medicines[index];
-                      return MedicineNurseCard(
-                        medicine: medicine,
-                        onEdit: () {
+                  padding: const EdgeInsets.all(12),
+                  itemCount: provider.medicines.length,
+                  itemBuilder: (context, index) {
+                    final medicine = provider.medicines[index];
+                    return MedicineNurseCard(
+                      medicine: medicine,
+                      onEdit: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EditMedicineAdminView(medicine: medicine),
+                          ),
+                        );
+                      },
+                      onDelete: () async {
+                        // 🔹 Confirmación antes de eliminar
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (ctx) => AlertDialog(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            title: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(Icons.warning_amber_rounded, color: Colors.red, size: 48),
+                                SizedBox(height: 10),
+                                Text(
+                                  "¿Eliminar medicamento?",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            content: Text(
+                              "Esta acción desactivará \"${medicine.medicineName}\".\n¿Deseas continuar?",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 16, color: Colors.black54, height: 1.4),
+                            ),
+                            actionsAlignment: MainAxisAlignment.center,
+                            actionsPadding: const EdgeInsets.only(bottom: 10, top: 5),
+                            actions: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                child: SizedBox(
+                                  width: 110,
+                                  height: 42,
+                                  child: OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      side: const BorderSide(color: Colors.grey),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                    onPressed: () => Navigator.pop(ctx, false),
+                                    child: const Text(
+                                      "Cancelar",
+                                      style: TextStyle(
+                                          color: Colors.black87, fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                child: SizedBox(
+                                  width: 110,
+                                  height: 42,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.redAccent,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                    onPressed: () => Navigator.pop(ctx, true),
+                                    child: const Text(
+                                      "Eliminar",
+                                      style: TextStyle(
+                                          color: Colors.white, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        // 🔹 Eliminar si el usuario confirma
+                        if (confirm == true) {
+                          await Provider.of<MedicineNurseProvider>(context, listen: false)
+                              .deleteMedicine(medicine.medicineId);
+
+                          if (!context.mounted) return;
+
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Editar ${medicine.medicineName}")),
+                            SnackBar(
+                              content: Text("✅ ${medicine.medicineName} eliminado correctamente"),
+                            ),
                           );
-                        },
-                        onDelete: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Eliminar ${medicine.medicineName}")),
-                          );
-                        },
-                      );
-                    },
-                  );
+                        }
+                      },
+                    );
+                  },
+                );
+
                 },
               ),
             ),

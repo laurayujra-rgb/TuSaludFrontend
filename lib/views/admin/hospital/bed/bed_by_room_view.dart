@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tusalud/api/response/app/ts_room_response.dart';
 import 'package:tusalud/providers/admin/beds_admin_provider.dart';
 import 'package:tusalud/style/app_style.dart';
+import 'package:tusalud/views/admin/hospital/bed/edit_bed_admin_view.dart';
 import 'package:tusalud/widgets/admin/beds/bed_admin_card.dart';
 
 class BedsByRoomView extends StatefulWidget {
@@ -135,14 +136,65 @@ class _BedsByRoomViewState extends State<BedsByRoomView> {
                   return const Center(child: Text("No hay camas registradas"));
                 }
 
-                return ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: provider.bedsByRoom.length,
-                  itemBuilder: (context, index) {
-                    final bed = provider.bedsByRoom[index];
-                    return BedAdminCard(bed: bed);
-                  },
-                );
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: provider.bedsByRoom.length,
+                    itemBuilder: (context, index) {
+                      final bed = provider.bedsByRoom[index];
+                      return BedAdminCard(
+                        bed: bed,
+
+                        // 🔹 Ver cama (tap principal)
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Seleccionaste ${bed.bedName}")),
+                          );
+                        },
+
+                        // 🔹 Editar cama
+                        onEdit: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => EditBedAdminView(bed: bed),
+                            ),
+                          ).then((_) {
+                            // 🔄 Recargar camas al volver de editar
+                            Provider.of<BedsAdminProvider>(context, listen: false)
+                                .loadBedsByRoom(widget.room.roomId);
+                          });
+                        },
+
+                        // 🔹 Eliminar cama
+                        onDelete: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text("Confirmar eliminación"),
+                              content: Text("¿Deseas eliminar la cama '${bed.bedName}'?"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx, false),
+                                  child: const Text("Cancelar"),
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                  onPressed: () => Navigator.pop(ctx, true),
+                                  child: const Text("Eliminar"),
+                                ),
+                              ],
+                            ),
+                          );
+
+                          if (confirm == true) {
+                            await Provider.of<BedsAdminProvider>(context, listen: false)
+                                .deleteBed(bed.bedId);
+                          }
+                        },
+                      );
+                    },
+                  );
+
               },
             ),
           ),

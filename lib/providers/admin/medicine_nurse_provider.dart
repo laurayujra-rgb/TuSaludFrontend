@@ -29,46 +29,85 @@ class MedicineNurseProvider extends ChangeNotifier {
   }
 
   /// 🔹 Cargar todos los medicamentos desde la API
-  Future<void> loadMedicines() async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+ /// 🔹 Cargar todos los medicamentos desde la API
+Future<void> loadMedicines() async {
+  _isLoading = true;
+  _errorMessage = null;
+  notifyListeners();
 
+  try {
+    final response = await TuSaludApi().getAllMedicines();
+
+    if (response.isSuccess() && response.dataList != null) {
+      // 🔹 Filtrar solo los medicamentos activos (status == 1)
+      _allMedicines = response.dataList!
+          .where((m) => (m.medicineStatus ?? 0) == 1)
+          .toList();
+
+      _medicines = List.from(_allMedicines);
+    } else {
+      _errorMessage = response.message ?? 'Error al cargar los medicamentos';
+    }
+  } catch (e) {
+    _errorMessage = 'Error de conexión: ${e.toString()}';
+  } finally {
+    _isLoading = false;
+    notifyListeners();
+  }
+}
+  /// 🔹 Crear nuevo medicamento
+  Future<bool> createMedicine(TsMedicineRequest request) async {
     try {
-      final response = await TuSaludApi().getAllMedicines();
-      if (response.isSuccess() && response.dataList != null) {
-        _allMedicines = response.dataList!;
-        _medicines = List.from(_allMedicines);
+      final response = await TuSaludApi().createMedicine(request);
+
+      if (response.isSuccess()) {
+        await loadMedicines(); // recargar después de crear
+        return true;
       } else {
-        _errorMessage = response.message ?? 'Error al cargar los medicamentos';
+        _errorMessage = response.message ?? 'Error al crear el medicamento';
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      _errorMessage = 'Error de conexión: ${e.toString()}';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// 🔹 Actualizar medicamento
+  Future<void> updateMedicine(int medicineId, TsMedicineRequest request) async {
+    try {
+      final response = await TuSaludApi().updateMedicine(medicineId, request);
+
+      if (response.isSuccess()) {
+        await loadMedicines();
+      } else {
+        _errorMessage = response.message ?? 'Error al actualizar el medicamento';
       }
     } catch (e) {
       _errorMessage = 'Error de conexión: ${e.toString()}';
     } finally {
-      _isLoading = false;
       notifyListeners();
     }
   }
-  Future<bool> createMedicine(TsMedicineRequest request) async {
-  try {
-    final response = await TuSaludApi().createMedicine(request);
 
-    if (response.isSuccess()) {
-      // recargar medicamentos después de crear
-      await loadMedicines();
-      return true;
-    } else {
-      _errorMessage = response.message ?? 'Error al crear el medicamento';
+  /// 🔹 Eliminar medicamento (soft delete)
+  Future<void> deleteMedicine(int medicineId) async {
+    try {
+      final response = await TuSaludApi().deleteMedicine(medicineId);
+
+      if (response.isSuccess()) {
+        await loadMedicines(); // recarga después de eliminar
+      } else {
+        _errorMessage = response.message ?? 'Error al eliminar el medicamento';
+      }
+    } catch (e) {
+      _errorMessage = 'Error de conexión: ${e.toString()}';
+    } finally {
       notifyListeners();
-      return false;
     }
-  } catch (e) {
-    _errorMessage = 'Error de conexión: ${e.toString()}';
-    notifyListeners();
-    return false;
   }
-}
-
 
   /// 🔹 Reintentar carga
   void retryLoading() {
