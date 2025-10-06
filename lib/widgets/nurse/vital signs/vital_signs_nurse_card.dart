@@ -26,7 +26,10 @@ class _VitalSignsNurseCardState extends State<VitalSignsNurseCard> {
   Future<void> _fetchPatientInfo() async {
     try {
       final api = TuSaludApi();
-      final response = await api.getPatientInfoByKardexId(widget.vitalSign.kardexId);
+      final response =
+          await api.getPatientInfoByKardexId(widget.vitalSign.kardexId);
+
+      if (!mounted) return; // evita errores si se desmonta antes de setState
 
       if (response.isSuccess() && response.data?.personAge != null) {
         setState(() {
@@ -34,14 +37,16 @@ class _VitalSignsNurseCardState extends State<VitalSignsNurseCard> {
         });
       } else {
         setState(() {
-          _patientAge = 25; // valor por defecto
+          _patientAge = 25;
         });
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _patientAge = 25;
       });
     } finally {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
@@ -53,9 +58,11 @@ class _VitalSignsNurseCardState extends State<VitalSignsNurseCard> {
     required num min,
     required num max,
   }) {
-    if (value < min || value > max) return Colors.red.shade400; // fuera de rango
-    if ((value - min).abs() < 2 || (value - max).abs() < 2) return Colors.orange.shade400; // borde
-    return Colors.green.shade600; // normal
+    if (value < min || value > max) return Colors.red.shade400;
+    if ((value - min).abs() < 2 || (value - max).abs() < 2) {
+      return Colors.orange.shade400;
+    }
+    return Colors.green.shade600;
   }
 
   @override
@@ -72,12 +79,16 @@ class _VitalSignsNurseCardState extends State<VitalSignsNurseCard> {
     final int age = _patientAge ?? 25;
     final r = VitalSignsRanges.fromAge(age);
 
-    final double? temp = double.tryParse(widget.vitalSign.vitalSignsTemperature ?? "");
-    final int? pulse = int.tryParse(widget.vitalSign.vitalSignsHeartRate ?? "");
-    final int? resp = int.tryParse(widget.vitalSign.vitalSignsRespiratoryRate ?? "");
-    final int? spo2 = int.tryParse(widget.vitalSign.vitalSignsOxygenSaturation ?? "");
-    final int? bpSys =
-        int.tryParse((widget.vitalSign.vitalSignsBloodPressure ?? "").split('/').first);
+    final double? temp =
+        double.tryParse(widget.vitalSign.vitalSignsTemperature ?? "");
+    final int? pulse =
+        int.tryParse(widget.vitalSign.vitalSignsHeartRate ?? "");
+    final int? resp =
+        int.tryParse(widget.vitalSign.vitalSignsRespiratoryRate ?? "");
+    final int? spo2 =
+        int.tryParse(widget.vitalSign.vitalSignsOxygenSaturation ?? "");
+    final int? bpSys = int.tryParse(
+        (widget.vitalSign.vitalSignsBloodPressure ?? "").split('/').first);
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
@@ -89,22 +100,55 @@ class _VitalSignsNurseCardState extends State<VitalSignsNurseCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔹 Encabezado (fecha y hora)
+            // 🔹 Encabezado (fecha + hora)
             Row(
               children: [
-                const Icon(Icons.calendar_today, size: 16, color: AppStyle.primary),
+                const Icon(Icons.calendar_today,
+                    size: 16, color: AppStyle.primary),
                 const SizedBox(width: 6),
-                Text(widget.vitalSign.vitalSignsDate ?? '--',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600, fontSize: 14)),
+                Text(
+                  widget.vitalSign.vitalSignsDate ?? '--',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 14),
+                ),
                 const Spacer(),
-                const Icon(Icons.access_time, size: 16, color: Colors.blueGrey),
+                const Icon(Icons.access_time,
+                    size: 16, color: Colors.blueGrey),
                 const SizedBox(width: 4),
                 Text(widget.vitalSign.vitalSignsHour ?? '--',
                     style: const TextStyle(fontSize: 13)),
               ],
             ),
-            const SizedBox(height: 12),
+
+            const SizedBox(height: 10),
+
+            // 🔹 Enfermera responsable
+            if (widget.vitalSign.vitalSignsNurse != null &&
+                widget.vitalSign.vitalSignsNurse!.isNotEmpty)
+              Row(
+                children: [
+                  const Icon(Icons.person_outline,
+                      size: 18, color: AppStyle.primary),
+                  const SizedBox(width: 6),
+                  Text(
+                    "Registrado por: ",
+                    style: TextStyle(
+                      color: Colors.grey.shade700,
+                      fontSize: 13,
+                    ),
+                  ),
+                  Text(
+                    widget.vitalSign.vitalSignsNurse!,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppStyle.primary,
+                      fontSize: 13.5,
+                    ),
+                  ),
+                ],
+              ),
+
+            const SizedBox(height: 14),
 
             // 🔹 Signos vitales principales
             Wrap(
@@ -115,41 +159,49 @@ class _VitalSignsNurseCardState extends State<VitalSignsNurseCard> {
                   "🌡 Temp",
                   "${widget.vitalSign.vitalSignsTemperature ?? '--'} °C",
                   color: temp != null
-                      ? _getColorForValue(value: temp, min: r.minTemp, max: r.maxTemp)
+                      ? _getColorForValue(
+                          value: temp, min: r.minTemp, max: r.maxTemp)
                       : AppStyle.primary,
                 ),
                 _chipValue(
                   "❤️ Pulso",
                   "${widget.vitalSign.vitalSignsHeartRate ?? '--'} lpm",
                   color: pulse != null
-                      ? _getColorForValue(value: pulse, min: r.minHr, max: r.maxHr)
+                      ? _getColorForValue(
+                          value: pulse, min: r.minHr, max: r.maxHr)
                       : AppStyle.primary,
                 ),
                 _chipValue(
                   "💨 Resp",
                   "${widget.vitalSign.vitalSignsRespiratoryRate ?? '--'} rpm",
                   color: resp != null
-                      ? _getColorForValue(value: resp, min: r.minResp, max: r.maxResp)
+                      ? _getColorForValue(
+                          value: resp, min: r.minResp, max: r.maxResp)
                       : AppStyle.primary,
                 ),
                 _chipValue(
                   "🩸 PA",
                   "${widget.vitalSign.vitalSignsBloodPressure ?? '--'}",
                   color: bpSys != null
-                      ? _getColorForValue(value: bpSys, min: r.minBpSys, max: r.maxBpSys)
+                      ? _getColorForValue(
+                          value: bpSys,
+                          min: r.minBpSys,
+                          max: r.maxBpSys,
+                        )
                       : AppStyle.primary,
                 ),
                 _chipValue(
                   "O₂ Sat",
                   "${widget.vitalSign.vitalSignsOxygenSaturation ?? '--'} %",
                   color: spo2 != null
-                      ? _getColorForValue(value: spo2, min: r.minSpo2, max: r.maxSpo2)
+                      ? _getColorForValue(
+                          value: spo2, min: r.minSpo2, max: r.maxSpo2)
                       : AppStyle.primary,
                 ),
               ],
             ),
 
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
 
             Text(
               "Edad del paciente: $age años",
@@ -165,7 +217,8 @@ class _VitalSignsNurseCardState extends State<VitalSignsNurseCard> {
             Align(
               alignment: Alignment.centerRight,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: widget.vitalSign.vitalSignsStatus == 1
                       ? Colors.green.shade100
@@ -173,7 +226,9 @@ class _VitalSignsNurseCardState extends State<VitalSignsNurseCard> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  widget.vitalSign.vitalSignsStatus == 1 ? "Activo" : "Inactivo",
+                  widget.vitalSign.vitalSignsStatus == 1
+                      ? "Activo"
+                      : "Inactivo",
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -201,11 +256,14 @@ class _VitalSignsNurseCardState extends State<VitalSignsNurseCard> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label,
-              style: TextStyle(
-                  fontSize: 12,
-                  color: color.withOpacity(0.9),
-                  fontWeight: FontWeight.w500)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: color.withOpacity(0.9),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           const SizedBox(height: 3),
           Text(
             value,

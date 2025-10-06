@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:tusalud/api/response/ts_response.dart';
 
 class TsVitalSignsResponse implements TsResponseService {
@@ -11,9 +10,9 @@ class TsVitalSignsResponse implements TsResponseService {
   String? vitalSignsRespiratoryRate;
   String? vitalSignsBloodPressure;
   String? vitalSignsOxygenSaturation;
-  String? vitalSignsNurse;
+  String? vitalSignsNurse; // 👈 nombre corregido
   int vitalSignsStatus;
-  int kardexId; // 👈 ahora es int, no TsKardexResponse
+  int kardexId;
 
   TsVitalSignsResponse({
     required this.vitalSignsId,
@@ -43,20 +42,23 @@ class TsVitalSignsResponse implements TsResponseService {
         kardexId: 0,
       );
 
-  factory TsVitalSignsResponse.fromJson(Map<String, dynamic> json) =>
-      TsVitalSignsResponse(
-        vitalSignsId: json["vitalSignsId"] ?? 0,
-        vitalSignsDate: json["vitalSignsDate"],
-        vitalSignsHour: json["vitalSignsHour"],
-        vitalSignsTemperature: json["vitalSignsTemperature"],
-        vitalSignsHeartRate: json["vitalSignsHeartRate"],
-        vitalSignsRespiratoryRate: json["vitalSignsRespiratoryRate"],
-        vitalSignsBloodPressure: json["vitalSignsBloodPressure"],
-        vitalSignsOxygenSaturation: json["vitalSignsOxygenSaturation"],
-        vitalSignsNurse: json["vitalSignsNurse"],
-        vitalSignsStatus: json["vitalSignsStatus"] ?? 0,
-        kardexId: json["kardexId"] ?? 0, // 👈 tomarlo directo
-      );
+  factory TsVitalSignsResponse.fromJson(Map<String, dynamic> json) {
+    return TsVitalSignsResponse(
+      vitalSignsId: json["vitalSignsId"] ?? 0,
+      vitalSignsDate: json["vitalSignsDate"],
+      vitalSignsHour: json["vitalSignsHour"],
+      vitalSignsTemperature: json["vitalSignsTemperature"],
+      vitalSignsHeartRate: json["vitalSignsHeartRate"],
+      vitalSignsRespiratoryRate: json["vitalSignsRespiratoryRate"],
+      vitalSignsBloodPressure: json["vitalSignsBloodPressure"],
+      vitalSignsOxygenSaturation: json["vitalSignsOxygenSaturation"],
+      // 👇 aquí aceptamos ambos nombres, el correcto y el del backend con typo
+      vitalSignsNurse:
+          json["vitalSignsNurse"] ?? json["nureseName"] ?? json["nurseName"],
+      vitalSignsStatus: json["vitalSignsStatus"] ?? 0,
+      kardexId: json["kardexId"] ?? 0,
+    );
+  }
 
   @override
   Map<String, dynamic> toMap() => {

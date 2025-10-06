@@ -30,9 +30,10 @@ class TsVitalSignsRequest {
       "vitalSignsRespiratoryRate": vitalSignsRespiratoryRate,
       "vitalSignsBloodPressure": vitalSignsBloodPressure,
       "vitalSignsOxygenSaturation": vitalSignsOxygenSaturation,
-      "vitalSignsNurse": vitalSignsNurse,
+      // 👇 usa el mismo nombre que el backend (con el typo)
+      "nureseName": vitalSignsNurse,
       "kardex": {
-        "kardexId": kardexId, // 👈 tal como espera tu backend
+        "kardexId": kardexId,
       }
     };
   }
