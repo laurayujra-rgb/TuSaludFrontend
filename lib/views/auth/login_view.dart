@@ -158,36 +158,36 @@ class _LoginFormState extends State<LoginForm> {
             text: S.of(context).login,
           ),
           const SizedBox(height: 16),
-          GestureDetector(
-            onTap: () => context.go(SignUpView.routerPath),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: S.of(context).dontHaveAnAccount,
-                    style: const TextStyle(
-                      color: AppStyle.primary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500
-                    ),
-                  ),
-                  TextSpan(
-                    text: S.of(context).signUp,
-                    style: const TextStyle(
-                      color: AppStyle.primary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold
-                    ),
-                  ),
-                ],
-                style: const TextStyle(
-                  color: AppStyle.primary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold
-                ),
-              ),
-            ),
-          ),
+          // GestureDetector(
+          //   onTap: () => context.go(SignUpView.routerPath),
+          //   child: RichText(
+          //     text: TextSpan(
+          //       children: [
+          //         TextSpan(
+          //           text: S.of(context).dontHaveAnAccount,
+          //           style: const TextStyle(
+          //             color: AppStyle.primary,
+          //             fontSize: 16,
+          //             fontWeight: FontWeight.w500
+          //           ),
+          //         ),
+          //         TextSpan(
+          //           text: S.of(context).signUp,
+          //           style: const TextStyle(
+          //             color: AppStyle.primary,
+          //             fontSize: 16,
+          //             fontWeight: FontWeight.bold
+          //           ),
+          //         ),
+          //       ],
+          //       style: const TextStyle(
+          //         color: AppStyle.primary,
+          //         fontSize: 16,
+          //         fontWeight: FontWeight.bold
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
