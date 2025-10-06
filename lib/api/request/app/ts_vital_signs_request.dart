@@ -6,6 +6,7 @@ class TsVitalSignsRequest {
   final String vitalSignsRespiratoryRate;
   final String vitalSignsBloodPressure;
   final String vitalSignsOxygenSaturation;
+  final String? vitalSignsNurse;
   final int kardexId;
 
   TsVitalSignsRequest({
@@ -16,6 +17,7 @@ class TsVitalSignsRequest {
     required this.vitalSignsRespiratoryRate,
     required this.vitalSignsBloodPressure,
     required this.vitalSignsOxygenSaturation,
+    this.vitalSignsNurse,
     required this.kardexId,
   });
 
@@ -28,6 +30,7 @@ class TsVitalSignsRequest {
       "vitalSignsRespiratoryRate": vitalSignsRespiratoryRate,
       "vitalSignsBloodPressure": vitalSignsBloodPressure,
       "vitalSignsOxygenSaturation": vitalSignsOxygenSaturation,
+      "vitalSignsNurse": vitalSignsNurse,
       "kardex": {
         "kardexId": kardexId, // 👈 tal como espera tu backend
       }
@@ -36,6 +39,6 @@ class TsVitalSignsRequest {
 
   debugPrint() {
     print(
-        'Date: $vitalSignsDate, Hour: $vitalSignsHour, Temp: $vitalSignsTemperature, HR: $vitalSignsHeartRate, RR: $vitalSignsRespiratoryRate, BP: $vitalSignsBloodPressure, O2: $vitalSignsOxygenSaturation, KardexId: $kardexId');
+        'Date: $vitalSignsDate, Hour: $vitalSignsHour, Temp: $vitalSignsTemperature, HR: $vitalSignsHeartRate, RR: $vitalSignsRespiratoryRate, BP: $vitalSignsBloodPressure, O2: $vitalSignsOxygenSaturation, Nurse: $vitalSignsNurse, KardexId: $kardexId');
   }
 }

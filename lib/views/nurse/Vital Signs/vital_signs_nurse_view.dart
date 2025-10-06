@@ -3,14 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/views/nurse/Vital%20Signs/add_vital_signs_nurse_view.dart';
 import 'package:tusalud/widgets/nurse/vital%20signs/vital_signs_nurse_card.dart';
-import '../../../providers/nurse/vital_signs_provider.dart';
+import 'package:tusalud/providers/nurse/vital_signs_provider.dart';
 
 class VitalSignsNurseView extends StatefulWidget {
   static const String routerName = 'vitalSignsNurse';
   static const String routerPath = '/vital_signs_nurse';
 
   final int kardexId;
-  final String? headerSubtitle; // opcional (ej: nombre paciente o #kardex)
+  final String? headerSubtitle;
 
   const VitalSignsNurseView({
     super.key,
@@ -26,7 +26,6 @@ class _VitalSignsNurseViewState extends State<VitalSignsNurseView> {
   @override
   void initState() {
     super.initState();
-    // cargar signos vitales desde el provider
     Future.microtask(() =>
         Provider.of<VitalSignsNurseProvider>(context, listen: false)
             .loadVitalSignsByKardex(widget.kardexId));
@@ -37,10 +36,10 @@ class _VitalSignsNurseViewState extends State<VitalSignsNurseView> {
     return Scaffold(
       backgroundColor: AppStyle.background,
       appBar: AppBar(
-        backgroundColor: AppStyle.card,
-        elevation: 1,
+        backgroundColor: AppStyle.primary,
+        elevation: 2,
         centerTitle: true,
-        iconTheme: const IconThemeData(color: AppStyle.textDark),
+        iconTheme: const IconThemeData(color: Colors.white),
         title: Column(
           children: [
             const Text(
@@ -48,8 +47,7 @@ class _VitalSignsNurseViewState extends State<VitalSignsNurseView> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppStyle.textDark,
-                letterSpacing: 0.3,
+                color: Colors.white,
               ),
             ),
             if (widget.headerSubtitle != null)
@@ -57,7 +55,7 @@ class _VitalSignsNurseViewState extends State<VitalSignsNurseView> {
                 widget.headerSubtitle!,
                 style: const TextStyle(
                   fontSize: 13,
-                  color: AppStyle.textLight,
+                  color: Colors.white70,
                 ),
               ),
           ],
@@ -77,7 +75,6 @@ class _VitalSignsNurseViewState extends State<VitalSignsNurseView> {
             );
           }
 
-          // filtrar por kardexId
           final vitalSigns = provider.allVitalSigns
               .where((vs) => vs.kardexId == widget.kardexId)
               .toList();
@@ -95,48 +92,41 @@ class _VitalSignsNurseViewState extends State<VitalSignsNurseView> {
             );
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.only(top: 12, bottom: 80),
-            itemCount: vitalSigns.length,
-            itemBuilder: (context, index) {
-              final item = vitalSigns[index];
-              return VitalSignsNurseCard(vitalSign: item);
+          return RefreshIndicator(
+            onRefresh: () async {
+              await provider.loadVitalSignsByKardex(widget.kardexId);
             },
+            child: ListView.builder(
+              padding: const EdgeInsets.only(top: 16, bottom: 90),
+              itemCount: vitalSigns.length,
+              itemBuilder: (context, index) {
+                final item = vitalSigns[index];
+                return VitalSignsNurseCard(vitalSign: item);
+              },
+            ),
           );
         },
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppStyle.accent,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-          ),
-            onPressed: () async {
-              final result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => AddVitalSignNurseView(kardexId: widget.kardexId),
-                ),
-              );
-
-              if (result == true) {
-                // refrescar lista después de guardar
-                Provider.of<VitalSignsNurseProvider>(context, listen: false)
-                    .loadVitalSignsByKardex(widget.kardexId);
-              }
-            },
-
-          icon: const Icon(Icons.add),
-          label: const Text(
-            "Agregar Signo Vital",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: AppStyle.accent,
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: const Text(
+          "Nuevo registro",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AddVitalSignNurseView(kardexId: widget.kardexId),
+            ),
+          );
+
+          if (result == true) {
+            Provider.of<VitalSignsNurseProvider>(context, listen: false)
+                .loadVitalSignsByKardex(widget.kardexId);
+          }
+        },
       ),
     );
   }

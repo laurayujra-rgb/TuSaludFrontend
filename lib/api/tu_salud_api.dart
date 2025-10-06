@@ -33,6 +33,7 @@ import '../config/preferences.dart';
 import 'request/app/ts_via_request.dart';
 import 'request/auth/ts_register_user_admin_request.dart';
 import 'request/auth/ts_token_request.dart';
+import 'response/app/ts_patient_info_response.dart';
 import 'response/app/ts_people_response.dart';
 class TuSaludApi {
   static const int authorizationForbidden = 403;
@@ -1535,6 +1536,35 @@ Future<TsResponse<TsKardexResponse>> getKardexByPatientId(int patientId) async {
 }
 
 
+// info paciente
+// GET PATIENT INFO BY KARDEX ID
+Future<TsResponse<TsPatientInfoResponse>> getPatientInfoByKardexId(int kardexId) async {
+  try {
+    final resp = await httpGet('$_baseUrl/kardex/$kardexId/patient-info', getHeaders());
+
+    if (resp.statusCode >= HttpStatus.badRequest) {
+      return TsResponse.createEmpty();
+    }
+
+    final decoded = jsonDecode(utf8.decode(resp.bodyBytes));
+    final dataMap = (decoded['data'] as Map?)?.cast<String, dynamic>();
+
+    final model = dataMap != null
+        ? TsPatientInfoResponse.fromJson(dataMap)
+        : TsPatientInfoResponse.createEmpty();
+
+    return TsResponse<TsPatientInfoResponse>(
+      status: decoded['status'] as int? ?? 200,
+      message: decoded['message'] as String? ?? 'OK',
+      data: model,
+    );
+  } catch (e) {
+    print('Error getPatientInfoByKardexId: $e');
+    return TsResponse.createEmpty();
+  }
+}
+
+
 
 Future<TsResponse<TsPeopleResponse>> getAllPatientsByRole() async {
   try {
@@ -2351,4 +2381,6 @@ Future<TsResponse<TsPeopleResponse>> getPersonById(int personId) async {
     );
   }
 }
+
+
 }

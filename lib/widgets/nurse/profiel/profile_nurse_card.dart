@@ -5,7 +5,6 @@ import 'package:tusalud/providers/app/profile_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 
 import '../../../generated/l10.dart';
-import '../../../providers/providers.dart';
 
 class ProfileNurseCard extends StatelessWidget {
   const ProfileNurseCard({super.key});
@@ -69,22 +68,7 @@ String _formatDate(String? date) {
     return date;
   }
 }
-// String _formatDate(String? date) {
-//   if (date == null || date.isEmpty) return 'N/A';
-//   try {
-//     final parsedDate = DateTime.parse(date);
-//     const meses = [
-//       'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-//       'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
-//     ];
-//     final dia = parsedDate.day.toString().padLeft(2, '0');
-//     final mesLiteral = meses[parsedDate.month - 1];
-//     final anio = parsedDate.year;
 
-//     return '$dia de $mesLiteral de $anio';
-//   } catch (e) {
-//     return date;
-//   }
 }
 
 

@@ -11,6 +11,7 @@ class TsVitalSignsResponse implements TsResponseService {
   String? vitalSignsRespiratoryRate;
   String? vitalSignsBloodPressure;
   String? vitalSignsOxygenSaturation;
+  String? vitalSignsNurse;
   int vitalSignsStatus;
   int kardexId; // 👈 ahora es int, no TsKardexResponse
 
@@ -23,6 +24,7 @@ class TsVitalSignsResponse implements TsResponseService {
     this.vitalSignsRespiratoryRate,
     this.vitalSignsBloodPressure,
     this.vitalSignsOxygenSaturation,
+    this.vitalSignsNurse,
     required this.vitalSignsStatus,
     required this.kardexId,
   });
@@ -36,6 +38,7 @@ class TsVitalSignsResponse implements TsResponseService {
         vitalSignsRespiratoryRate: '',
         vitalSignsBloodPressure: '',
         vitalSignsOxygenSaturation: '',
+        vitalSignsNurse: '',
         vitalSignsStatus: 0,
         kardexId: 0,
       );
@@ -50,6 +53,7 @@ class TsVitalSignsResponse implements TsResponseService {
         vitalSignsRespiratoryRate: json["vitalSignsRespiratoryRate"],
         vitalSignsBloodPressure: json["vitalSignsBloodPressure"],
         vitalSignsOxygenSaturation: json["vitalSignsOxygenSaturation"],
+        vitalSignsNurse: json["vitalSignsNurse"],
         vitalSignsStatus: json["vitalSignsStatus"] ?? 0,
         kardexId: json["kardexId"] ?? 0, // 👈 tomarlo directo
       );
@@ -64,6 +68,7 @@ class TsVitalSignsResponse implements TsResponseService {
         "vitalSignsRespiratoryRate": vitalSignsRespiratoryRate,
         "vitalSignsBloodPressure": vitalSignsBloodPressure,
         "vitalSignsOxygenSaturation": vitalSignsOxygenSaturation,
+        "vitalSignsNurse": vitalSignsNurse,
         "vitalSignsStatus": vitalSignsStatus,
         "kardexId": kardexId,
       };
