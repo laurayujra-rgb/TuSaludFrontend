@@ -126,7 +126,7 @@ class PeopleAdminView extends StatelessWidget {
             const SizedBox(height: 16),
             _buildOptionCard(
               context,
-              title: "Gestión de Supervisoras",
+              title: "Gestión de Licenciadas en Enfermería",
               icon: Icons.supervisor_account,
               color: Colors.deepPurple,
               onTap: () {
