@@ -1,9 +1,13 @@
+// lib/widgets/admin/people/patients/add_patients_admin_card.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tusalud/api/request/app/ts_request_create_request.dart';
+import 'package:tusalud/providers/admin/beds_admin_provider.dart';
 import 'package:tusalud/providers/admin/gender_provider.dart';
-import 'package:tusalud/providers/auth/registe_user_provider.dart';
-import 'package:tusalud/widgets/app/custom_field.dart';
+import 'package:tusalud/providers/admin/register_patient_provider.dart';
+import 'package:tusalud/providers/admin/rooms_admin_provider.dart';
 import 'package:tusalud/widgets/app/custom_button.dart';
+import 'package:tusalud/widgets/app/custom_field.dart';
 
 class AddPatientCard extends StatefulWidget {
   const AddPatientCard({super.key});
@@ -22,14 +26,13 @@ class _AddPatientCardState extends State<AddPatientCard> {
   final _ageController = TextEditingController();
 
   String? _selectedGenderId;
-  final int _roleId = 4; // Paciente = rolId = 4
+  int? _selectedRoomId;
+  int? _selectedBedId; // depende de la sala
 
   @override
   void initState() {
     super.initState();
-    // 🔹 Cargar géneros al iniciar
-    Future.microtask(() =>
-        Provider.of<GenderAdminProvider>(context, listen: false).loadGenders());
+    // Gender y Rooms ya se cargan en los providers en AddPatientView
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -43,13 +46,11 @@ class _AddPatientCardState extends State<AddPatientCard> {
       setState(() {
         _birthdateController.text =
             "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
-
-        // 🔹 Calcular edad automáticamente
         final today = DateTime.now();
         int age = today.year - picked.year;
         if (today.month < picked.month ||
             (today.month == picked.month && today.day < picked.day)) {
-          age--; // aún no cumplió años este año
+          age--;
         }
         _ageController.text = age.toString();
       });
@@ -59,36 +60,62 @@ class _AddPatientCardState extends State<AddPatientCard> {
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final provider = Provider.of<RegisterUserProvider>(context, listen: false);
+    // Validaciones adicionales: sala y cama
+    if (_selectedRoomId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Seleccione una sala")),
+      );
+      return;
+    }
+    if (_selectedBedId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Seleccione una cama")),
+      );
+      return;
+    }
 
-    await provider.registerUser(
-      _nameController.text,
-      _fatherSurnameController.text,
-      _motherSurnameController.text,
-      _dniController.text,
-      _birthdateController.text,
-      int.tryParse(_ageController.text) ?? 0,
-      int.parse(_selectedGenderId!),
-      _roleId,
+    final regProvider = context.read<RegisterPatientProvider>();
+
+    final req = TsPatientCreateRequest(
+      personName: _nameController.text.trim(),
+      personFatherSurname: _fatherSurnameController.text.trim(),
+      personMotherSurname: _motherSurnameController.text.trim().isEmpty
+          ? null
+          : _motherSurnameController.text.trim(),
+      personDni: _dniController.text.trim(),
+      personBirthdate: _birthdateController.text.trim(),
+      personAge: int.tryParse(_ageController.text.trim()) ?? 0,
+      genderId: int.parse(_selectedGenderId!),
+      bedId: _selectedBedId!, // 👈 cama obligatoria
     );
 
-    if (provider.errorMessage == null) {
-      // 👈 devolvemos true para refrescar lista
-      Navigator.of(context).pop(true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Paciente registrado con éxito")),
-      );
+    final resp = await regProvider.registerPatient(req);
+
+    if (resp.isSuccess()) {
+      if (mounted) {
+        Navigator.of(context).pop(true); // para refrescar lista
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Paciente registrado con éxito")),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(provider.errorMessage!)),
+        SnackBar(content: Text(regProvider.errorMessage ?? "Error al registrar")),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final registerProvider = Provider.of<RegisterUserProvider>(context);
-    final genderProvider = Provider.of<GenderAdminProvider>(context);
+    final registerProvider = context.watch<RegisterPatientProvider>();
+    final genderProvider = context.watch<GenderAdminProvider>();
+    final roomsProvider  = context.watch<RoomsAdminProvider>();
+    final bedsProvider   = context.watch<BedsAdminProvider>();
+
+    // Camas: solo libres de la sala seleccionada
+    final bedsInRoom = (_selectedRoomId == null)
+        ? <dynamic>[]
+        : bedsProvider.bedsByRoom.where((b) => b.bedOccupied != true).toList();
 
     return Card(
       elevation: 6,
@@ -112,20 +139,20 @@ class _AddPatientCardState extends State<AddPatientCard> {
                 ),
               ),
               const SizedBox(height: 24),
+
+              // Datos personales
               CustomField(
                 controller: _nameController,
                 hintText: "Nombre",
                 prefixIcon: Icon(Icons.person, color: Colors.teal[600]),
-                validator: (v) =>
-                    v == null || v.isEmpty ? "Ingrese nombre" : null,
+                validator: (v) => v == null || v.isEmpty ? "Ingrese nombre" : null,
               ),
               const SizedBox(height: 16),
               CustomField(
                 controller: _fatherSurnameController,
                 hintText: "Apellido Paterno",
                 prefixIcon: Icon(Icons.badge, color: Colors.teal[600]),
-                validator: (v) =>
-                    v == null || v.isEmpty ? "Ingrese apellido paterno" : null,
+                validator: (v) => v == null || v.isEmpty ? "Ingrese apellido paterno" : null,
               ),
               const SizedBox(height: 16),
               CustomField(
@@ -139,10 +166,10 @@ class _AddPatientCardState extends State<AddPatientCard> {
                 hintText: "DNI",
                 keyboardType: TextInputType.number,
                 prefixIcon: Icon(Icons.credit_card, color: Colors.teal[600]),
-                validator: (v) =>
-                    v == null || v.isEmpty ? "Ingrese DNI" : null,
+                validator: (v) => v == null || v.isEmpty ? "Ingrese DNI" : null,
               ),
               const SizedBox(height: 16),
+
               TextFormField(
                 controller: _birthdateController,
                 decoration: InputDecoration(
@@ -150,16 +177,14 @@ class _AddPatientCardState extends State<AddPatientCard> {
                   prefixIcon: Icon(Icons.calendar_today, color: Colors.teal[600]),
                   filled: true,
                   fillColor: Colors.teal.withOpacity(0.05),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 readOnly: true,
                 onTap: () => _selectDate(context),
-                validator: (v) =>
-                    v == null || v.isEmpty ? "Seleccione fecha" : null,
+                validator: (v) => v == null || v.isEmpty ? "Seleccione fecha" : null,
               ),
               const SizedBox(height: 16),
+
               TextFormField(
                 controller: _ageController,
                 readOnly: true,
@@ -168,21 +193,17 @@ class _AddPatientCardState extends State<AddPatientCard> {
                   prefixIcon: Icon(Icons.cake, color: Colors.teal[600]),
                   filled: true,
                   fillColor: Colors.teal.withOpacity(0.05),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
               ),
               const SizedBox(height: 16),
 
-              // 🔹 Dropdown dinámico desde DB
+              // Género
               DropdownButtonFormField<String>(
                 value: _selectedGenderId,
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.wc, color: Colors.teal[600]),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   filled: true,
                   fillColor: Colors.teal.withOpacity(0.05),
                 ),
@@ -195,6 +216,60 @@ class _AddPatientCardState extends State<AddPatientCard> {
                 }).toList(),
                 onChanged: (v) => setState(() => _selectedGenderId = v),
                 validator: (v) => v == null ? "Seleccione género" : null,
+              ),
+
+              const SizedBox(height: 24),
+              const Divider(),
+              const SizedBox(height: 8),
+
+              // Sala
+              DropdownButtonFormField<int>(
+                value: _selectedRoomId,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.meeting_room, color: Colors.teal[600]),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  filled: true,
+                  fillColor: Colors.teal.withOpacity(0.05),
+                ),
+                hint: const Text("Seleccione sala"),
+                items: roomsProvider.rooms.map((r) {
+                  return DropdownMenuItem(
+                    value: r.roomId,
+                    child: Text(r.roomName ?? "Sin nombre"),
+                  );
+                }).toList(),
+                onChanged: (roomId) async {
+                  setState(() {
+                    _selectedRoomId = roomId;
+                    _selectedBedId = null; // reset cama
+                  });
+                  if (roomId != null) {
+                    await context.read<BedsAdminProvider>().loadBedsByRoom(roomId);
+                  }
+                },
+                validator: (v) => v == null ? "Seleccione sala" : null,
+              ),
+
+              const SizedBox(height: 16),
+
+              // Cama (solo libres)
+              DropdownButtonFormField<int>(
+                value: _selectedBedId,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.bed, color: Colors.teal[600]),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  filled: true,
+                  fillColor: Colors.teal.withOpacity(0.05),
+                ),
+                hint: const Text("Seleccione cama"),
+                items: bedsInRoom.map<DropdownMenuItem<int>>((b) {
+                  return DropdownMenuItem(
+                    value: b.bedId,
+                    child: Text("${b.bedName ?? 'Cama'}  ${b.bedOccupied == true ? '(Ocupada)' : ''}"),
+                  );
+                }).toList(),
+                onChanged: (bedId) => setState(() => _selectedBedId = bedId),
+                validator: (v) => v == null ? "Seleccione cama" : null,
               ),
 
               const SizedBox(height: 28),

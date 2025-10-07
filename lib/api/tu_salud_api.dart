@@ -9,6 +9,7 @@ import 'package:tusalud/api/request/app/ts_kardex_request.dart';
 import 'package:tusalud/api/request/app/ts_medication_kardex_request.dart';
 import 'package:tusalud/api/request/app/ts_medication_request.dart';
 import 'package:tusalud/api/request/app/ts_reports_request.dart';
+import 'package:tusalud/api/request/app/ts_request_create_request.dart';
 import 'package:tusalud/api/request/app/ts_role_request.dart';
 import 'package:tusalud/api/request/app/ts_room_request.dart';
 import 'package:tusalud/api/request/app/ts_vital_signs_request.dart';
@@ -232,7 +233,45 @@ Future<http.Response> httpDelete(String baseUrl, dynamic header) async {
 /// AUTH SECTION
 /// ----------------------------------------------------------------------------
 /// 
+/// 
+/// 
+Future<TsResponse<TsPeopleResponse>> createPatient(
+  TsPatientCreateRequest request,
+) async {
+  try {
+    final response = await httpPost(
+      '$_baseUrl/persons/create',
+      getHeaders(),
+      jsonEncode(request.toJson()),
+    );
 
+    if (response.statusCode >= HttpStatus.badRequest) {
+      final errorJson = json.decode(response.body);
+      return TsResponse<TsPeopleResponse>(
+        status: response.statusCode,
+        message: errorJson['message'] ?? 'Error al crear paciente',
+        error: errorJson['error'] ?? '',
+      );
+    }
+
+    final responseJson = json.decode(response.body);
+    final personData = TsPeopleResponse.createEmpty().fromMap(
+      Map<String, dynamic>.from(responseJson['data']),
+    );
+
+    return TsResponse<TsPeopleResponse>(
+      data: personData,
+      status: response.statusCode,
+      message: responseJson['message'],
+    );
+  } catch (e) {
+    return TsResponse<TsPeopleResponse>(
+      status: HttpStatus.internalServerError,
+      message: 'Error inesperado al procesar la respuesta',
+      error: e.toString(),
+    );
+  }
+}
 
 ///-----------------------------------------------------------------------------
 // CREATE A PERSON

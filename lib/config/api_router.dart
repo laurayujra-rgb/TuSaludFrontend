@@ -7,6 +7,7 @@ import 'package:provider/single_child_widget.dart';
 import 'package:tusalud/providers/admin/beds_admin_provider.dart';
 import 'package:tusalud/providers/admin/gender_provider.dart';
 import 'package:tusalud/providers/admin/people_admin_provider.dart';
+import 'package:tusalud/providers/admin/register_patient_provider.dart';
 import 'package:tusalud/providers/admin/register_user_admin_provider.dart';
 import 'package:tusalud/providers/admin/role_provider.dart';
 import 'package:tusalud/providers/admin/rooms_admin_provider.dart';
@@ -414,5 +415,6 @@ class AppRouter {
     ChangeNotifierProvider(create: (_) => PatientsNursingLicProvider()),
     ChangeNotifierProvider(create: (_) => MedicationKardexNursingLicProvider()),
     ChangeNotifierProvider(create: (_) => ProfileProvider()),
+    ChangeNotifierProvider(create: (_) => RegisterPatientProvider()),
   ];
 }
