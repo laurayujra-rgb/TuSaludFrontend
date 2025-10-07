@@ -9,46 +9,72 @@ class PatientsNurseProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
 
+  // 🔹 Nuevo: filtro por sala
+  int? _selectedRoomId;
+
   // Getters
   List<TsPeopleResponse> get patients => _patients;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+  int? get selectedRoomId => _selectedRoomId;
 
-  /// 🔹 Buscar pacientes por nombre o apellido
+  /// 🔹 Buscar pacientes por nombre o apellido (se combina con filtro de sala)
   void searchPatients(String query) {
-    if (query.isEmpty) {
-      _patients = List.from(_allPatients);
-    } else {
-      _patients = _allPatients.where((p) {
+    _applyFilters(query: query);
+  }
+
+  /// 🔹 Setear sala seleccionada (null = todas)
+  void setSelectedRoomId(int? roomId) {
+    _selectedRoomId = roomId;
+    _applyFilters();
+    notifyListeners();
+  }
+
+  void _applyFilters({String? query}) {
+    List<TsPeopleResponse> base = List.from(_allPatients);
+
+    // Filtro por sala (miramos room directo o room dentro de bed)
+    if (_selectedRoomId != null) {
+      base = base.where((p) {
+        final int? roomId = p.room?.roomId ?? p.bed?.room.roomId;
+        return roomId == _selectedRoomId;
+      }).toList();
+    }
+
+    // Filtro por texto
+    if (query != null && query.isNotEmpty) {
+      base = base.where((p) {
         final fullName =
             "${p.personName ?? ''} ${p.personFahterSurname ?? ''} ${p.personMotherSurname ?? ''}";
         return fullName.toLowerCase().contains(query.toLowerCase());
       }).toList();
     }
+
+    _patients = base;
     notifyListeners();
   }
 
   /// 🔹 Cargar pacientes desde la API
-Future<void> loadPatients() async {
-  _isLoading = true;
-  _errorMessage = null;
-  notifyListeners();
-
-  try {
-    final response = await TuSaludApi().getAllPatientsByRole(); // 🔹 ahora solo role=4
-    if (response.isSuccess() && response.dataList != null) {
-      _allPatients = response.dataList!;
-      _patients = List.from(_allPatients);
-    } else {
-      _errorMessage = response.message ?? 'Error al cargar pacientes';
-    }
-  } catch (e) {
-    _errorMessage = 'Error de conexión: ${e.toString()}';
-  } finally {
-    _isLoading = false;
+  Future<void> loadPatients() async {
+    _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
+
+    try {
+      final response = await TuSaludApi().getAllPatientsByRole(); // solo role=4
+      if (response.isSuccess() && response.dataList != null) {
+        _allPatients = response.dataList!;
+        _applyFilters(); // 👈 aplica filtros actuales (sala/búsqueda)
+      } else {
+        _errorMessage = response.message ?? 'Error al cargar pacientes';
+      }
+    } catch (e) {
+      _errorMessage = 'Error de conexión: ${e.toString()}';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
-}
 
   /// 🔹 Reintentar carga
   void retryLoading() {
@@ -60,6 +86,7 @@ Future<void> loadPatients() async {
   void clearPatients() {
     _allPatients = [];
     _patients = [];
+    _selectedRoomId = null;
     notifyListeners();
   }
 }
