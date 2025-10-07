@@ -7,6 +7,10 @@ class PatientAdminCard extends StatelessWidget {
   const PatientAdminCard({super.key, required this.person});
 
   void _showDetails(BuildContext context) {
+    final bed = person.bed;
+    final room = bed?.room;
+    final camaOcupada = bed?.bedOccupied == true;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -22,7 +26,7 @@ class PatientAdminCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 🔹 Avatar grande + nombre
+                // 🔹 Avatar + nombre
                 Center(
                   child: Column(
                     children: [
@@ -64,18 +68,30 @@ class PatientAdminCard extends StatelessWidget {
 
                 // 🔹 Datos detallados
                 _buildDetailRow(Icons.badge, "DNI", person.personDni ?? "-"),
-                _buildDetailRow(Icons.cake, "Nacimiento", person.personBirthdate ?? "-"),
-                _buildDetailRow(Icons.numbers, "Edad", "${person.personAge ?? '-'}"),
-                _buildDetailRow(Icons.wc, "Género", person.gender.genderName ?? "-"),
                 _buildDetailRow(
-                  Icons.check_circle,
-                  "Estado",
-                  person.personStatus == 1 ? "Activo" : "Inactivo",
+                    Icons.cake, "Nacimiento", person.personBirthdate ?? "-"),
+                _buildDetailRow(
+                    Icons.numbers, "Edad", "${person.personAge ?? '-'}"),
+                _buildDetailRow(
+                    Icons.wc, "Género", person.gender.genderName ?? "-"),
+                _buildDetailRow(Icons.check_circle, "Estado",
+                    person.personStatus == 1 ? "Activo" : "Inactivo"),
+
+                const Divider(height: 28),
+
+                // 🔹 Sala y cama
+                _buildDetailRow(Icons.meeting_room, "Sala",
+                    room?.roomName ?? "-"),
+                _buildDetailRow(Icons.bed, "Cama", bed?.bedName ?? "-"),
+                _buildDetailRow(
+                  camaOcupada ? Icons.lock : Icons.lock_open,
+                  "Estado cama",
+                  camaOcupada ? "Ocupada" : "Libre",
                 ),
 
                 const SizedBox(height: 20),
 
-                // 🔹 Botón cerrar
+                // 🔹 Cerrar
                 Center(
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
@@ -103,6 +119,10 @@ class PatientAdminCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bed = person.bed;
+    final room = bed?.room;
+    final camaOcupada = bed?.bedOccupied == true;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 3,
@@ -112,14 +132,12 @@ class PatientAdminCard extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
 
-        // 🔹 Icono de avatar de paciente
         leading: CircleAvatar(
           radius: 26,
           backgroundColor: Colors.teal.withOpacity(0.15),
           child: const Icon(Icons.person, size: 30, color: Colors.teal),
         ),
 
-        // 🔹 Nombre y apellidos
         title: Text(
           "${person.personName ?? ''} ${person.personFahterSurname ?? ''}",
           style: const TextStyle(
@@ -129,13 +147,41 @@ class PatientAdminCard extends StatelessWidget {
           ),
         ),
 
-        // 🔹 Apellido materno debajo
-        subtitle: Text(
-          person.personMotherSurname ?? '',
-          style: const TextStyle(color: Colors.black54),
+        // 👇 mostramos sala / cama / estado cama
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              person.personMotherSurname ?? '',
+              style: const TextStyle(color: Colors.black54),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "Sala: ${room?.roomName ?? '-'}  •  Cama: ${bed?.bedName ?? '-'}",
+              style: const TextStyle(color: Colors.black54, fontSize: 12),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(
+                  camaOcupada ? Icons.lock : Icons.lock_open,
+                  size: 14,
+                  color: camaOcupada ? Colors.redAccent : Colors.green,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  camaOcupada ? "Cama ocupada" : "Cama libre",
+                  style: TextStyle(
+                    color: camaOcupada ? Colors.redAccent : Colors.green,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
 
-        // 🔹 Rol a la derecha
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -158,7 +204,6 @@ class PatientAdminCard extends StatelessWidget {
   }
 }
 
-/// 🔹 Helper para fila de detalle en el modal
 Widget _buildDetailRow(IconData icon, String label, String value) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 6),

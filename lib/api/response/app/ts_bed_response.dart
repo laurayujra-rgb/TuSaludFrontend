@@ -9,16 +9,16 @@ class TsBedsResponse implements TsResponseService {
   String? bedName;
   TsRoomResponse room;
   int? bedStatus;
-  bool? bedOccupied; // ✅ NUEVO CAMPO
+  bool? bedOccupied; // 👈 NUEVO
   TsAuditResponse? audit;
 
   TsBedsResponse({
     required this.bedId,
     this.bedName,
     required this.room,
-    this.bedStatus,
-    this.bedOccupied, // ✅ NUEVO
-    this.audit,
+    required this.bedStatus,
+    this.bedOccupied,
+    required this.audit,
   });
 
   factory TsBedsResponse.createEmpty() => TsBedsResponse(
@@ -26,7 +26,7 @@ class TsBedsResponse implements TsResponseService {
         bedName: '',
         room: TsRoomResponse.createEmpty(),
         bedStatus: 0,
-        bedOccupied: false, // ✅ default
+        bedOccupied: false,
         audit: TsAuditResponse.createEmpty(),
       );
 
@@ -36,9 +36,9 @@ class TsBedsResponse implements TsResponseService {
   factory TsBedsResponse.fromJson(Map<String, dynamic> json) => TsBedsResponse(
         bedId: json["bedId"] as int? ?? 0,
         bedName: json["bedName"] as String?,
-        room: TsRoomResponse.fromJson(json["room"]),
+        room: TsRoomResponse.fromJson(json["room"] as Map<String, dynamic>),
         bedStatus: json["bedStatus"] as int? ?? 0,
-        bedOccupied: json["bedOccupied"] as bool? ?? false, // ✅ NUEVO
+        bedOccupied: json["bedOccupied"] as bool? ?? false,
         audit: json["audit"] != null
             ? TsAuditResponse.fromJson(json["audit"])
             : TsAuditResponse.createEmpty(),
@@ -50,7 +50,7 @@ class TsBedsResponse implements TsResponseService {
         "bedName": bedName,
         "room": room.toMap(),
         "bedStatus": bedStatus,
-        "bedOccupied": bedOccupied, // ✅ NUEVO
+        "bedOccupied": bedOccupied,
         "audit": audit?.toJson(),
       };
 
@@ -63,9 +63,9 @@ class TsBedsResponse implements TsResponseService {
   TsBedsResponse fromMap(Map<String, dynamic> json) => TsBedsResponse(
         bedId: json["bedId"] as int? ?? 0,
         bedName: json["bedName"] as String?,
-        room: TsRoomResponse.fromJson(json["room"]),
+        room: TsRoomResponse.fromJson(json["room"] as Map<String, dynamic>),
         bedStatus: json["bedStatus"] as int? ?? 0,
-        bedOccupied: json["bedOccupied"] as bool? ?? false, // ✅ NUEVO
+        bedOccupied: json["bedOccupied"] as bool? ?? false,
         audit: json["audit"] != null
             ? TsAuditResponse.fromJson(json["audit"])
             : TsAuditResponse.createEmpty(),
