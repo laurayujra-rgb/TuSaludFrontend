@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tusalud/providers/admin/role_provider.dart'; // Asegúrate de tener este provider
+import 'package:tusalud/providers/admin/role_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/widgets/admin/Hospital/role/role_admin_card.dart';
 
@@ -28,105 +28,67 @@ class _RoleAdminViewState extends State<RoleAdminView> {
       backgroundColor: AppStyle.ligthGrey,
       body: Column(
         children: [
-          // HEADER sin flecha atrás
+          // HEADER sin flecha atrás ni botón agregar
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 40, 16, 8),
-            child: Row(
-              children: [
-                // Card título
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: AppStyle.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 8,
-                          spreadRadius: 2,
-                          offset: const Offset(2, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: AppStyle.primary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.all(12),
-                          child: const Icon(
-                            Icons.admin_panel_settings,
-                            size: 36,
-                            color: AppStyle.primary,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        const Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Administración de Roles",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                "Gestiona los roles disponibles en el sistema",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppStyle.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    spreadRadius: 2,
+                    offset: const Offset(2, 4),
                   ),
-                ),
-
-                const SizedBox(width: 12),
-
-                // Botón agregar
-                InkWell(
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Agregar nuevo rol")),
-                    );
-                  },
-                  borderRadius: BorderRadius.circular(30),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
                     decoration: BoxDecoration(
-                      color: Colors.green.shade50,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 6,
-                          spreadRadius: 2,
-                        ),
-                      ],
+                      color: AppStyle.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
                     ),
+                    padding: const EdgeInsets.all(12),
                     child: const Icon(
-                      Icons.add_circle,
-                      size: 30,
-                      color: Colors.green,
+                      Icons.admin_panel_settings,
+                      size: 36,
+                      color: AppStyle.primary,
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 16),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Administración de Roles",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          "Consulta los roles predefinidos del sistema",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
-          // LISTADO DE ROLES
+          // LISTADO DE ROLES (solo lectura)
           Expanded(
             child: Consumer<RoleAdminProvider>(
               builder: (context, provider, child) {
@@ -148,45 +110,11 @@ class _RoleAdminViewState extends State<RoleAdminView> {
                       onTap: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text("Seleccionaste ${role.roleName}"),
-                          ),
-                        );
-                      },
-                      onEdit: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Editar: ${role.roleName}")),
-                        );
-                      },
-                      onDelete: () async {
-                        final confirm = await showDialog<bool>(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: const Text("Confirmar eliminación"),
                             content: Text(
-                              "¿Deseas eliminar el rol '${role.roleName}'?",
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(ctx, false),
-                                child: const Text("Cancelar"),
-                              ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                ),
-                                onPressed: () => Navigator.pop(ctx, true),
-                                child: const Text("Eliminar"),
-                              ),
-                            ],
+                                "Rol: ${role.roleName} — ID: ${role.roleId}"),
+                            duration: const Duration(seconds: 2),
                           ),
                         );
-
-                        if (confirm == true) {
-                          await Provider.of<RoleAdminProvider>(
-                            context,
-                            listen: false,
-                          ).deleteRole(role.roleId);
-                        }
                       },
                     );
                   },

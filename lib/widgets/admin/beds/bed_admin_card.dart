@@ -19,12 +19,14 @@ class BedAdminCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isOccupied = bed.bedOccupied == true;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Slidable(
         key: ValueKey(bed.bedId),
 
-        // Deslizar a la izquierda → Editar
+        // 👉 Deslizar a la izquierda → Editar
         startActionPane: ActionPane(
           motion: const DrawerMotion(),
           extentRatio: 0.25,
@@ -39,7 +41,7 @@ class BedAdminCard extends StatelessWidget {
           ],
         ),
 
-        // Deslizar a la derecha → Eliminar
+        // 👉 Deslizar a la derecha → Eliminar
         endActionPane: ActionPane(
           motion: const DrawerMotion(),
           extentRatio: 0.25,
@@ -54,14 +56,14 @@ class BedAdminCard extends StatelessWidget {
           ],
         ),
 
-        // Card principal
+        // 👉 Card principal
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppStyle.white,
+              color: isOccupied ? Colors.red.shade50 : Colors.green.shade50,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -74,6 +76,7 @@ class BedAdminCard extends StatelessWidget {
             ),
             child: Row(
               children: [
+                // Ícono de cama
                 Container(
                   decoration: BoxDecoration(
                     color: AppStyle.primary.withOpacity(0.1),
@@ -87,6 +90,8 @@ class BedAdminCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 16),
+
+                // Información
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,22 +111,39 @@ class BedAdminCard extends StatelessWidget {
                           fontSize: 13,
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        bed.bedStatus == 1 ? "Disponible" : "Ocupada",
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: bed.bedStatus == 1
-                              ? Colors.green
-                              : Colors.redAccent,
-                        ),
+                      const SizedBox(height: 4),
+
+                      // 🔹 Estado de la cama (ocupada / disponible)
+                      Row(
+                        children: [
+                          Icon(
+                            isOccupied ? Icons.lock : Icons.lock_open,
+                            color:
+                                isOccupied ? Colors.redAccent : Colors.green,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            isOccupied ? "Ocupada" : "Disponible",
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color:
+                                  isOccupied ? Colors.redAccent : Colors.green,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-                const Icon(Icons.arrow_forward_ios,
-                    size: 18, color: Colors.grey),
+
+                // Flecha al final
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 18,
+                  color: Colors.grey,
+                ),
               ],
             ),
           ),
