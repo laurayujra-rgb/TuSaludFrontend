@@ -1,26 +1,29 @@
+// ts_people_response.dart
 import 'dart:convert';
 
 import 'package:tusalud/api/response/app/ts_audit_response.dart';
 import 'package:tusalud/api/response/app/ts_gender_response.dart';
 import 'package:tusalud/api/response/app/ts_role_response.dart';
 import 'package:tusalud/api/response/app/ts_bed_response.dart';
+import 'package:tusalud/api/response/app/ts_room_response.dart';
 import 'package:tusalud/api/response/ts_response.dart';
 
 class TsPeopleResponse implements TsResponseService {
   int personId;
   String? personName;
-  String? personFahterSurname;
+  String? personFahterSurname; // (propiedad mantiene el nombre que ya usas)
   String? personMotherSurname;
   String? personDni;
   String? personBirthdate;
   int? personAge;
   int? personStatus;
-
-  // 👇 NUEVO: cama (con room dentro)
-  TsBedsResponse? bed;
-
   TsGenderResponse gender;
   TsRoleResponse role;
+
+  /// 👇 Relacionadas
+  TsBedsResponse? bed;
+  TsRoomResponse? room;
+
   TsAuditResponse? audit;
 
   TsPeopleResponse({
@@ -32,9 +35,10 @@ class TsPeopleResponse implements TsResponseService {
     this.personBirthdate,
     this.personAge,
     this.personStatus,
-    this.bed, // 👈
     required this.gender,
     required this.role,
+    this.bed,
+    this.room,
     required this.audit,
   });
 
@@ -47,60 +51,66 @@ class TsPeopleResponse implements TsResponseService {
         personBirthdate: '',
         personAge: 0,
         personStatus: 0,
-        bed: null,
         gender: TsGenderResponse.createEmpty(),
         role: TsRoleResponse.createEmpty(),
+        bed: null,
+        room: null,
         audit: TsAuditResponse.createEmpty(),
       );
 
   @override
   String toJson() => json.encode(toMap());
 
-  factory TsPeopleResponse.fromJson(Map<String, dynamic> json) =>
-      TsPeopleResponse(
-        personId: json['personId'] as int? ?? 0,
-        personName: json['personName'] as String?,
-        personFahterSurname: json['personFatherSurname'] as String? ??
-            json['personFahterSurname'] as String?, // por si el backend usa ambos
-        personMotherSurname: json['personMotherSurname'] as String?,
-        personDni: json['personDni'] as String?,
-        personBirthdate: json['personBirthdate'] as String?,
-        personAge: json['personAge'] as int? ?? 0,
-        personStatus: json['personStatus'] as int? ?? 1,
+  factory TsPeopleResponse.fromJson(Map<String, dynamic> json) {
+    // fallback para room: si no viene en raíz, lo tomo de bed.room
+    final dynamic roomJson =
+        json['room'] ?? (json['bed'] is Map<String, dynamic> ? (json['bed'] as Map<String, dynamic>)['room'] : null);
 
-        // 👇 bed opcional
-        bed: (json["bed"] != null)
-            ? TsBedsResponse.fromJson(json["bed"] as Map<String, dynamic>)
-            : null,
-
-        gender: json["gender"] != null
-            ? TsGenderResponse.fromJson(json['gender'] as Map<String, dynamic>)
-            : TsGenderResponse.createEmpty(),
-        role: json["role"] != null
-            ? TsRoleResponse.fromJson(json['role'] as Map<String, dynamic>)
-            : TsRoleResponse.createEmpty(),
-        audit: json["audit"] != null
-            ? TsAuditResponse.fromJson(json["audit"])
-            : TsAuditResponse.createEmpty(),
-      );
+    return TsPeopleResponse(
+      personId: json['personId'] as int? ?? 0,
+      personName: json['personName'] as String?,
+      // 👇 fallback key correcto/typo
+      personFahterSurname:
+          (json['personFatherSurname'] as String?) ?? (json['personFahterSurname'] as String?),
+      personMotherSurname: json['personMotherSurname'] as String?,
+      personDni: json['personDni'] as String?,
+      personBirthdate: json['personBirthdate'] as String?,
+      personAge: json['personAge'] as int? ?? 0,
+      personStatus: json['personStatus'] as int? ?? 1,
+      gender: json["gender"] != null
+          ? TsGenderResponse.fromJson(Map<String, dynamic>.from(json['gender']))
+          : TsGenderResponse.createEmpty(),
+      role: json["role"] != null
+          ? TsRoleResponse.fromJson(Map<String, dynamic>.from(json['role']))
+          : TsRoleResponse.createEmpty(),
+      bed: json["bed"] != null
+          ? TsBedsResponse.fromJson(Map<String, dynamic>.from(json["bed"]))
+          : null,
+      room: roomJson != null
+          ? TsRoomResponse.fromJson(Map<String, dynamic>.from(roomJson))
+          : null,
+      audit: json["audit"] != null
+          ? TsAuditResponse.fromJson(json["audit"])
+          : TsAuditResponse.createEmpty(),
+    );
+  }
 
   @override
   Map<String, dynamic> toMap() => {
         'personId': personId,
         'personName': personName,
-        'personFahterSurname': personFahterSurname,
+        'personFatherSurname': personFahterSurname, // exporta con la key correcta
         'personMotherSurname': personMotherSurname,
         'personDni': personDni,
         'personBirthdate': personBirthdate,
         'personAge': personAge,
         'personStatus': personStatus,
-
-        // 👇 incluimos cama si existe
-        if (bed != null) 'bed': bed!.toMap(),
-
+        // Nota: si tus modelos tienen toMap(), mejor úsalo. Si sólo tienen toJson() que devuelve String, déjalo así.
         'gender': gender.toJson(),
         'role': role.toJson(),
-        "audit": audit?.toJson(),
+        'bed': bed?.toMap(),
+        'room': room?.toMap(),
+        'audit': audit?.toJson(),
       };
 
   @override
@@ -109,29 +119,36 @@ class TsPeopleResponse implements TsResponseService {
   }
 
   @override
-  TsPeopleResponse fromMap(Map<String, dynamic> json) => TsPeopleResponse(
-        personId: json['personId'] as int? ?? 0,
-        personName: json['personName'] as String?,
-        personFahterSurname: json['personFatherSurname'] as String? ??
-            json['personFahterSurname'] as String?,
-        personMotherSurname: json['personMotherSurname'] as String?,
-        personDni: json['personDni'] as String?,
-        personBirthdate: json['personBirthdate'] as String?,
-        personAge: json['personAge'] as int? ?? 0,
-        personStatus: json['personStatus'] as int? ?? 1,
+  TsPeopleResponse fromMap(Map<String, dynamic> json) {
+    final dynamic roomJson =
+        json['room'] ?? (json['bed'] is Map<String, dynamic> ? (json['bed'] as Map<String, dynamic>)['room'] : null);
 
-        bed: (json["bed"] != null)
-            ? TsBedsResponse.fromJson(json["bed"] as Map<String, dynamic>)
-            : null,
-
-        gender: json["gender"] != null
-            ? TsGenderResponse.fromJson(json['gender'] as Map<String, dynamic>)
-            : TsGenderResponse.createEmpty(),
-        role: json["role"] != null
-            ? TsRoleResponse.fromJson(json['role'] as Map<String, dynamic>)
-            : TsRoleResponse.createEmpty(),
-        audit: json["audit"] != null
-            ? TsAuditResponse.fromJson(json["audit"])
-            : TsAuditResponse.createEmpty(),
-      );
+    return TsPeopleResponse(
+      personId: json['personId'] as int? ?? 0,
+      personName: json['personName'] as String?,
+      // 👇 fallback key correcto/typo
+      personFahterSurname:
+          (json['personFatherSurname'] as String?) ?? (json['personFahterSurname'] as String?),
+      personMotherSurname: json['personMotherSurname'] as String?,
+      personDni: json['personDni'] as String?,
+      personBirthdate: json['personBirthdate'] as String?,
+      personAge: json['personAge'] as int? ?? 0,
+      personStatus: json['personStatus'] as int? ?? 1,
+      gender: json["gender"] != null
+          ? TsGenderResponse.fromJson(Map<String, dynamic>.from(json['gender']))
+          : TsGenderResponse.createEmpty(),
+      role: json["role"] != null
+          ? TsRoleResponse.fromJson(Map<String, dynamic>.from(json['role']))
+          : TsRoleResponse.createEmpty(),
+      bed: json["bed"] != null
+          ? TsBedsResponse.fromJson(Map<String, dynamic>.from(json["bed"]))
+          : null,
+      room: roomJson != null
+          ? TsRoomResponse.fromJson(Map<String, dynamic>.from(roomJson))
+          : null,
+      audit: json["audit"] != null
+          ? TsAuditResponse.fromJson(json["audit"])
+          : TsAuditResponse.createEmpty(),
+    );
+  }
 }

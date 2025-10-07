@@ -314,6 +314,45 @@ Future<TsResponse<TsPeopleResponse>> registerUser(TsPersonRequest personRequest)
     );
   }
 }
+
+Future<TsResponse<TsPeopleResponse>> getPatientsByRoom(int roomId) async {
+  try {
+    final response = await httpGet(
+      '$_baseUrl/persons/rooms/$roomId/patients',
+      getHeaders(),
+    );
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      final errorJson = json.decode(response.body);
+      return TsResponse<TsPeopleResponse>(
+        status: response.statusCode,
+        message: errorJson['message'] ?? 'Error al obtener pacientes por sala',
+        error: errorJson['error'] ?? '',
+      );
+    }
+
+    final responseJson = json.decode(response.body);
+    final List<dynamic> list = responseJson['data'] ?? [];
+
+    final patients = list
+        .map((e) => TsPeopleResponse.createEmpty().fromMap(
+              Map<String, dynamic>.from(e),
+            ))
+        .toList();
+
+    return TsResponse<TsPeopleResponse>(
+      dataList: patients,
+      status: response.statusCode,
+      message: responseJson['message'] ?? 'OK',
+    );
+  } catch (e) {
+    return TsResponse<TsPeopleResponse>(
+      status: HttpStatus.internalServerError,
+      message: 'Error inesperado al obtener pacientes por sala',
+      error: e.toString(),
+    );
+  }
+}
 // ------------------------------------------------------------------------------------------------
 /// REGISTER USER ADMIN (PERSON + ACCOUNT)
 /// ------------------------------------------------------------------------------------------------

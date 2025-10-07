@@ -55,4 +55,6 @@ class TsPersonResponse {
             ? TsRoleResponse.fromJson(json["role"])
             : TsRoleResponse.createEmpty(),
       );
+      
+      
 }
