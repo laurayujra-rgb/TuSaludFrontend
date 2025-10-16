@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/api/response/app/ts_people_response.dart';
 import 'package:tusalud/providers/app/profile_provider.dart';
@@ -43,6 +44,25 @@ class ProfileNurseCard extends StatelessWidget {
       children: [
         const SizedBox(height: 20),
         _UserProfileCard(user: user),
+        ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppStyle.primary,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          ),
+          onPressed: () async {
+            await context.pushNamed('editProfileNurse'); // ✅ Usamos GoRouter
+            final provider = Provider.of<ProfileProvider>(context, listen: false);
+            await provider.loadCurrentUserData();
+          },
+          icon: const Icon(Icons.edit, color: Colors.white),
+          label: const Text(
+            'Editar perfil',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+
+
         const SizedBox(height: 24),
         _InfoSection(
           title: S.of(context).personalInfo,

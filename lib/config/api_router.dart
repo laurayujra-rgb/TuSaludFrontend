@@ -43,6 +43,7 @@ import 'package:tusalud/views/app/nav_bar_admin_view.dart';
 import 'package:tusalud/views/app/nav_bar_nurse_view.dart';
 import 'package:tusalud/views/app/nav_bar_nursing_lic_view.dart';
 import 'package:tusalud/views/admin/profile/prifle_admin_view.dart';
+import 'package:tusalud/views/nurse/profile/edit_profile_nurse_vuew.dart';
 import 'package:tusalud/views/nurse/profile/profile_nurse_view.dart';
 import 'package:tusalud/views/nursing%20Lic/kardex/add_kardex_nursing_lic_view.dart';
 import 'package:tusalud/views/nurse/Reports/add_reports_nurse_view.dart';
@@ -307,6 +308,13 @@ class AppRouter {
             path: ProfileNurseView.routerPath,
             builder: (context, state) => const ProfileNurseView(),
           ),
+
+          GoRoute(
+            path: EditProfileNurseView.routerPath,
+            name: EditProfileNurseView.routerName,
+            builder: (context, state) => const EditProfileNurseView(),
+          ),
+
 
 
 
