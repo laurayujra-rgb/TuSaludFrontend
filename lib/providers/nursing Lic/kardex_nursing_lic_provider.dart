@@ -89,6 +89,49 @@ Future<bool> addKardex(TsKardexRequest request) async {
   }
 }
 
+Future<bool> updateKardex(int kardexId, TsKardexRequest request) async {
+  try {
+    final response = await TuSaludApi().updateKardex(kardexId, request);
+    if (response.isSuccess() && response.data != null) {
+      final index = _allKardex.indexWhere((k) => k.kardexId == kardexId);
+      if (index != -1) {
+        _allKardex[index] = response.data!;
+        _kardexList = List.from(_allKardex);
+        notifyListeners();
+      }
+      return true;
+    } else {
+      _errorMessage = response.message ?? 'Error al actualizar el kardex';
+      notifyListeners();
+      return false;
+    }
+  } catch (e) {
+    _errorMessage = 'Error de conexión: ${e.toString()}';
+    notifyListeners();
+    return false;
+  }
+}
+
+Future<bool> deleteKardex(int kardexId) async {
+  try {
+    final response = await TuSaludApi().deleteKardex(kardexId);
+    if (response.status == 200 || response.isSuccess()) {
+      _allKardex.removeWhere((k) => k.kardexId == kardexId);
+      _kardexList = List.from(_allKardex);
+      notifyListeners();
+      return true;
+    } else {
+      _errorMessage = response.message ?? 'Error al eliminar el kardex';
+      notifyListeners();
+      return false;
+    }
+  } catch (e) {
+    _errorMessage = 'Error de conexión: ${e.toString()}';
+    notifyListeners();
+    return false;
+  }
+}
+
 
 
 

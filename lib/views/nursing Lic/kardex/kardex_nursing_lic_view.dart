@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tusalud/providers/nursing%20Lic/kardex_nursing_lic_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/views/nursing%20Lic/kardex/add_kardex_nursing_lic_view.dart';
+import 'package:tusalud/views/nursing%20Lic/kardex/edit_kardex_nursing_lic_view.dart' show EditKardexNursingLicView;
 import 'package:tusalud/widgets/nursing%20Lic/kardex/kardex_nursing_lic_card.dart';
 
 
@@ -133,26 +134,85 @@ Widget build(BuildContext context) {
                   );
                 }
 
-                return ListView.builder(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  itemCount: provider.kardexList.length,
-                  itemBuilder: (context, index) {
-                    final kardex = provider.kardexList[index];
-                    return KardexNursingLicCard(
-                      kardex: kardex,
-                      onEdit: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Editar kardex: ${kardex.kardexNumber}")),
-                        );
-                      },
-                      onDelete: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Eliminar kardex: ${kardex.kardexNumber}")),
+                    return ListView.builder(
+                      itemCount: provider.kardexList.length,
+                      itemBuilder: (context, index) {
+                        final kardex = provider.kardexList[index];
+
+                        return Dismissible(
+                          key: ValueKey(kardex.kardexId),
+                          background: Container(
+                            color: Colors.blueAccent,
+                            alignment: Alignment.centerLeft,
+                            padding: const EdgeInsets.only(left: 20),
+                            child: const Icon(Icons.edit, color: Colors.white),
+                          ),
+                          secondaryBackground: Container(
+                            color: Colors.redAccent,
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.only(right: 20),
+                            child: const Icon(Icons.delete, color: Colors.white),
+                          ),
+                            confirmDismiss: (direction) async {
+                              final rootContext = context; // ✅ contexto seguro
+
+                              if (direction == DismissDirection.startToEnd) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => EditKardexNursingLicView(
+                                      kardex: kardex,
+                                      patientId: widget.patientId,
+                                    ),
+                                  ),
+                                );
+                                return false;
+                              }
+
+                              if (direction == DismissDirection.endToStart) {
+                                final confirm = await showDialog<bool>(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: const Text("Confirmar eliminación"),
+                                    content: const Text("¿Deseas eliminar este Kardex?"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(_, false),
+                                        child: const Text("Cancelar"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(_, true),
+                                        child: const Text("Eliminar"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+
+                                if (confirm == true) {
+                                  final kardexProvider =
+                                      Provider.of<KardexNursingLicProvider>(rootContext, listen: false);
+                                  final deleted = await kardexProvider.deleteKardex(kardex.kardexId);
+
+                                  if (deleted && mounted) {
+                                    ScaffoldMessenger.of(rootContext).showSnackBar(
+                                      const SnackBar(content: Text("🗑️ Kardex eliminado correctamente")),
+                                    );
+                                  } else if (mounted) {
+                                    ScaffoldMessenger.of(rootContext).showSnackBar(
+                                      const SnackBar(content: Text("❌ Error al eliminar el kardex")),
+                                    );
+                                  }
+                                }
+                              }
+
+                              return false;
+                            },
+
+                          child: KardexNursingLicCard(kardex: kardex),
                         );
                       },
                     );
-                  },
-                );
+
               },
             ),
           ),
