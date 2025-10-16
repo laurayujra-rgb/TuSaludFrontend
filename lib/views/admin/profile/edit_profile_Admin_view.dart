@@ -6,18 +6,17 @@ import 'package:tusalud/style/app_style.dart';
 import 'package:tusalud/widgets/app/custom_app_bar.dart';
 import 'dart:convert';
 
-class EditProfileNurseLicView extends StatefulWidget {
-  static const String routerName = 'editProfileNurseLic';
-  static const String routerPath = '/edit_profile_nurseLic';
+class EditProfileAdminView extends StatefulWidget {
+  static const String routerName = 'editProfileAdmin';
+  static const String routerPath = '/edit_profile_admin';
 
-  const EditProfileNurseLicView({super.key});
+  const EditProfileAdminView({super.key});
 
   @override
-  State<EditProfileNurseLicView> createState() =>
-      _EditProfileNurseLicViewState();
+  State<EditProfileAdminView> createState() => _EditProfileAdminViewState();
 }
 
-class _EditProfileNurseLicViewState extends State<EditProfileNurseLicView> {
+class _EditProfileAdminViewState extends State<EditProfileAdminView> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameCtrl;
   late TextEditingController _fatherCtrl;
@@ -36,7 +35,6 @@ class _EditProfileNurseLicViewState extends State<EditProfileNurseLicView> {
     _birthdateCtrl = TextEditingController();
     _dniCtrl = TextEditingController();
 
-    // Cargar datos actuales del usuario
     Future.microtask(() async {
       final provider = Provider.of<ProfileProvider>(context, listen: false);
       await provider.loadCurrentUserData();
@@ -65,7 +63,7 @@ class _EditProfileNurseLicViewState extends State<EditProfileNurseLicView> {
     super.dispose();
   }
 
-  /// ✅ Guardar cambios con recálculo automático de edad
+  /// ✅ Guardar cambios (con edad recalculada automáticamente)
   Future<void> _saveChanges() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
@@ -81,7 +79,7 @@ class _EditProfileNurseLicViewState extends State<EditProfileNurseLicView> {
       return;
     }
 
-    // 🔹 Función para calcular edad
+    // 🔹 Función para calcular edad según la fecha seleccionada
     int calculateAge(DateTime birthDate) {
       final today = DateTime.now();
       int age = today.year - birthDate.year;
@@ -92,12 +90,11 @@ class _EditProfileNurseLicViewState extends State<EditProfileNurseLicView> {
       return age;
     }
 
-    // 🔹 Calcular edad desde la fecha actual del campo
     int personAge = 0;
     try {
       personAge = calculateAge(DateTime.parse(_birthdateCtrl.text));
     } catch (_) {
-      personAge = user.personAge ?? 0; // fallback
+      personAge = user.personAge ?? 0;
     }
 
     final body = {
@@ -106,7 +103,7 @@ class _EditProfileNurseLicViewState extends State<EditProfileNurseLicView> {
       "personMotherSurname": _motherCtrl.text.trim(),
       "personDni": _dniCtrl.text.trim(),
       "personBirthdate": _birthdateCtrl.text.trim(),
-      "personAge": personAge, // ✅ edad calculada automáticamente
+      "personAge": personAge,
       "personStatus": 1,
       "gender": {"genderId": _genderId},
       "role": {"roleId": user.role.roleId}
@@ -115,7 +112,6 @@ class _EditProfileNurseLicViewState extends State<EditProfileNurseLicView> {
     try {
       final api = TuSaludApi();
       final response = await api.updatePerson(user.personId, body);
-
       setState(() => _saving = false);
 
       if (response.isSuccess()) {
@@ -133,8 +129,7 @@ class _EditProfileNurseLicViewState extends State<EditProfileNurseLicView> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-                response.message ?? 'Error al actualizar el perfil (${response.status})'),
+            content: Text(response.message ?? 'Error al actualizar el perfil'),
             backgroundColor: Colors.redAccent,
           ),
         );
@@ -213,7 +208,8 @@ class _EditProfileNurseLicViewState extends State<EditProfileNurseLicView> {
     );
   }
 
-  Widget _buildField(TextEditingController controller, String label, IconData icon,
+  Widget _buildField(TextEditingController controller, String label,
+      IconData icon,
       {bool isNumber = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),

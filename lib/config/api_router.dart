@@ -34,6 +34,7 @@ import 'package:tusalud/views/admin/peoples/patients/add_patients_admin_view.dar
 import 'package:tusalud/views/admin/peoples/patients/patients_admin_view.dart';
 import 'package:tusalud/views/admin/peoples/people_admin.view.dart';
 import 'package:tusalud/views/admin/peoples/supervisor/supervisor_admin_view.dart';
+import 'package:tusalud/views/admin/profile/edit_profile_Admin_view.dart';
 import 'package:tusalud/views/admin/settings/diet/add_diet_admin_view.dart';
 import 'package:tusalud/views/admin/settings/gender/gender_admin_view.dart';
 import 'package:tusalud/views/admin/settings/medicine/add_medicine_admin_view.dart';
@@ -43,7 +44,7 @@ import 'package:tusalud/views/app/nav_bar_admin_view.dart';
 import 'package:tusalud/views/app/nav_bar_nurse_view.dart';
 import 'package:tusalud/views/app/nav_bar_nursing_lic_view.dart';
 import 'package:tusalud/views/admin/profile/prifle_admin_view.dart';
-import 'package:tusalud/views/nurse/profile/edit_profile_nurse_vuew.dart';
+import 'package:tusalud/views/nurse/profile/edit_profile_nurse_view.dart';
 import 'package:tusalud/views/nurse/profile/profile_nurse_view.dart';
 import 'package:tusalud/views/nursing%20Lic/kardex/add_kardex_nursing_lic_view.dart';
 import 'package:tusalud/views/nurse/Reports/add_reports_nurse_view.dart';
@@ -207,6 +208,12 @@ class AppRouter {
             path: ProfileAdminView.routerPath,
             builder: (context, state) => const ProfileAdminView(),
           ),
+          GoRoute(
+            path: EditProfileAdminView.routerPath,
+            name: EditProfileAdminView.routerName,
+            builder: (context, state) => const EditProfileAdminView(),
+          ),
+
         ],
       ),
 
