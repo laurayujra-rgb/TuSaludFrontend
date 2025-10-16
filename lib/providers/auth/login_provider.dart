@@ -50,13 +50,22 @@ void goHome(BuildContext context) async {
         final data = TuSaludApi().parseJwt(token.accessToken ?? '');
 
         // Guardar tokens y datos
-        await Preferences().setAccessToken(token.accessToken ?? '');
-        await Preferences().setRefreshToken(token.refreshToken ?? '');
-        await Preferences().setEmail(data['email'] ?? '');
-        await Preferences().setLastName(data['lastName'] ?? '');
-        await Preferences().setName(data['name'] ?? '');
-        await Preferences().setRole(data['roles']?[0] ?? '');
-        await Preferences().setPersonId(data['personId'] ?? 0);
+await Preferences().setAccessToken(token.accessToken ?? '');
+await Preferences().setRefreshToken(token.refreshToken ?? '');
+await Preferences().setEmail(data['email'] ?? '');
+await Preferences().setLastName(data['lastName'] ?? '');
+await Preferences().setName(data['name'] ?? '');
+await Preferences().setRole(data['roles']?[0] ?? '');
+await Preferences().setPersonId(int.tryParse(data['personId'].toString()) ?? 0);
+
+// 👇 Guarda el personId (conversión segura)
+final personId = int.tryParse(data['personId'].toString()) ?? 0;
+await Preferences().setPersonId(personId);
+
+// 👇 Log temporal para depurar
+debugPrint('✅ ID de persona guardado correctamente: $personId');
+
+
 
         final role = data['roles']?[0] ?? '';
 

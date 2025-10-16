@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/api/response/app/ts_people_response.dart';
 import 'package:tusalud/providers/app/profile_provider.dart';
 import 'package:tusalud/style/app_style.dart';
+import 'package:tusalud/views/nursing%20Lic/profile/edit_profile_nurse_lic_view.dart';
 
 import '../../../generated/l10.dart';
 import '../../../providers/providers.dart';
@@ -40,24 +42,53 @@ class ProfileNurseLicCard extends StatelessWidget {
       return Text(S.of(context).noUserData);
     }
 
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        _UserProfileCard(user: user),
-        const SizedBox(height: 24),
-        _InfoSection(
-          title: S.of(context).personalInfo,
-          children: [
-            _InfoItem(icon: Icons.credit_card, label: S.of(context).dni, value: user.personDni ?? 'N/A'),
-            _InfoItem(icon: Icons.cake, label: S.of(context).bornDate, value: _formatDate(user.personBirthdate)),
-            _InfoItem(icon: Icons.timeline, label: S.of(context).age, value: user.personAge?.toString() ?? 'N/A'),
-            _InfoItem(icon: Icons.transgender, label: S.of(context).gender, value: user.gender?.genderName ?? 'N/A'),
-          ],
-        ),
-        const SizedBox(height: 16),
+return Column(
+  children: [
+    const SizedBox(height: 20),
+    _UserProfileCard(user: user),
 
+    const SizedBox(height: 16),
+
+    // 👉 Aquí agregas el botón “Editar perfil”
+ElevatedButton.icon(
+  style: ElevatedButton.styleFrom(
+    backgroundColor: AppStyle.primary,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+  ),
+  onPressed: () async {
+    // 👇 Espera a que se cierre la vista de edición
+   await context.pushNamed(EditProfileNurseLicView.routerName);
+context.read<ProfileProvider>().loadCurrentUserData();
+
+    // 👇 Al volver, recarga el perfil
+    final provider = Provider.of<ProfileProvider>(context, listen: false);
+    await provider.loadCurrentUserData();
+  },
+  icon: const Icon(Icons.edit, color: Colors.white),
+  label: const Text(
+    'Editar perfil',
+    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+  ),
+),
+
+
+
+    const SizedBox(height: 24),
+
+    _InfoSection(
+      title: S.of(context).personalInfo,
+      children: [
+        _InfoItem(icon: Icons.credit_card, label: S.of(context).dni, value: user.personDni ?? 'N/A'),
+        _InfoItem(icon: Icons.cake, label: S.of(context).bornDate, value: _formatDate(user.personBirthdate)),
+        _InfoItem(icon: Icons.timeline, label: S.of(context).age, value: user.personAge?.toString() ?? 'N/A'),
+        _InfoItem(icon: Icons.transgender, label: S.of(context).gender, value: user.gender?.genderName ?? 'N/A'),
       ],
-    );
+    ),
+    const SizedBox(height: 16),
+  ],
+);
+
   }
 
 String _formatDate(String? date) {
@@ -134,6 +165,7 @@ class _UserProfileCard extends StatelessWidget {
       ),
     );
   }
+  
 }
 
 class _InfoSection extends StatelessWidget {
@@ -166,7 +198,9 @@ class _InfoSection extends StatelessWidget {
         ),
       ),
     );
+    
   }
+  
 }
 
 class _InfoItem extends StatelessWidget {
@@ -206,5 +240,8 @@ class _InfoItem extends StatelessWidget {
         ],
       ),
     );
+    
   }
+  
 }
+

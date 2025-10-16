@@ -56,6 +56,7 @@ import 'package:tusalud/views/nursing%20Lic/medication/medication_kardex_nursing
 import 'package:tusalud/views/nursing%20Lic/patient/patients_nursing_lic_view.dart';
 import 'package:tusalud/views/admin/settings/via%20Medicine/via_admin_view.dart';
 import 'package:tusalud/views/nurse/Vital%20Signs/vital_signs_nurse_view.dart';
+import 'package:tusalud/views/nursing%20Lic/profile/edit_profile_nurse_lic_view.dart';
 import 'package:tusalud/views/nursing%20Lic/profile/profile_nurse_lic_view.dart';
 
 import '../providers/auth/user_provider.dart';
@@ -385,8 +386,13 @@ class AppRouter {
             path: ProfileNurseLicView.routerPath,
             builder: (context, state) => const ProfileNurseLicView(),
           ),
+          GoRoute(
+            path: EditProfileNurseLicView.routerPath,
+            name: EditProfileNurseLicView.routerName,
+            builder: (context, state) => const EditProfileNurseLicView(),
+),
 
-          // aquí también podrías meter más rutas de supervisor
+    
         ],
       ),
     ],

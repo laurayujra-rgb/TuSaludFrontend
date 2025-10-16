@@ -2460,5 +2460,61 @@ Future<TsResponse<TsPeopleResponse>> getPersonById(int personId) async {
   }
 }
 
+// ------------------------------------------------------------------------------------------------
+/// UPDATE PERSON
+/// ------------------------------------------------------------------------------------------------
+Future<TsResponse<TsPeopleResponse>> updatePerson(
+  int personId,
+  Map<String, dynamic> body,
+) async {
+  try {
+    final api = TuSaludApi();
+    final response = await api.httpPut(
+      '${Enviroment.apiTuSaludURL}/persons/update/$personId', // ✅ aquí usamos personId, no user.personId
+      api.getHeaders(),
+      jsonEncode(body),
+    );
+
+    if (response.statusCode >= HttpStatus.badRequest) {
+      // Manejo de errores del backend
+      try {
+        final errorJson = json.decode(response.body);
+        return TsResponse<TsPeopleResponse>(
+          status: response.statusCode,
+          message: errorJson['message'] ?? 'Error al actualizar persona',
+          error: errorJson['error'] ?? '',
+        );
+      } catch (e) {
+        return TsResponse<TsPeopleResponse>(
+          status: response.statusCode,
+          message: 'Error desconocido al actualizar persona',
+          error: e.toString(),
+        );
+      }
+    }
+
+    // ✅ Parsear respuesta exitosa
+    final responseJson = json.decode(response.body);
+    final personData = TsPeopleResponse.createEmpty().fromMap(
+      Map<String, dynamic>.from(responseJson['data']),
+    );
+
+    return TsResponse<TsPeopleResponse>(
+      data: personData,
+      status: response.statusCode,
+      message: responseJson['message'] ?? 'Persona actualizada correctamente',
+    );
+  } catch (e) {
+    return TsResponse<TsPeopleResponse>(
+      status: HttpStatus.internalServerError,
+      message: 'Error durante la actualización de la persona',
+      error: e.toString(),
+    );
+  }
+}
+
+
+
+
 
 }
