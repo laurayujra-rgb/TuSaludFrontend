@@ -5,7 +5,6 @@ class TsKardexRequest {
   final String kardexHour;
   final String nursingActions;
   final int patientId;
-  final int nurseId;
   final int dietId;
 
   TsKardexRequest({
@@ -15,7 +14,6 @@ class TsKardexRequest {
     required this.kardexHour,
     required this.nursingActions,
     required this.patientId,
-    required this.nurseId,
     required this.dietId,
   });
 
@@ -28,9 +26,6 @@ class TsKardexRequest {
       "nursingActions": nursingActions,
       "patient": {
         "personId": patientId,
-      },
-      "nurse": {
-        "personId": nurseId,
       },
       "diets": {
         "dietId": dietId,

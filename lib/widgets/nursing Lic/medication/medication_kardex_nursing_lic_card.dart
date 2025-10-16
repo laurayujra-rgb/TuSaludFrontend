@@ -37,9 +37,9 @@ class MedicationKardexNursingLicCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
-              // 🔹 Enfermera
-              if (kardex.nurseName != null && kardex.nurseName!.isNotEmpty)
-                Text("👩‍⚕️ Enfermera: ${kardex.nurseName!}"),
+              // // 🔹 Enfermera
+              // if (kardex.nurseName != null && kardex.nurseName!.isNotEmpty)
+              //   Text("👩‍⚕️ Enfermera: ${kardex.nurseName!}"),
 
               // 🔹 Dieta
               if (kardex.dietName != null && kardex.dietName!.isNotEmpty)

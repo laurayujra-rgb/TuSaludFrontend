@@ -83,24 +83,24 @@ class KardexNursingLicCard extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            // 🔹 Enfermera asignada
-            if (kardex.nurseName != null && kardex.nurseName!.isNotEmpty)
-              Row(
-                children: [
-                  const Text("👩‍⚕️ ",
-                      style: TextStyle(fontSize: 20)), // emoji enfermera
-                  Expanded(
-                    child: Text(
-                      kardex.nurseName!,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            if (kardex.nurseName != null && kardex.nurseName!.isNotEmpty)
+            // // 🔹 Enfermera asignada
+            // if (kardex.nurseName != null && kardex.nurseName!.isNotEmpty)
+            //   Row(
+            //     children: [
+            //       const Text("👩‍⚕️ ",
+            //           style: TextStyle(fontSize: 20)), // emoji enfermera
+            //       Expanded(
+            //         child: Text(
+            //           kardex.nurseName!,
+            //           style: const TextStyle(
+            //             fontSize: 14,
+            //             color: Colors.black87,
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // if (kardex.nurseName != null && kardex.nurseName!.isNotEmpty)
               const SizedBox(height: 10),
 
             // 🔹 Dieta + Fecha

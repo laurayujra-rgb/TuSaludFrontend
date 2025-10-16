@@ -72,7 +72,7 @@ void _saveForm() async {
       kardexHour: _currentHour,
       nursingActions: _actionsController.text,
       patientId: widget.patientId, // 👈 viene de la vista
-      nurseId: _selectedNurse?.personId ?? 0, // 👈 enfermera seleccionada
+
       dietId: _selectedDiet?.dietId ?? 0,
     );
 
@@ -189,36 +189,36 @@ void _saveForm() async {
               const SizedBox(height: 16),
 
               // Dropdown Enfermera
-              Consumer<PeopleAdminProvider>(
-                builder: (context, nurseProvider, _) {
-                  if (nurseProvider.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (nurseProvider.errorMessage != null) {
-                    return Text(
-                      nurseProvider.errorMessage!,
-                      style: const TextStyle(color: Colors.red),
-                    );
-                  }
-                  if (nurseProvider.people.isEmpty) {
-                    return const Text("No hay enfermeras registradas");
-                  }
-                  return DropdownButtonFormField<TsPeopleResponse>(
-                    value: _selectedNurse,
-                    items: nurseProvider.people.map((nurse) {
-                      final fullName =
-                          "${nurse.personName ?? ''} ${nurse.personFahterSurname ?? ''} ${nurse.personMotherSurname ?? ''}";
-                      return DropdownMenuItem<TsPeopleResponse>(
-                        value: nurse,
-                        child: Text(fullName.trim()),
-                      );
-                    }).toList(),
-                    decoration: _inputDecoration("Seleccione Enfermera", Icons.person),
-                    onChanged: (value) => setState(() => _selectedNurse = value),
-                    validator: (value) => value == null ? "Seleccione una enfermera" : null,
-                  );
-                },
-              ),
+              // Consumer<PeopleAdminProvider>(
+              //   builder: (context, nurseProvider, _) {
+              //     if (nurseProvider.isLoading) {
+              //       return const Center(child: CircularProgressIndicator());
+              //     }
+              //     if (nurseProvider.errorMessage != null) {
+              //       return Text(
+              //         nurseProvider.errorMessage!,
+              //         style: const TextStyle(color: Colors.red),
+              //       );
+              //     }
+              //     if (nurseProvider.people.isEmpty) {
+              //       return const Text("No hay enfermeras registradas");
+              //     }
+              //     return DropdownButtonFormField<TsPeopleResponse>(
+              //       value: _selectedNurse,
+              //       items: nurseProvider.people.map((nurse) {
+              //         final fullName =
+              //             "${nurse.personName ?? ''} ${nurse.personFahterSurname ?? ''} ${nurse.personMotherSurname ?? ''}";
+              //         return DropdownMenuItem<TsPeopleResponse>(
+              //           value: nurse,
+              //           child: Text(fullName.trim()),
+              //         );
+              //       }).toList(),
+              //       decoration: _inputDecoration("Seleccione Enfermera", Icons.person),
+              //       onChanged: (value) => setState(() => _selectedNurse = value),
+              //       validator: (value) => value == null ? "Seleccione una enfermera" : null,
+              //     );
+              //   },
+              // ),
               const SizedBox(height: 16),
 
               // Acciones de Enfermería
