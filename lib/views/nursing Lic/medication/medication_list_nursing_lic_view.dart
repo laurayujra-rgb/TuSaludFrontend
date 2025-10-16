@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tusalud/providers/nursing%20Lic/medication_kardex_nursing_lic_provider.dart';
 import 'package:tusalud/style/app_style.dart';
+import 'package:tusalud/views/nursing%20Lic/medication/EditMedicationKardexView.dart';
 import 'package:tusalud/widgets/nursing%20Lic/medication/medication_card.dart';
 import 'package:tusalud/views/nursing%20Lic/medication/add_medication_kardex_view.dart';
 
@@ -125,14 +126,74 @@ class _MedicationListNursingLicViewState
                   );
                 }
 
-                return ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-                  itemCount: provider.medications.length,
-                  itemBuilder: (context, index) {
-                    final medication = provider.medications[index];
-                    return MedicationCard(medication: medication);
-                  },
-                );
+return ListView.builder(
+  padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+  itemCount: provider.medications.length,
+  itemBuilder: (context, index) {
+    final medication = provider.medications[index];
+    return Dismissible(
+      key: ValueKey(medication.id),
+      background: Container(
+        color: Colors.blueAccent,
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: const Icon(Icons.edit, color: Colors.white, size: 28),
+      ),
+      secondaryBackground: Container(
+        color: Colors.redAccent,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: const Icon(Icons.delete, color: Colors.white, size: 28),
+      ),
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.startToEnd) {
+          // 👉 Editar
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => EditMedicationKardexView(
+                medication: medication,
+              ),
+            ),
+          );
+          if (result == true) {
+            Provider.of<MedicationKardexNursingLicProvider>(context, listen: false)
+                .loadMedicationsByKardex(widget.kardexId);
+          }
+          return false;
+        } else if (direction == DismissDirection.endToStart) {
+          // 👉 Eliminar
+          final confirm = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text("Eliminar medicación"),
+              content: const Text("¿Deseas eliminar este medicamento del Kardex?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text("Cancelar"),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: const Text("Eliminar"),
+                ),
+              ],
+            ),
+          );
+          if (confirm == true) {
+            await Provider.of<MedicationKardexNursingLicProvider>(context, listen: false)
+                .deleteMedication(medication.id);
+          }
+          return false;
+        }
+        return false;
+      },
+      child: MedicationCard(medication: medication),
+    );
+  },
+);
+
               },
             ),
           ),
