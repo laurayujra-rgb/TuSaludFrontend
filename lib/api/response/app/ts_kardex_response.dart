@@ -12,6 +12,7 @@ class TsKardexResponse implements TsResponseService {
   String? nursingActions;
   int? dietId;
   String? dietName;
+  String? nurseLic; // 👈 nombre corregido
 
   // 🔹 Solo nombres (ignoro los IDs)
   String? patientName;
@@ -28,7 +29,7 @@ class TsKardexResponse implements TsResponseService {
     this.dietId,
     this.dietName,
     this.patientName,
- 
+    this.nurseLic,
   });
 
   factory TsKardexResponse.createEmpty() => TsKardexResponse(
@@ -42,7 +43,7 @@ class TsKardexResponse implements TsResponseService {
         dietId: 0,
         dietName: '',
         patientName: '',
-   
+        nurseLic: '',
       );
 
   @override
@@ -61,6 +62,7 @@ class TsKardexResponse implements TsResponseService {
         dietName: json['dietName'] as String?,
         // 🔹 Aquí ignoro los IDs, solo uso nombres
         patientName: json['patientName'] as String? ?? '',
+        nurseLic: json['nurseLic'] as String? ?? '',
 
       );
 
@@ -76,6 +78,7 @@ class TsKardexResponse implements TsResponseService {
         "dietId": dietId,
         "dietName": dietName,
         "patientName": patientName,
+        "nurseLic": nurseLic,
  
       };
 
@@ -96,6 +99,6 @@ class TsKardexResponse implements TsResponseService {
         dietId: json['dietId'] as int?,
         dietName: json['dietName'] as String?,
         patientName: json['patientName'] as String? ?? '',
-     
+        nurseLic: json['nurseLic'] as String? ?? '',
       );
 }

@@ -6,6 +6,8 @@ class TsKardexRequest {
   final String nursingActions;
   final int patientId;
   final int dietId;
+  final String? nurseLic; // 👈 nombre corregido
+
 
   TsKardexRequest({
     required this.kardexNumber,
@@ -15,6 +17,7 @@ class TsKardexRequest {
     required this.nursingActions,
     required this.patientId,
     required this.dietId,
+    this.nurseLic,
   });
 
   Map<String, dynamic> toJson() {
@@ -30,6 +33,7 @@ class TsKardexRequest {
       "diets": {
         "dietId": dietId,
       },
+      "nurseLic": nurseLic,
     };
   }
 }

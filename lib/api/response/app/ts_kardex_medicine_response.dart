@@ -11,6 +11,8 @@ class TsMedicationKardexResponse implements TsResponseService {
   String? routeNote;
   String? notes;
   int status;
+  String? nurseLic; // 👈 nombre corregido
+
 
   TsMedicationKardexResponse({
     required this.id,
@@ -22,6 +24,7 @@ class TsMedicationKardexResponse implements TsResponseService {
     this.routeNote,
     this.notes,
     required this.status,
+    this.nurseLic,
   });
 
   /// 🔹 Crear objeto vacío
@@ -35,6 +38,7 @@ class TsMedicationKardexResponse implements TsResponseService {
         routeNote: '',
         notes: '',
         status: 0,
+        nurseLic: '',
       );
 
   @override
@@ -52,6 +56,7 @@ class TsMedicationKardexResponse implements TsResponseService {
         routeNote: json['routeNote'] as String? ?? '',
         notes: json['notes'] as String? ?? '',
         status: json['status'] as int? ?? 0,
+        nurseLic: json['nurseLic'] as String? ?? '',
       );
 
   @override
@@ -65,6 +70,7 @@ class TsMedicationKardexResponse implements TsResponseService {
         "routeNote": routeNote,
         "notes": notes,
         "status": status,
+        "nurseLic": nurseLic,
       };
 
   @override
@@ -84,5 +90,6 @@ class TsMedicationKardexResponse implements TsResponseService {
         routeNote: json['routeNote'] as String? ?? '',
         notes: json['notes'] as String? ?? '',
         status: json['status'] as int? ?? 0,
+        nurseLic: json['nurseLic'] as String? ?? '',
       );
 }

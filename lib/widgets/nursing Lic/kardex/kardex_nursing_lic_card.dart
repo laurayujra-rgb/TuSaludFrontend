@@ -67,8 +67,7 @@ class KardexNursingLicCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("🩺 ",
-                    style: TextStyle(fontSize: 20)), // emoji diagnóstico
+                const Text("🩺 ", style: TextStyle(fontSize: 20)),
                 Expanded(
                   child: Text(
                     kardex.kardexDiagnosis ?? "Sin diagnóstico",
@@ -83,25 +82,24 @@ class KardexNursingLicCard extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            // // 🔹 Enfermera asignada
-            // if (kardex.nurseName != null && kardex.nurseName!.isNotEmpty)
-            //   Row(
-            //     children: [
-            //       const Text("👩‍⚕️ ",
-            //           style: TextStyle(fontSize: 20)), // emoji enfermera
-            //       Expanded(
-            //         child: Text(
-            //           kardex.nurseName!,
-            //           style: const TextStyle(
-            //             fontSize: 14,
-            //             color: Colors.black87,
-            //           ),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // if (kardex.nurseName != null && kardex.nurseName!.isNotEmpty)
-              const SizedBox(height: 10),
+            // 🔹 Enfermera licenciada
+            if (kardex.nurseLic != null && kardex.nurseLic!.isNotEmpty)
+              Row(
+                children: [
+                  const Text("👩‍⚕️ ", style: TextStyle(fontSize: 20)),
+                  Expanded(
+                    child: Text(
+                      kardex.nurseLic!,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppStyle.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            const SizedBox(height: 10),
 
             // 🔹 Dieta + Fecha
             Row(
