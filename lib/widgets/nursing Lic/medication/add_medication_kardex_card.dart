@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tusalud/api/request/app/ts_medication_kardex_request.dart';
 import 'package:tusalud/providers/admin/medicine_nurse_provider.dart';
 import 'package:tusalud/providers/nursing%20Lic/medication_kardex_nursing_lic_provider.dart';
+import 'package:tusalud/providers/app/profile_provider.dart';
 import 'package:tusalud/style/app_style.dart';
 
 class AddMedicationKardexCard extends StatefulWidget {
@@ -25,12 +26,20 @@ class _AddMedicationKardexCardState extends State<AddMedicationKardexCard> {
   int? _selectedMedicineId;
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() =>
+        Provider.of<ProfileProvider>(context, listen: false)
+            .loadCurrentUserData());
+  }
+
+  @override
   Widget build(BuildContext context) {
     final medicineProvider = Provider.of<MedicineNurseProvider>(context);
-    final medicationProvider = Provider.of<MedicationKardexNursingLicProvider>(
-      context,
-      listen: false,
-    );
+    final medicationProvider =
+        Provider.of<MedicationKardexNursingLicProvider>(context, listen: false);
+    final profileProvider = Provider.of<ProfileProvider>(context);
+    final user = profileProvider.currentUser;
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -53,7 +62,34 @@ class _AddMedicationKardexCardState extends State<AddMedicationKardexCard> {
               ),
               const SizedBox(height: 20),
 
-              // 🔹 Selector de medicamento (desde BD)
+              // 🔹 Mostrar nombre de enfermera (si está disponible)
+              if (user != null)
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: AppStyle.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.person, color: AppStyle.primary),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          "${user.personName ?? ''} ${user.personFahterSurname ?? ''} - ${user.role?.roleName ?? ''}",
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: AppStyle.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+              // 🔹 Selector de medicamento
               DropdownButtonFormField<int>(
                 value: _selectedMedicineId,
                 decoration: InputDecoration(
@@ -115,11 +151,12 @@ class _AddMedicationKardexCardState extends State<AddMedicationKardexCard> {
               // 🔹 Vía (autocompletada)
               TextFormField(
                 controller: _routeNoteController,
-                readOnly: true, // 👈 bloqueado (solo lectura)
+                readOnly: true,
                 decoration: const InputDecoration(
                   labelText: "Vía de administración",
                   border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.local_hospital, color: AppStyle.primary),
+                  prefixIcon:
+                      Icon(Icons.local_hospital, color: AppStyle.primary),
                 ),
               ),
               const SizedBox(height: 16),
@@ -154,6 +191,24 @@ class _AddMedicationKardexCardState extends State<AddMedicationKardexCard> {
                   ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
+                      if (user == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  "No se pudo obtener el perfil de la enfermera.")),
+                        );
+                        return;
+                      }
+
+                      // 👩‍⚕️ Combinar nombre + rol
+                      final nurseFullName =
+                          "${user.personName ?? ''} ${user.personFahterSurname ?? ''} ${user.personMotherSurname ?? ''}"
+                              .trim();
+                      final nurseRole = user.role?.roleName ?? '';
+                      final nurseDisplay = nurseRole.isNotEmpty
+                          ? "$nurseFullName - $nurseRole"
+                          : nurseFullName;
+
                       final request = TsMedicationKardexRequest(
                         kardexId: widget.kardexId,
                         medicineId: _selectedMedicineId!,
@@ -161,6 +216,7 @@ class _AddMedicationKardexCardState extends State<AddMedicationKardexCard> {
                         frequency: _frequencyController.text,
                         routeNote: _routeNoteController.text,
                         notes: _notesController.text,
+                        nurseLic: nurseDisplay, // ✅ nuevo campo
                       );
 
                       final success =

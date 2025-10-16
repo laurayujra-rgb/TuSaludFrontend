@@ -5,6 +5,7 @@ class TsKardexMedicineRequest {
   final String frequency;
   final String routeNote;
   final String notes;
+  final String? nurseLic; // 👈 nombre corregido
 
   TsKardexMedicineRequest({
     required this.kardexId,
@@ -13,6 +14,7 @@ class TsKardexMedicineRequest {
     required this.frequency,
     required this.routeNote,
     required this.notes,
+    this.nurseLic,
   });
 
   Map<String, dynamic> toJson() {
@@ -27,11 +29,12 @@ class TsKardexMedicineRequest {
       "frequency": frequency,
       "routeNote": routeNote,
       "notes": notes,
+      "nurseLic": nurseLic,
     };
   }
 
   void debugPrint() {
     print(
-        "KardexId: $kardexId, MedicineId: $medicineId, Dose: $dose, Freq: $frequency, Route: $routeNote, Notes: $notes");
+        "KardexId: $kardexId, MedicineId: $medicineId, Dose: $dose, Freq: $frequency, Route: $routeNote, Notes: $notes, NurseLic: $nurseLic");
   }
 }

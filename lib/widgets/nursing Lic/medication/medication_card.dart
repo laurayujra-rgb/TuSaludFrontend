@@ -93,6 +93,26 @@ class MedicationCard extends StatelessWidget {
                 ),
               ],
             ),
+          const SizedBox(height: 10),
+
+          // 🔹 Enfermera que registró
+          if (medication.nurseLic != null && medication.nurseLic!.isNotEmpty)
+            Row(
+              children: [
+                const Icon(Icons.person, color: AppStyle.primary, size: 22),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    medication.nurseLic!,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppStyle.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
     );
